@@ -1,4 +1,4 @@
-package com.iforddow.league_management.auth;
+package com.iforddow.league_management.requests.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

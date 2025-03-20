@@ -1,16 +1,20 @@
-package com.iforddow.league_management.service;
+package com.iforddow.league_management.service.league;
 
 import com.iforddow.league_management.dto.league.LeagueDTO;
 import com.iforddow.league_management.exception.ResourceNotFoundException;
+import com.iforddow.league_management.jpa.entity.User;
 import com.iforddow.league_management.jpa.entity.league.League;
+import com.iforddow.league_management.repository.UserRepository;
 import com.iforddow.league_management.repository.league.LeagueRepository;
 import com.iforddow.league_management.requests.league.LeagueRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.*;
 
 /*
@@ -54,7 +58,7 @@ public class LeagueService {
     * @Author: IFD
     * @Since: 2025-02-07
     * */
-    public ResponseEntity<LeagueDTO> getLeagueById(Long id) {
+    public ResponseEntity<LeagueDTO> getLeagueById(Integer id) {
 
         LeagueDTO league = leagueRepository.findLeagueById(id)
                 .map(LeagueDTO::new)
@@ -74,11 +78,20 @@ public class LeagueService {
     * @Since: 2025-02-07
     * */
     @Transactional
-    public ResponseEntity<?> addLeague(LeagueRequest leagueRequest) {
+    public ResponseEntity<?> createLeague(LeagueRequest leagueRequest, Principal connectedUser) {
+
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         League newLeague = League.builder()
                 .name(leagueRequest.getLeagueName())
                 .gameType(leagueRequest.getGameType())
+                .description(leagueRequest.getLeagueDescription())
+                .location(leagueRequest.getLocation())
+                .createdBy(user)
                 .createdAt(new Date().toInstant())
                 .build();
 
@@ -99,7 +112,7 @@ public class LeagueService {
     * @Since: 2025-02-07
     * */
     @Transactional
-    public ResponseEntity<?> updateLeague(Long id, LeagueRequest leagueRequest) {
+    public ResponseEntity<?> updateLeague(Integer id, LeagueRequest leagueRequest) {
 
         League league = leagueRepository
                 .findLeagueById(id)
@@ -124,7 +137,7 @@ public class LeagueService {
     * @Since: 2025-02-07
     * */
     @Transactional
-    public ResponseEntity<?> deleteLeague(Long id) {
+    public ResponseEntity<?> deleteLeague(Integer id) {
 
         League league = leagueRepository
                 .findLeagueById(id)

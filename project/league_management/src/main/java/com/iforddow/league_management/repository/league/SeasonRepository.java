@@ -1,4 +1,4 @@
-package com.iforddow.league_management.repository;
+package com.iforddow.league_management.repository.league;
 
 import com.iforddow.league_management.jpa.entity.league.Season;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SeasonRepository extends JpaRepository<Season, Long> {
+public interface SeasonRepository extends JpaRepository<Season, Integer> {
 
-    Optional<Season> findSeasonsByIdAndLeagueId(Long id, Long leagueId);
+    Optional<Season> findSeasonsByIdAndLeagueId(Integer id, Integer leagueId);
 
-    Optional<List<Season>> findSeasonsByLeagueId(Long leagueId);
+    Optional<List<Season>> findSeasonsByLeagueId(Integer leagueId);
 
 }

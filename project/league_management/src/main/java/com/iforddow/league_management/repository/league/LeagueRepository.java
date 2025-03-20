@@ -1,9 +1,11 @@
-package com.iforddow.league_management.repository;
+package com.iforddow.league_management.repository.league;
 
+import com.iforddow.league_management.jpa.entity.User;
 import com.iforddow.league_management.jpa.entity.league.League;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /*
@@ -15,5 +17,8 @@ import java.util.Optional;
 @Repository
 public interface LeagueRepository extends JpaRepository<League, Integer> {
 
-    Optional<League> findLeagueById(Long id);
+    Optional<League> findLeagueById(Integer id);
+
+    List<League> findLeagueByCreatedBy_Id(Integer createdById);
+
 }

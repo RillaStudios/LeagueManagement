@@ -1,6 +1,5 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.league;
 
-import com.iforddow.league_management.jpa.entity.league.League;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

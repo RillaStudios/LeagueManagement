@@ -1,6 +1,6 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.permissions;
 
-import com.iforddow.league_management.jpa.entity.permissions.Role;
+import com.iforddow.league_management.jpa.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +14,7 @@ public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_role_id", nullable = false)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

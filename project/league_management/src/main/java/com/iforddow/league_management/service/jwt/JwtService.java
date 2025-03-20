@@ -1,11 +1,13 @@
-package com.iforddow.league_management.service;
+package com.iforddow.league_management.service.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,16 @@ public class JwtService {
         // Extract the subject from the token
         return extractClaim(token, Claims::getSubject);
 
+    }
+
+    public String extractToken(HttpServletRequest request) {
+
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return authHeader.substring(7);
     }
 
     /*
@@ -151,9 +163,7 @@ public class JwtService {
     * @Author: IFD
     * @Since: 2025-02-04
     * */
-    private String buildToken(
-            Map<String, Object> extraClaims, UserDetails userDetails, long expiration
-    ) {
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
 
         // Build the token with the extra claims, user details, and expiration time
         return Jwts

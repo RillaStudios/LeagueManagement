@@ -1,20 +1,77 @@
-package com.iforddow.league_management.service.authority;
+package com.iforddow.league_management.service.permissions;
 
-import com.iforddow.league_management.jpa.entity.Role;
-import com.iforddow.league_management.repository.RoleRepository;
-import com.iforddow.league_management.requests.RoleRequest;
+import com.iforddow.league_management.dto.permissions.PermissionDTO;
+import com.iforddow.league_management.dto.permissions.RoleDTO;
+import com.iforddow.league_management.dto.UserDTO;
+import com.iforddow.league_management.exception.ResourceAlreadyExistsException;
+import com.iforddow.league_management.exception.ResourceNotFoundException;
+import com.iforddow.league_management.jpa.entity.permissions.Role;
+import com.iforddow.league_management.repository.permissions.RolePermissionRepository;
+import com.iforddow.league_management.repository.permissions.RoleRepository;
+import com.iforddow.league_management.repository.UserRepository;
+import com.iforddow.league_management.requests.permissions.RoleRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class RoleService {
 
+    // RoleRepository autowire
     private final RoleRepository roleRepository;
+
+    // RolePermissionRepository autowire
+    private final RolePermissionRepository rolePermissionRepository;
+
+    // UserRepository autowire
+    private final UserRepository userRepository;
+
+    /*
+    * A method to get all roles
+    *
+    * @return ResponseEntity<?>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-05
+    * */
+    public ResponseEntity<List<RoleDTO>> getAllRoles() {
+
+        List<RoleDTO> roles = roleRepository.findAll()
+                .stream()
+                .map(RoleDTO::new).toList();
+
+        if(roles.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(roles);
+
+    }
+
+    /*
+    * A method to get a role by id
+    *
+    * @param Long id
+    * @return ResponseEntity<?>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-05
+    * */
+    public ResponseEntity<RoleDTO> getRole(Integer id) {
+
+        RoleDTO role = roleRepository
+                .findRoleById(id)
+                .map(RoleDTO::new)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+
+        return ResponseEntity.ok(role);
+
+    }
 
     /*
     * A method to add a new role
@@ -25,35 +82,25 @@ public class RoleService {
     * @Author: IFD
     * @Since: 2025-02-05
     * */
-    public ResponseEntity<?> addRole(RoleRequest role) {
+    @Transactional
+    public ResponseEntity<?> addRole(RoleRequest roleRequest) {
 
-        try {
+        if (roleRepository.existsByRoleName(roleRequest.getRoleName())) {
 
-            Role newRole = Role.builder()
-                    .roleName(role.getRoleName().toUpperCase())
-                    .roleDesc(role.getRoleDescription())
-                    .build();
-
-            if (roleRepository.existsByRoleName(role.getRoleName())) {
-                Map<String, String> response = Map.of("message", "Role creation failed: Role name already exists");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            roleRepository.save(newRole);
-
-            Map<String, String> response = Map.of("message", "Role created successfully");
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-
-            Map<String, String> response = Map.of("message", "Role creation failed: " + e.getMessage());
-
-            return ResponseEntity.badRequest().body(response);
+            throw new ResourceAlreadyExistsException("Role name already exists");
 
         }
 
+        Role newRole = Role.builder()
+                .roleName(roleRequest.getRoleName().toUpperCase())
+                .roleDesc(roleRequest.getRoleDescription())
+                .build();
+
+        roleRepository.save(newRole);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     /*
     * A method to edit a role
@@ -64,29 +111,20 @@ public class RoleService {
     * @Author: IFD
     * @Since: 2025-02-05
     * */
-    public ResponseEntity<?> editRole(Long id, RoleRequest roleRequest) {
+    @Transactional
+    public ResponseEntity<?> editRole(Integer id, RoleRequest roleRequest) {
 
-        try {
+        Role role = roleRepository.findRoleById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
-            Role role = roleRepository.findRoleById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+        role.setRoleName(roleRequest.getRoleName());
+        role.setRoleDesc(roleRequest.getRoleDescription());
 
-            role.setRoleName(roleRequest.getRoleName());
-            role.setRoleDesc(roleRequest.getRoleDescription());
+        roleRepository.save(role);
 
-            roleRepository.save(role);
-
-            Map<String, String> response = Map.of("message", "Role updated successfully");
-
-            return ResponseEntity.ok().body(response);
-
-        } catch (Exception e) {
-
-            Map<String, String> response = Map.of("message", "Role update failed: " + e.getMessage());
-
-            return ResponseEntity.badRequest().body(response);
-
-        }
+        return ResponseEntity.ok().build();
     }
+
 
     /*
     * A method to delete a role
@@ -98,26 +136,65 @@ public class RoleService {
     * @Since: 2025-02-05
     * */
     @Transactional
-    public ResponseEntity<?> deleteRole(Long id) {
+    public ResponseEntity<?> deleteRole(Integer id) {
 
-        try {
+        Role role = roleRepository.findRoleById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
-            Role role = roleRepository.findRoleById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+        roleRepository.delete(role);
 
-            roleRepository.deleteRoleById(role.getId());
+        return ResponseEntity.noContent().build();
+    }
 
-            Map<String, String> response = Map.of("message", "Role deleted successfully");
+    /*
+    * A method to get all permissions assigned to a role
+    *
+    * @param Long id
+    * @return ResponseEntity<?>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-05
+    * */
+    public ResponseEntity<List<PermissionDTO>> getPermissionsByRole(Integer roleId) {
 
-            return ResponseEntity.ok().body(response);
+        roleRepository.findRoleById(roleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
-        } catch (Exception e) {
+        List<PermissionDTO> permissions = rolePermissionRepository
+                .findPermissionsByRoleId(roleId)
+                .stream().map(PermissionDTO::new)
+                .toList();
 
-            Map<String, String> response = Map.of("message", "Role deletion failed: " + e.getMessage());
-
-            return ResponseEntity.badRequest().body(response);
-
+        if(permissions.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
 
+        return ResponseEntity.ok(permissions);
+    }
+
+    /*
+    * A method to get all users with a specific role
+    *
+    * @param Long id
+    * @return ResponseEntity<?>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-05
+    * */
+    public ResponseEntity<List<UserDTO>> getUsersByRole(Integer roleId) {
+        roleRepository.findRoleById(roleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+
+        List<UserDTO> users = userRepository
+                .findUsersByRoleId(roleId)
+                .stream().map(UserDTO::new)
+                .toList();
+
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(users);
     }
 
 }

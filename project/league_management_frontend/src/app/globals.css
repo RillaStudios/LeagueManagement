@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+
+  :root {
+    --background: 120 27% 95%;
+    --foreground: 120 5% 10%;
+    --card: 120 27% 90%;
+    --card-foreground: 120 5% 15%;
+    --popover: 120 27% 95%;
+    --popover-foreground: 120 95% 10%;
+    --primary: 120 45% 33%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 120 27% 70%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 82 27% 85%;
+    --muted-foreground: 120 5% 40%;
+    --accent: 82 27% 80%;
+    --accent-foreground: 120 5% 15%;
+    --destructive: 0 50% 48%;
+    --destructive-foreground: 120 5% 90%;
+    --border: 120 27% 50%;
+    --input: 120 27% 48%;
+    --ring: 120 45% 33%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 120 27% 10%;
+    --foreground: 120 5% 90%;
+    --card: 120 27% 10%;
+    --card-foreground: 120 5% 90%;
+    --popover: 120 27% 5%;
+    --popover-foreground: 120 5% 90%;
+    --primary: 120 45% 33%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 120 27% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 82 27% 25%;
+    --muted-foreground: 120 5% 60%;
+    --accent: 82 27% 25%;
+    --accent-foreground: 120 5% 90%;
+    --destructive: 0 50% 48%;
+    --destructive-foreground: 120 5% 90%;
+    --border: 120 27% 48%;
+    --input: 120 27% 48%;
+    --ring: 120 45% 33%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-size: 16px;
+    /* Default browser size, good for accessibility */
+  }
+
+  .dropdown-content {
+    position: absolute;
+    left: 0;
+    z-index: 1000;
+  }
+
+  body {
+    @apply bg-background text-foreground font-nunito text-base leading-relaxed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-poppins font-bold;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

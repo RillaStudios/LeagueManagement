@@ -1,10 +1,13 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.league;
 
-import com.iforddow.league_management.jpa.entity.league.League;
+import com.iforddow.league_management.jpa.entity.game.Game;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -28,5 +31,8 @@ public class Venue {
 
     @Column(name = "link")
     private String link;
+
+    @OneToMany(mappedBy = "venue")
+    private Set<Game> games = new LinkedHashSet<>();
 
 }

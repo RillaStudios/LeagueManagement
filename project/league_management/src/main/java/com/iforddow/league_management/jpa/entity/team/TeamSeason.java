@@ -1,10 +1,13 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.team;
 
 import com.iforddow.league_management.jpa.entity.league.Season;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -27,5 +30,8 @@ public class TeamSeason {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "season_id", nullable = false)
     private Season season;
+
+    @OneToMany(mappedBy = "teamSeason")
+    private Set<TeamSeasonStats> teamSeasonStats = new LinkedHashSet<>();
 
 }

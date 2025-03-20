@@ -1,6 +1,6 @@
-package com.iforddow.league_management.jpa;
+package com.iforddow.league_management.jpa.entity;
 
-import com.iforddow.league_management.entity.TokenType;
+import com.iforddow.league_management.utils.TokenType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package com.iforddow.league_management.controller;
+package com.iforddow.league_management.controller.league;
 
-import com.iforddow.league_management.requests.SeasonRequest;
-import com.iforddow.league_management.service.SeasonService;
+import com.iforddow.league_management.requests.league.SeasonRequest;
+import com.iforddow.league_management.service.league.SeasonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class SeasonController {
     * @Since: 2025-02-07
     * */
     @GetMapping("/")
-    public ResponseEntity<?> getAllSeasons(@PathVariable Long leagueId) {
+    public ResponseEntity<?> getAllSeasons(@PathVariable Integer leagueId) {
 
         return seasonService.getAllSeasons(leagueId);
 
@@ -34,28 +34,28 @@ public class SeasonController {
     * @Since: 2025-02-07
     * */
     @GetMapping("/{seasonId}")
-    public ResponseEntity<?> getSeasonById(@PathVariable Long leagueId, @PathVariable Long seasonId) {
+    public ResponseEntity<?> getSeasonById(@PathVariable Integer leagueId, @PathVariable Integer seasonId) {
 
         return seasonService.getSeasonById(leagueId, seasonId);
 
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createSeason(@PathVariable Long leagueId, @RequestBody SeasonRequest seasonRequest) {
+    public ResponseEntity<?> createSeason(@PathVariable Integer leagueId, @RequestBody SeasonRequest seasonRequest) {
 
         return seasonService.createSeason(leagueId, seasonRequest);
 
     }
 
     @PatchMapping("/{seasonId}")
-    public ResponseEntity<?> updateSeason(@PathVariable Long leagueId, @PathVariable Long seasonId, @RequestBody SeasonRequest seasonRequest) {
+    public ResponseEntity<?> updateSeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @RequestBody SeasonRequest seasonRequest) {
 
         return seasonService.updateSeason(leagueId, seasonId, seasonRequest);
 
     }
 
     @DeleteMapping("/{seasonId}")
-    public ResponseEntity<?> deleteSeason(@PathVariable Long leagueId, @PathVariable Long seasonId) {
+    public ResponseEntity<?> deleteSeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId) {
 
         return seasonService.deleteSeason(leagueId, seasonId);
 

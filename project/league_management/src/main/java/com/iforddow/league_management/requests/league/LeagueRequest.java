@@ -1,4 +1,4 @@
-package com.iforddow.league_management.requests;
+package com.iforddow.league_management.requests.league;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +20,11 @@ public class LeagueRequest {
     // private Integer id;
     private String leagueName;
 
-    // private Instant createdAt;
+    // String to represent the description of the league
     private String leagueDescription;
 
-    // private Association association;
-    private int associationId;
+    // String to represent the location of the league
+    private String location;
 
     // private String gameType;
     private String gameType;

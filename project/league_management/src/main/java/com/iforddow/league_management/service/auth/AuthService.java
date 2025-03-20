@@ -1,7 +1,9 @@
-package com.iforddow.league_management.service;
+package com.iforddow.league_management.service.auth;
 
-import com.iforddow.league_management.auth.AuthRequest;
-import com.iforddow.league_management.auth.RegisterRequest;
+import com.iforddow.league_management.dto.TokenDTO;
+import com.iforddow.league_management.exception.*;
+import com.iforddow.league_management.requests.auth.AuthRequest;
+import com.iforddow.league_management.requests.auth.RegisterRequest;
 import com.iforddow.league_management.jpa.entity.permissions.Role;
 import com.iforddow.league_management.jpa.entity.Token;
 import com.iforddow.league_management.repository.permissions.RoleRepository;
@@ -10,9 +12,13 @@ import com.iforddow.league_management.service.jwt.JwtService;
 import com.iforddow.league_management.utils.TokenType;
 import com.iforddow.league_management.jpa.entity.User;
 import com.iforddow.league_management.repository.TokenRepository;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,8 +26,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /*
@@ -33,8 +38,12 @@ import java.util.Set;
 * @Since: 2025-02-04
 * */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthService {
+
+    @Value("${spring.app.production}")
+    private Boolean production;
 
     // UserRepository object
     private final UserRepository repository;
@@ -57,6 +66,8 @@ public class AuthService {
     /*
     * A method to register a new user
     *
+    * CREATE METHOD (User)
+    *
     * @param request: RegisterRequest object
     *
     * @return AuthResponse object
@@ -64,53 +75,50 @@ public class AuthService {
     * @Author: IFD
     * @Since: 2025-02-04
     * */
-    public ResponseEntity<?> register(RegisterRequest request) {
+    @Transactional
+    public ResponseEntity<?> register(RegisterRequest request, HttpServletResponse response) {
 
-        // Try to register a new user
-        try {
+        Optional<User> existingUser = repository.findByEmail(request.getEmail());
 
-            Role userRole = roleRepository.findByRoleName("USER")
-                    .orElseThrow(() -> new RuntimeException("User Role not found"));
-
-            User user = User.builder()
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .accountEnabled(true)
-                    .accountExpired(false)
-                    .accountLocked(false)
-                    .credentialsExpired(false)
-                    .roles(Set.of(userRole))
-                    .build();
-
-            User savedUser = repository.save(user);
-
-            String jwtToken = jwtService.generateToken(user);
-
-            String refreshToken = jwtService.generateRefreshToken(user);
-
-            saveUserToken(savedUser, jwtToken);
-
-            // Create a response body
-            Map<String, Object> responseBody = Map.of(
-                    "message", "User registered successfully",
-                    "userId", savedUser.getId(),
-                    "accessToken", jwtToken,
-                    "refreshToken", refreshToken
-            );
-
-            return ResponseEntity.ok(responseBody);
-
-        } catch (RuntimeException e) {
-
-            // Create a response body
-            Map<String, Object> responseBody = Map.of(
-                    "message", "User registration failed due to " + e.getMessage()
-            );
-
-            // Return a bad request
-            return ResponseEntity.badRequest().body(responseBody);
-
+        if(existingUser.isPresent()) {
+            throw new ResourceAlreadyExistsException("A user with this email already exists.");
         }
+
+        Role userRole = roleRepository.findByRoleName("USER")
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find appropriate role for permissions."));
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .accountEnabled(true)
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .roles(Set.of(userRole))
+                .build();
+
+        User savedUser = repository.save(user);
+
+        String jwtToken = jwtService.generateToken(user);
+
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        saveUserToken(savedUser, jwtToken);
+
+        // Set the refresh token as an httpOnly cookie
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(production);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        refreshTokenCookie.setAttribute("SameSite", "None");
+
+        response.addCookie(refreshTokenCookie);
+
+        // Create a response body
+        TokenDTO token = new TokenDTO(jwtToken);
+
+        return ResponseEntity.ok(token);
 
     }
 
@@ -119,6 +127,8 @@ public class AuthService {
     * This method is used to authenticate a user and generate a token for the user
     * and save the token in the database.
     *
+    * CREATE METHOD (Token)
+    *
     * @param request: AuthRequest object
     *
     * @return AuthResponse object
@@ -126,57 +136,112 @@ public class AuthService {
     * @Author: IFD
     * @Since: 2025-02-04
     * */
-    public ResponseEntity<?> authenticate(AuthRequest request) {
+    @Transactional
+    public ResponseEntity<TokenDTO> authenticate(AuthRequest request, HttpServletResponse response) {
+
+        // Get the user from the database
+        User user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new
+                        ResourceNotFoundException("An account with email "
+                        + request.getEmail()
+                        + " was not found."));
+
+        // Authenticate the user
+        authenticateUser(request);
+
+        // Generate the token for the user
+        String jwtToken = jwtService.generateToken(user);
+
+        // Generate the refresh token for the user
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        // Revoke all the user tokens
+        revokeAllUserTokens(user);
+
+        // Save the token in the database
+        saveUserToken(user, jwtToken);
+
+        // Set the refresh token as an httpOnly cookie
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(production);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        refreshTokenCookie.setAttribute("SameSite", "None");
+
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok(new TokenDTO(jwtToken));
+
+    }
+
+    /*
+     * Refresh the token of a user. This is useful when the token of a user expires.
+     * This method is used to generate a new token for the user and save it in the database.
+     *
+     * CREATE METHOD (Token)
+     *
+     * @param request: HttpServletRequest object
+     * @param response: HttpServletResponse object
+     *
+     * @Author: IFD
+     * @Since: 2025-02-04
+     * */
+    @Transactional
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+
+        String refreshToken = extractRefreshTokenFromCookies(request);
+
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new NoContentException("Refresh token not found. Please login again.");
+        }
+
+        String userEmail = jwtService.extractEmail(refreshToken);
+
+        if (userEmail == null) {
+            throw  new GeneralException("Could not extract user from token. Please login again.");
+        }
+
+        User user = repository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("A user with email " + userEmail + " was not found."));
+
+        if (!jwtService.isTokenValid(refreshToken, user)) {
+            throw new GeneralException("The refresh token provided was invalid. Please login again.");
+        }
+
+        // Generate new access token
+        String accessToken = jwtService.generateToken(user);
+
+        // Revoke old tokens and save the new one
+        revokeAllUserTokens(user);
+        saveUserToken(user, accessToken);
+
+        // Return successful response
+        return ResponseEntity.ok(new TokenDTO(accessToken));
+    }
+
+
+    public ResponseEntity<?> logout(HttpServletResponse response) {
 
         try {
 
-            // Authenticate the user
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+            Cookie refreshTokenCookie = new Cookie("refreshToken", "");
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setSecure(production);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(0);
+            refreshTokenCookie.setAttribute("SameSite", "None");
 
-            // Get the user from the database
-            User user = repository.findByEmail(request.getEmail())
-                    .orElseThrow();
+            response.addCookie(refreshTokenCookie);
 
-            // Generate the token for the user
-            String jwtToken = jwtService.generateToken(user);
+            return ResponseEntity.ok("Logged out successfully");
 
-            // Generate the refresh token for the user
-            String refreshToken = jwtService.generateRefreshToken(user);
+        } catch (Exception e) {
 
-            // Revoke all the user tokens
-            revokeAllUserTokens(user);
-
-            // Save the token in the database
-            saveUserToken(user, jwtToken);
-
-            // Create a response body
-            Map<String, Object> responseBody = Map.of(
-                    "message", "User signed in successfully",
-                    "email", user.getEmail(),
-                    "accessToken", jwtToken,
-                    "refreshToken", refreshToken,
-                    "roles", user.getRoles()
-            );
-
-            // Return the AuthResponse object
-            return ResponseEntity.ok(responseBody);
-
-        } catch (AuthenticationException e) {
-
-            // Create a response body
-            Map<String, Object> responseBody = Map.of(
-                    "message", "Unable to authenticate user due to " + e.getMessage()
-            );
-
-            // Return a bad request
-            return ResponseEntity.badRequest().body(responseBody);
+            throw new GeneralException("An error occurred while logging out");
 
         }
+
     }
 
     /*
@@ -188,160 +253,92 @@ public class AuthService {
     * @Author: IFD
     * @Since: 2025-02-04
     * */
-    private void saveUserToken(User user, String jwtToken) {
+    @Transactional
+    public void saveUserToken(User user, String jwtToken) {
 
-        // Try to save the user token in the database
-        try {
+        // Create a new Token object
+        Token token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
 
-            // Create a new Token object
-            Token token = Token.builder()
-                    .user(user)
-                    .token(jwtToken)
-                    .tokenType(TokenType.BEARER)
-                    .expired(false)
-                    .revoked(false)
-                    .build();
+        tokenRepository.save(token);
 
-            // Save the token in the database
-            tokenRepository.save(token);
-
-        } catch (Exception e) {
-
-            // Throw a runtime exception
-            throw new RuntimeException(e);
-
-        }
     }
 
     /*
-    * Revoke all the user tokens
-    *
-    * @param user: User object
-    *
-    * @Author: IFD
-    * @Since: 2025-02-04
-    * */
-    private void revokeAllUserTokens(User user) {
+     * Revoke all the user tokens
+     *
+     * @param user: User object
+     *
+     * @Author: IFD
+     * @Since: 2025-02-04
+     * */
+    @Transactional
+    public void revokeAllUserTokens(User user) {
 
-        // Try to revoke all the user tokens
-        try {
-            // Get all the valid user tokens
-            List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        // Directly perform the batch update to revoke tokens
+        int updatedTokensCount = tokenRepository.revokeTokensByUser(user.getId());
 
-            // If there are no valid user tokens, return
-            if (validUserTokens.isEmpty())
-                return;
-
-            // Revoke all the user tokens
-            validUserTokens.forEach(token -> {
-                token.setExpired(true);
-                token.setRevoked(true);
-            });
-
-            // Save the user tokens in the database
-            tokenRepository.saveAll(validUserTokens);
-        } catch (Exception e) {
-
-            // Throw a runtime exception
-            throw new RuntimeException(e);
-
+        // If no tokens were updated, log that there were no tokens to revoke
+        if (updatedTokensCount == 0) {
+            log.info("No valid tokens found for user {}", user.getEmail());
+            return;
         }
+
+        // Log the result of the token revocation
+        log.info("Successfully revoked {} valid tokens for user {}", updatedTokensCount, user.getEmail());
+
     }
 
     /*
-    * Refresh the token of a user. This is useful when the token of a user expires.
-    * This method is used to generate a new token for the user and save it in the database.
+    * Authenticate the user
     *
-    * @param request: HttpServletRequest object
-    * @param response: HttpServletResponse object
+    * @param request: AuthRequest object
     *
     * @Author: IFD
-    * @Since: 2025-02-04
+    * @Since: 2025-02-09
     * */
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+    private void authenticateUser(AuthRequest request) {
 
-        // Try to refresh the token
         try {
 
-            // Get the Authorization header from the request
-            final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-            // Initialize the refreshToken and userEmail
-            final String refreshToken;
-            final String userEmail;
-
-            // If the Authorization header is null or does not start with "Bearer ", return
-            if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-                return ResponseEntity.badRequest().body("Invalid token");
-            }
-
-            // Get the refreshToken from the Authorization header
-            refreshToken = authHeader.substring(7);
-
-            // Extract the username from the refreshToken
-            userEmail = jwtService.extractEmail(refreshToken);
-
-            // If the username is not null, get the user from the database
-            if (userEmail != null) {
-
-                // Get the user from the database
-                User user = this.repository.findByEmail(userEmail)
-                        .orElseThrow();
-
-                // Check if the refreshToken is valid
-                if (jwtService.isTokenValid(refreshToken, user)) {
-
-                    // Generate a new token for the user
-                    String accessToken = jwtService.generateToken(user);
-
-                    // Revoke all the user tokens
-                    revokeAllUserTokens(user);
-
-                    // Save the new token in the database
-                    saveUserToken(user, accessToken);
-
-                    // Create a response body
-                    Map<String, Object> authResponse = Map.of(
-                            "message", "Token refreshed successfully",
-                            "accessToken", accessToken,
-                            "refreshToken", refreshToken
-                    );
-
-                    // Return the AuthResponse object
-                    return ResponseEntity.ok(authResponse);
-
-                }   else {
-
-                    // Create a response body
-                    Map<String, Object> responseBody = Map.of(
-                            "message", "Invalid token"
-                    );
-
-                    // Return a bad request
-                    return ResponseEntity.badRequest().body(responseBody);
-
-                }
-            }   else {
-
-                // Create a response body
-                Map<String, Object> responseBody = Map.of(
-                        "message", "Invalid token"
-                );
-
-                // Return a bad request
-                return ResponseEntity.badRequest().body(responseBody);
-
-            }
-        } catch (Exception e) {
-
-            // Create a response body
-            Map<String, Object> responseBody = Map.of(
-                    "message", "Unable to refresh token due to " + e.getMessage()
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
             );
 
-            return ResponseEntity.badRequest().body(responseBody);
+        } catch (AuthenticationException e) {
+
+            throw new AuthenticationFailedException("The password entered is incorrect.");
 
         }
 
     }
+
+    /*
+    * A method to extract the refresh token from a cookie
+    *
+    * @param request: HttpServletRequest object
+    *
+    * @Author: IFD
+    * @Since: 2025-02-25
+    * */
+    private String extractRefreshTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) return null;
+
+        for (Cookie cookie : cookies) {
+            if ("refreshToken".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
 }

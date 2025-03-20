@@ -1,13 +1,13 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.league;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.iforddow.league_management.jpa.entity.team.Team;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
@@ -19,22 +19,25 @@ import java.util.Set;
 public class Division {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @Column(name = "division_id", nullable = false)
+    private Integer id;
 
     @Column(name = "name", length = 50)
     private String name;
-
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "league_id")
     private League league;
 
-    @OneToMany(mappedBy = "division")
-    private Set<TeamSeason> teamSeasons = new LinkedHashSet<>();
+    @Column(name = "max_teams")
+    private Integer maxTeams;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conference_id")
+    private Conference conference;
+
+    @OneToMany(mappedBy = "division", fetch = FetchType.LAZY)
+    private Set<Team> teams;
 
 }

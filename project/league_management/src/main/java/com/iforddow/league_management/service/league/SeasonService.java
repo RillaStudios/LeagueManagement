@@ -1,4 +1,4 @@
-package com.iforddow.league_management.service;
+package com.iforddow.league_management.service.league;
 
 import com.iforddow.league_management.dto.league.SeasonDTO;
 import com.iforddow.league_management.exception.ResourceNotFoundException;
@@ -33,7 +33,7 @@ public class SeasonService {
     * @Author: IFD
     * @Since: 2025-02-10
     * */
-    public ResponseEntity<List<SeasonDTO>> getAllSeasons(Long leagueId) {
+    public ResponseEntity<List<SeasonDTO>> getAllSeasons(Integer leagueId) {
 
         List<SeasonDTO> allSeasons = seasonRepository
                 .findAll().stream()
@@ -57,7 +57,7 @@ public class SeasonService {
     * @Author: IFD
     * @Since: 2025-02-10
     * */
-    public ResponseEntity<SeasonDTO> getSeasonById(Long leagueId, Long seasonId) {
+    public ResponseEntity<SeasonDTO> getSeasonById(Integer leagueId, Integer seasonId) {
 
         SeasonDTO season = seasonRepository
                 .findSeasonsByIdAndLeagueId(seasonId, leagueId)
@@ -79,14 +79,13 @@ public class SeasonService {
     * @Since: 2025-02-10
     * */
     @Transactional
-    public ResponseEntity<?> createSeason(Long leagueId, SeasonRequest seasonRequest) {
+    public ResponseEntity<?> createSeason(Integer leagueId, SeasonRequest seasonRequest) {
 
         League league = leagueRepository
                 .findLeagueById(leagueId)
                 .orElseThrow(() -> new ResourceNotFoundException("No league found with ID: " + leagueId));
 
         Season newSeason = Season.builder()
-                .seasonName(seasonRequest.getSeasonName())
                 .startDate(seasonRequest.getStartDate())
                 .endDate(seasonRequest.getEndDate())
                 .league(league)
@@ -110,13 +109,12 @@ public class SeasonService {
     * @Since: 2025-02-10
     * */
     @Transactional
-    public ResponseEntity<?> updateSeason(Long leagueId, Long seasonId, SeasonRequest seasonRequest) {
+    public ResponseEntity<?> updateSeason(Integer leagueId, Integer seasonId, SeasonRequest seasonRequest) {
 
         Season season = seasonRepository
                 .findSeasonsByIdAndLeagueId(seasonId, leagueId)
                 .orElseThrow(() -> new ResourceNotFoundException("No season found with ID: " + seasonId));
 
-        season.setSeasonName(seasonRequest.getSeasonName());
         season.setStartDate(seasonRequest.getStartDate());
         season.setEndDate(seasonRequest.getEndDate());
 
@@ -137,7 +135,7 @@ public class SeasonService {
     * @Since: 2025-02-10
     * */
     @Transactional
-    public ResponseEntity<?> deleteSeason(Long leagueId, Long seasonId) {
+    public ResponseEntity<?> deleteSeason(Integer leagueId, Integer seasonId) {
 
         Season season = seasonRepository
                 .findSeasonsByIdAndLeagueId(seasonId, leagueId)

@@ -1,10 +1,12 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.league;
 
-import com.iforddow.league_management.jpa.entity.league.League;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -25,5 +27,8 @@ public class Conference {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "league_id", nullable = false)
     private League league;
+
+    @OneToMany(mappedBy = "conference", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Division> divisions = new ArrayList<>();
 
 }

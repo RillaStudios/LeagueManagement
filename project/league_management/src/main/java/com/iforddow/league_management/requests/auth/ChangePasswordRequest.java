@@ -1,6 +1,9 @@
-package com.iforddow.league_management.auth;
+package com.iforddow.league_management.requests.auth;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /*
 * A class to represent the request body for changing password

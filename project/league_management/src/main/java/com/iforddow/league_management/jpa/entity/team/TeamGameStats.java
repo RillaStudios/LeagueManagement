@@ -1,5 +1,6 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.team;
 
+import com.iforddow.league_management.jpa.entity.game.Game;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

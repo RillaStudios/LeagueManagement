@@ -1,5 +1,6 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.permissions;
 
+import com.iforddow.league_management.jpa.entity.User;
 import com.iforddow.league_management.jpa.entity.league.League;
 import jakarta.persistence.*;
 import lombok.*;

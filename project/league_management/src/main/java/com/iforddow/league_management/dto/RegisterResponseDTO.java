@@ -1,8 +1,5 @@
-package com.iforddow.league_management.response;
+package com.iforddow.league_management.dto;
 
-public class RegisterResponse {
-
-    public RegisterResponse(String message, Long userId, String accessToken, String refreshToken) {
-    }
+public record RegisterResponseDTO(String message, Integer userId, String accessToken, String refreshToken) {
 
 }

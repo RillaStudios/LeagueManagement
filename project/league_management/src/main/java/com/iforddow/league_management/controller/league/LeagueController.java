@@ -1,10 +1,12 @@
-package com.iforddow.league_management.controller;
+package com.iforddow.league_management.controller.league;
 
-import com.iforddow.league_management.requests.LeagueRequest;
-import com.iforddow.league_management.service.LeagueService;
+import com.iforddow.league_management.requests.league.LeagueRequest;
+import com.iforddow.league_management.service.league.LeagueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 /*
 * A controller class that handles all the requests related to the leagues.
@@ -45,7 +47,7 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @GetMapping("/{leagueId}")
-    public ResponseEntity<?> getLeagueById(@PathVariable Long leagueId) {
+    public ResponseEntity<?> getLeagueById(@PathVariable Integer leagueId) {
 
         return leagueService.getLeagueById(leagueId);
 
@@ -61,9 +63,9 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @PostMapping("/")
-    public ResponseEntity<?> addLeague(@RequestBody LeagueRequest leagueRequest) {
+    public ResponseEntity<?> createLeague(@RequestBody LeagueRequest leagueRequest, Principal connectedUser) {
 
-        return leagueService.addLeague(leagueRequest);
+        return leagueService.createLeague(leagueRequest, connectedUser);
 
     }
 
@@ -78,7 +80,7 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @PatchMapping("/{leagueId}")
-    public ResponseEntity<?> updateLeague(@PathVariable Long leagueId, @RequestBody LeagueRequest leagueRequest) {
+    public ResponseEntity<?> updateLeague(@PathVariable Integer leagueId, @RequestBody LeagueRequest leagueRequest) {
 
         return leagueService.updateLeague(leagueId, leagueRequest);
 
@@ -94,7 +96,7 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @DeleteMapping("/{leagueId}")
-    public ResponseEntity<?> deleteLeague(@PathVariable Long leagueId) {
+    public ResponseEntity<?> deleteLeague(@PathVariable Integer leagueId) {
 
         return leagueService.deleteLeague(leagueId);
 

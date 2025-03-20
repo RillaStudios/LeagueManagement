@@ -1,13 +1,14 @@
 package com.iforddow.league_management.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class AdminController {
 
-    @GetMapping("/admin/dashboard")
+    @GetMapping("/admin")
     public String adminDashboard() {
-        return "admin/dashboard";
+        return "admin dashboard";
     }
+
 }

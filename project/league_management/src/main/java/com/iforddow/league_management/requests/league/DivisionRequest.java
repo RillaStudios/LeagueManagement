@@ -1,4 +1,4 @@
-package com.iforddow.league_management.requests;
+package com.iforddow.league_management.requests.league;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 public class DivisionRequest {
 
     private String divisionName;
+
+    private Integer conferenceId;
 
 }

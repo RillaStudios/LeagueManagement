@@ -1,4 +1,4 @@
-package com.iforddow.league_management.jpa.entity;
+package com.iforddow.league_management.jpa.entity.permissions;
 
 import jakarta.persistence.*;
 import lombok.*;
