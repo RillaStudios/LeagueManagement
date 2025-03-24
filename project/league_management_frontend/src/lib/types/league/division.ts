@@ -3,5 +3,6 @@ export interface Division {
     divisionName?: string;
     leagueName: string;
     conferenceName: string;
-    conferenceId?: number | null;
+    conferenceId: number;
+    leagueId: number;
 }

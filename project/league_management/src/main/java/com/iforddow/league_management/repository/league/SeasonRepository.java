@@ -12,6 +12,6 @@ public interface SeasonRepository extends JpaRepository<Season, Integer> {
 
     Optional<Season> findSeasonsByIdAndLeagueId(Integer id, Integer leagueId);
 
-    Optional<List<Season>> findSeasonsByLeagueId(Integer leagueId);
+    List<Season> findSeasonListByLeagueId(Integer leagueId);
 
 }

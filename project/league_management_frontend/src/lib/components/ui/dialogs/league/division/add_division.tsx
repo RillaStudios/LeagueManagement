@@ -5,15 +5,25 @@ import { Separator } from "@/lib/components/shadcn/separator";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogOverlay, DialogPortal, DialogTitle } from "@/lib/components/shadcn/dialog";
 import { useDialog } from "@/lib/components/providers/dialog_provider";
 import DivisionForm from "./division_form";
+import { Division } from "@/lib/types/league/division";
 
 interface AddEditDivisionDialogProps {
     leagueId: number;
+    divisionId?: number;
     isEdit?: boolean;
+    onSave?: (updatedDivision: Division) => void;
 }
 
-const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId, isEdit }) => {
+const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId, isEdit, divisionId, onSave }) => {
     const { dialogState, closeDialog } = useDialog();
     const isOpen = isEdit ? dialogState["editDivision"] : dialogState["addDivision"];
+
+    const handleSave = (updatedDivision: Division) => {
+        if (onSave) {
+            onSave(updatedDivision); // Call the onSave callback
+        }
+        closeDialog(isEdit ? "editDivision" : "addDivision"); // Close the dialog
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={() => closeDialog(isEdit ? "editDivision" : "addDivision")}>
@@ -27,7 +37,12 @@ const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId,
                         </DialogDescription>
                     </DialogHeader>
                     <Separator />
-                    <DivisionForm leagueId={leagueId} isEdit={isEdit ? isEdit : false} />
+                    <DivisionForm
+                        leagueId={leagueId}
+                        isEdit={isEdit}
+                        divisionId={divisionId}
+                        onSave={handleSave}
+                    />
                 </DialogContent>
             </DialogPortal>
         </Dialog>

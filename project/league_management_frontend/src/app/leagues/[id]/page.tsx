@@ -7,7 +7,7 @@ import { Button } from "@/lib/components/shadcn/button";
 import LeagueManagerRow from "@/lib/components/ui/display/league_manager_role";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
-import { getLeague } from "@/lib/service/league_service";
+import { getLeague } from "@/lib/service/league/league_service";
 import Link from "next/link";
 
 export default async function LeaguePage({ params }: { params: Promise<{ id: number }> }) {

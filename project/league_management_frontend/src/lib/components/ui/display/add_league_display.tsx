@@ -13,7 +13,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { Textarea } from "../../shadcn/textarea";
 import { BodySmall } from "../../layout/typography";
 import Column from "../../layout/column";
-import { addLeague } from "@/lib/service/league_service";
+import { addLeague, getLeague, updateLeague } from "@/lib/service/league/league_service";
 import { League } from "@/lib/types/league/league";
 
 const formSchema = z.object({
@@ -25,9 +25,12 @@ const formSchema = z.object({
     location: z.string(),
 });
 
-const AddLeagueDisplay: React.FC<{}> = () => {
+interface AddEditLeagueDisplayProps {
+    isEdit?: boolean;
+    leagueId?: number;
+}
 
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const AddEditLeagueDisplay: React.FC<AddEditLeagueDisplayProps> = ({ isEdit, leagueId }) => {
 
     const { accessToken } = useAuth();
     const { user } = useUserData();
@@ -46,6 +49,33 @@ const AddLeagueDisplay: React.FC<{}> = () => {
     });
 
     useEffect(() => {
+
+        if (isEdit && leagueId !== undefined) {
+
+            const fetchLeague = async () => {
+                // Fetch league data
+                let currentLeague: League | null;
+
+                try {
+                    const currentLeague = await getLeague(leagueId);
+
+                    if (currentLeague) {
+                        form.reset({
+                            name: currentLeague.name,
+                            gameType: currentLeague.gameType,
+                            description: currentLeague.description,
+                            location: currentLeague.location,
+                        });
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch league:", error);
+                    currentLeague = null;
+                }
+            };
+
+            fetchLeague();
+        }
+
         if (user) {
             form.reset({
                 name: "",
@@ -66,13 +96,20 @@ const AddLeagueDisplay: React.FC<{}> = () => {
                 gameType: values.gameType,
                 description: values.description,
                 location: values.location,
+                id: leagueId,
             };
 
-            addLeague(accessToken!, newLeague);
+            if (isEdit) {
+                await updateLeague(accessToken!, newLeague);
+            } else {
+                await addLeague(accessToken!, newLeague);
+            }
+
+            form.reset(values); // Reset form with current values to clear dirty state
 
         } catch (error) {
-            console.error("Failed to add league:", error);
-            setServerError("Failed to add league. Please try again.");
+            console.error("Failed to add/edit league:", error);
+            setServerError("Failed to add/edit league. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -136,9 +173,9 @@ const AddLeagueDisplay: React.FC<{}> = () => {
                 {serverError && <p className="text-red-500 text-sm text-left">{serverError}</p>}
                 <div className="flex justify-start">
                     <Column gap="8">
-                        <BodySmall text="Note: A league must be created before adding conferences, teams, and divisions." />
+                        {!isEdit && <BodySmall text="Note: A league must be created before adding conferences, teams, and divisions." />}
                         <Button type="submit" disabled={!form.formState.isDirty || loading}>
-                            {loading ? "Adding League..." : "Add League"}
+                            {isEdit ? loading ? "Editing League..." : "Edit League" : loading ? "Adding League..." : "Add League"}
                         </Button>
                     </Column>
                 </div>
@@ -147,4 +184,4 @@ const AddLeagueDisplay: React.FC<{}> = () => {
     );
 }
 
-export default AddLeagueDisplay;
+export default AddEditLeagueDisplay;

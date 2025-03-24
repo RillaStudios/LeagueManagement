@@ -137,7 +137,7 @@ public class ConferenceService {
     * @Since: 2025-02-18
     * */
     @Transactional
-    public ResponseEntity<?> addConference(Integer leagueId, ConferenceRequest conferenceRequest) {
+    public ResponseEntity<ConferenceDTO> addConference(Integer leagueId, ConferenceRequest conferenceRequest) {
 
         League league = leagueRepository
                 .findLeagueById(leagueId)
@@ -150,7 +150,7 @@ public class ConferenceService {
 
         conferenceRepository.save(conference);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ConferenceDTO(conference));
 
     }
 
@@ -166,7 +166,7 @@ public class ConferenceService {
     * @Since: 2025-02-18
     * */
     @Transactional
-    public ResponseEntity<?> updateConference(Integer leagueId, Integer conferenceId, ConferenceRequest conferenceRequest) {
+    public ResponseEntity<ConferenceDTO> updateConference(Integer leagueId, Integer conferenceId, ConferenceRequest conferenceRequest) {
 
         Conference conference = conferenceRepository
                 .findByIdAndLeagueId(conferenceId, leagueId)
@@ -176,7 +176,7 @@ public class ConferenceService {
 
         conferenceRepository.save(conference);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new ConferenceDTO(conference));
 
     }
 

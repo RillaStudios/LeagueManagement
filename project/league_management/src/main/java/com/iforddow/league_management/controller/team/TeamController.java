@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/leagues/{leagueId}/teams")
@@ -15,7 +17,7 @@ public class TeamController {
     private final TeamService teamService;
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllTeams(@PathVariable Integer leagueId) {
+    public ResponseEntity<List<TeamDTO>> getAllTeams(@PathVariable Integer leagueId) {
 
         return teamService.getAllTeams(leagueId);
 
@@ -46,6 +48,13 @@ public class TeamController {
     public ResponseEntity<?> deleteTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId) {
 
         return teamService.deleteTeam(leagueId, teamId);
+
+    }
+
+    @GetMapping("/{teamId}/news")
+    public ResponseEntity<TeamDTO> addNewsItem(@PathVariable Integer leagueId, @PathVariable Integer teamId) {
+
+        return teamService.getTeamById(leagueId, teamId);
 
     }
 

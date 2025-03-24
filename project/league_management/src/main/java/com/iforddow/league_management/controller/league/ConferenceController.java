@@ -1,6 +1,7 @@
 package com.iforddow.league_management.controller.league;
 
 import com.iforddow.league_management.dto.league.ConferenceDTO;
+import com.iforddow.league_management.dto.league.DivisionDTO;
 import com.iforddow.league_management.requests.league.ConferenceRequest;
 import com.iforddow.league_management.service.league.ConferenceService;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +32,14 @@ public class ConferenceController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addConference(@PathVariable Integer leagueId, @RequestBody ConferenceRequest conferenceRequest) {
+    public ResponseEntity<ConferenceDTO> addConference(@PathVariable Integer leagueId, @RequestBody ConferenceRequest conferenceRequest) {
 
         return conferenceService.addConference(leagueId, conferenceRequest);
 
     }
 
     @PatchMapping("/{conferenceId}")
-    public ResponseEntity<?> updateConference(@PathVariable Integer leagueId, @PathVariable Integer conferenceId, @RequestBody ConferenceRequest conferenceRequest) {
+    public ResponseEntity<ConferenceDTO> updateConference(@PathVariable Integer leagueId, @PathVariable Integer conferenceId, @RequestBody ConferenceRequest conferenceRequest) {
 
         return conferenceService.updateConference(leagueId, conferenceId, conferenceRequest);
 
@@ -52,7 +53,7 @@ public class ConferenceController {
     }
 
     @GetMapping("/{conferenceId}/divisions")
-    public ResponseEntity<?> getDivisionsByConferenceId(@PathVariable Integer leagueId, @PathVariable Integer conferenceId) {
+    public ResponseEntity<List<DivisionDTO>> getDivisionsByConferenceId(@PathVariable Integer leagueId, @PathVariable Integer conferenceId) {
 
         return conferenceService.getDivisionsByConferenceId(leagueId, conferenceId);
 

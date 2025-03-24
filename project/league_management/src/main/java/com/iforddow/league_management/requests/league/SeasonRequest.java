@@ -19,9 +19,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SeasonRequest {
 
-    // The name of the season
-    private String seasonName;
-
     // The start date of the season
     private LocalDate startDate;
 

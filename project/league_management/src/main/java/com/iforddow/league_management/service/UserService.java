@@ -134,4 +134,8 @@ public class UserService {
 
     }
 
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        return ResponseEntity.ok(userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList()));
+    }
+
 }

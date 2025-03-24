@@ -18,7 +18,8 @@ import useLoading from "@/lib/hooks/useLoading";
 import { Division } from "@/lib/types/league/division";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/shadcn/select";
 import { Conference } from "@/lib/types/league/conference";
-import { addDivision, getConferences } from "@/lib/service/league_service";
+import { addDivision, getDivision, updateDivision } from "@/lib/service/league/division_service";
+import { getConferences } from "@/lib/service/league/conference_service";
 
 const formSchema = z.object({
     divName: z.string().min(1, {
@@ -29,22 +30,16 @@ const formSchema = z.object({
 
 interface DivisionFormProps {
     leagueId: number;
-    isEdit: boolean;
+    divisionId?: number;
+    isEdit?: boolean;
+    onSave?: (updatedDivision: Division) => void;
 }
 
-const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit }) => {
-
-    // Server error state
+const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionId, onSave }) => {
     const [serverError, setServerError] = useState<string | null>(null);
-
-    const [division, setDivision] = useState<Division | null>(null);
-
     const [conferences, setConferences] = useState<Conference[] | null>(null);
-
-    // Use the loading hook
     const { loading, setLoading } = useLoading();
 
-    // Create a form
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -57,22 +52,13 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit }) => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-
-                // Fetch conferences regardless of edit mode
                 const conferences = await getConferences(leagueId);
-
                 setConferences(conferences);
 
                 if (isEdit) {
-                    const divisionId = window.location.pathname.split('/').pop(); // Get division ID from URL
-                    const divisionResponse = await fetch(`/api/leagues/${leagueId}/divisions/${divisionId}`);
-                    if (!divisionResponse.ok) throw new Error('Failed to fetch division');
-                    const divisionData = await divisionResponse.json();
-                    setDivision(divisionData);
-
-                    // Set form values with division data
-                    form.setValue('divName', divisionData.name);
-                    form.setValue('selectConference', divisionData.conferenceId);
+                    const newDivision = await getDivision(leagueId, divisionId!);
+                    form.setValue('divName', newDivision.divisionName || '');
+                    form.setValue('selectConference', newDivision.conferenceId?.toString() || '');
                 }
             } catch (error) {
                 setServerError(error instanceof Error ? error.message : 'An error occurred');
@@ -84,44 +70,30 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit }) => {
         fetchData();
     }, [isEdit, form]);
 
-
-    /* 
-    A function that is called when the form is submitted.
-
-    @param values - The form values
-
-    @returns {Promise<void>}
-
-    @Author IFD
-    @Since 2025-02-38
-    */
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            //Set loading to true
             setLoading(true);
-
             const newDivision: Partial<Division> = {
                 divisionName: values.divName,
-                conferenceId: null,
+                conferenceId: parseInt(values.selectConference),
             };
 
-            addDivision(leagueId, newDivision);
+            let updatedDivision: Division;
+            if (isEdit) {
+                updatedDivision = await updateDivision(leagueId, divisionId!, newDivision);
+            } else {
+                updatedDivision = await addDivision(leagueId, newDivision);
+            }
 
-
+            if (onSave) {
+                onSave(updatedDivision); // Call the onSave callback
+            }
         } catch (error: any) {
-
-            // Set the server error
-            setServerError(error.message?.toString() || "An error occurred. Please try again.");
-
+            setServerError(error.message || "An error occurred. Please try again.");
         } finally {
-
-            //Set loading to false
             setLoading(false);
-
         }
-    }
-
+    };
 
     return (
         <Form {...form}>
@@ -146,14 +118,16 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit }) => {
                         <FormItem>
                             <FormLabel>Assign Conference</FormLabel>
                             <FormControl>
-                                <Select>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Assign division to conference" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="light">Light</SelectItem>
-                                        <SelectItem value="dark">Dark</SelectItem>
-                                        <SelectItem value="system">System</SelectItem>
+                                        {conferences?.map((conference) => (
+                                            <SelectItem key={conference.id} value={conference.id.toString()}>
+                                                {conference.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </FormControl>
@@ -164,7 +138,7 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit }) => {
                 {serverError && <p className="text-red-500 text-sm text-center">{serverError}</p>}
                 <div className="flex justify-center">
                     <Button type="submit">
-                        {loading ? "Adding division..." : "Add Division"}
+                        {loading ? "Saving..." : isEdit ? "Edit Division" : "Add Division"}
                     </Button>
                 </div>
             </form>

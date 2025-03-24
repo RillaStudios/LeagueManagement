@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { League } from "../types/league/league";
-import { getAllLeagues, getAllUserLeagues } from "../service/league_service";
+import { getAllLeagues, getAllUserLeagues } from "../service/league/league_service";
 import { useAuth } from "./useAuth";
 
 /* 

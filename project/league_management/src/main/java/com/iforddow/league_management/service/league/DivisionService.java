@@ -127,7 +127,7 @@ public class DivisionService {
     * @Since: 2025-02-11
     * */
     @Transactional
-    public ResponseEntity<?> addDivision(Integer leagueId, DivisionRequest divisionRequest) {
+    public ResponseEntity<DivisionDTO> addDivision(Integer leagueId, DivisionRequest divisionRequest) {
 
         League league = leagueRepository
                 .findLeagueById(leagueId)
@@ -135,12 +135,13 @@ public class DivisionService {
 
         Division division = Division.builder()
                 .name(divisionRequest.getDivisionName())
+                .conference(Conference.builder().id(divisionRequest.getConferenceId()).build())
                 .league(league)
                 .build();
 
         divisionRepository.save(division);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DivisionDTO(division));
 
     }
 
@@ -155,7 +156,7 @@ public class DivisionService {
     * @Since: 2025-02-11
     * */
     @Transactional
-    public ResponseEntity<?> updateDivision(Integer leagueId, Integer divisionId, DivisionRequest divisionRequest) {
+    public ResponseEntity<DivisionDTO> updateDivision(Integer leagueId, Integer divisionId, DivisionRequest divisionRequest) {
 
         Division division = divisionRepository.findDivisionByIdAndLeagueId(divisionId, leagueId)
                 .orElseThrow(() -> new ResourceNotFoundException("Division with " + divisionId + " not found"));
@@ -174,7 +175,7 @@ public class DivisionService {
 
         divisionRepository.save(division);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(new DivisionDTO(division));
 
     }
 

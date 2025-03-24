@@ -1,6 +1,4 @@
-import { Conference } from "../types/league/conference";
-import { Division } from "../types/league/division";
-import { League } from "../types/league/league";
+import { League } from "../../types/league/league";
 
 // The URL of the API
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -135,58 +133,46 @@ export async function addLeague(accessToken: string, league: Partial<League>): P
 }
 
 /* 
-A 
+A function that updates a league in the database
+
+@param accessToken: the access token of the user
+@param league: the league object to be updated in the database
+
+@returns void
+
+@Author: IFD
+@Since: 2025-03-22
 */
-export async function getDivisions(leagueId: number): Promise<Division[]> {
-    const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/`, {
-        method: 'GET',
+export async function updateLeague(accessToken: string, league: Partial<League>): Promise<void> {
+    await fetch(`${API_URL}/leagues/${league.id}`, {
+        method: 'PATCH',
         headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-        cache: 'no-store',
+        body: JSON.stringify({ leagueName: league.name, gameType: league.gameType, leagueDescription: league.description, location: league.location }),
     });
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch divisions');
-    }
-
-    const divisions: Division[] = await response.json();
-
-    return divisions;
 }
 
-export async function addDivision(leagueId: number, division: Partial<Division>): Promise<void> {
-    const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/`, {
-        method: 'POST',
+/* 
+A function that deletes a league from the database
+
+@param accessToken: the access token of the user
+@param leagueId: the ID of the league to be deleted
+
+@returns void
+
+@Author: IFD
+@Since: 2025-03-22
+*/
+export async function deleteLeague(accessToken: string, leagueId: number): Promise<void> {
+    await fetch(`${API_URL}/leagues/${leagueId}`, {
+        method: 'DELETE',
         headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(division),
     });
-
-    if (!response.ok) {
-        throw new Error('Failed to add division');
-    }
-}
-
-export async function getConferences(leagueId: number): Promise<Conference[]> {
-    const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        cache: 'no-store',
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch conferences');
-    }
-
-    const text = await response.text();
-    const conferences: Conference[] = text ? JSON.parse(text) : [];
-
-    return conferences;
 }

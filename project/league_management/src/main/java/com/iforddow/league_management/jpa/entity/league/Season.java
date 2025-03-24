@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -35,9 +34,9 @@ public class Season {
     private Integer maxTeams;
 
     @OneToMany(mappedBy = "season")
-    private Set<Game> games = new LinkedHashSet<>();
+    private List<Game> games;
 
     @OneToMany(mappedBy = "season")
-    private Set<TeamSeason> teamSeasons = new LinkedHashSet<>();
+    private List<TeamSeason> teamSeasons;
 
 }

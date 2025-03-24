@@ -1,5 +1,6 @@
 package com.iforddow.league_management.controller.league;
 
+import com.iforddow.league_management.dto.league.ConferenceDTO;
 import com.iforddow.league_management.dto.league.DivisionDTO;
 import com.iforddow.league_management.requests.league.DivisionRequest;
 import com.iforddow.league_management.service.league.DivisionService;
@@ -31,14 +32,14 @@ public class DivisionController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addDivision(@PathVariable Integer leagueId, @RequestBody DivisionRequest divisionRequest) {
+    public ResponseEntity<DivisionDTO> addDivision(@PathVariable Integer leagueId, @RequestBody DivisionRequest divisionRequest) {
 
         return divisionService.addDivision(leagueId, divisionRequest);
 
     }
 
     @PatchMapping("/{divisionId}")
-    public ResponseEntity<?> updateDivision(@PathVariable Integer leagueId, @PathVariable Integer divisionId, @RequestBody DivisionRequest divisionRequest) {
+    public ResponseEntity<DivisionDTO> updateDivision(@PathVariable Integer leagueId, @PathVariable Integer divisionId, @RequestBody DivisionRequest divisionRequest) {
 
         return divisionService.updateDivision(leagueId, divisionId, divisionRequest);
 
@@ -59,7 +60,7 @@ public class DivisionController {
     }
 
     @GetMapping("/{divisionId}/conference")
-    public ResponseEntity<?> getConferenceByDivisionId(@PathVariable Integer leagueId, @PathVariable Integer divisionId) {
+    public ResponseEntity<ConferenceDTO> getConferenceByDivisionId(@PathVariable Integer leagueId, @PathVariable Integer divisionId) {
 
         return divisionService.getConferenceByDivisionId(leagueId, divisionId);
 

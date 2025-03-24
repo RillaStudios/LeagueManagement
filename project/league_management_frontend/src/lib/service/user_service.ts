@@ -137,3 +137,36 @@ export async function updateUserData(accessToken: string, data: Partial<User>): 
 
     }
 }
+
+export async function getAllUsers(): Promise<User[]> {
+
+    const res = await fetch(`${API_URL}/account/users`, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+    });
+
+    if (!res.ok) {
+
+        const errorText = await res.text();
+        console.warn("Failed to get all users:", res.status, errorText);
+
+        if (errorText) {
+
+            const error = JSON.parse(errorText);
+
+            throw new Error(error.error);
+        }
+
+        throw new Error(`HTTP error. Status: ${res.status}`);
+
+    }
+
+    const text = await res.text();
+
+    const users: User[] = text ? JSON.parse(text) : [];
+
+    console.log(users);
+
+    return users;
+}

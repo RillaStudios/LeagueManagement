@@ -36,7 +36,7 @@ public class SeasonService {
     public ResponseEntity<List<SeasonDTO>> getAllSeasons(Integer leagueId) {
 
         List<SeasonDTO> allSeasons = seasonRepository
-                .findAll().stream()
+                .findSeasonListByLeagueId(leagueId).stream()
                 .map(SeasonDTO::new).toList();
 
         if (allSeasons.isEmpty()) {
@@ -93,7 +93,7 @@ public class SeasonService {
 
         seasonRepository.save(newSeason);
 
-        return ResponseEntity.ok().body(newSeason);
+        return ResponseEntity.ok().body(new SeasonDTO(newSeason));
 
     }
 

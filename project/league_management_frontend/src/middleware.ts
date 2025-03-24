@@ -1,6 +1,6 @@
 // app/middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthSession } from './lib/service/auth_service';
+import { getAuthSession } from './lib/service/auth/auth_service';
 
 /* 
 A middleware function to help protect routes 

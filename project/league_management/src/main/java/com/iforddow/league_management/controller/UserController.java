@@ -68,4 +68,11 @@ public class UserController {
 
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getUsers() {
+
+        return userService.getUsers();
+
+    }
+
 }

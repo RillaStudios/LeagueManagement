@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -38,6 +39,6 @@ public class Division {
     private Conference conference;
 
     @OneToMany(mappedBy = "division", fetch = FetchType.LAZY)
-    private Set<Team> teams;
+    private List<Team> teams;
 
 }

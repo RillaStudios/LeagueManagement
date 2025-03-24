@@ -1,5 +1,6 @@
 package com.iforddow.league_management.requests.team;
 
+import com.iforddow.league_management.jpa.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,6 @@ public class TeamRequest {
 
     private Integer divisionId;
 
-    private String abbreviation;
+    private Integer ownerId;
 
 }

@@ -4,7 +4,7 @@ import { createContext, useState, useEffect } from "react";
 import useLoading from "@/lib/hooks/useLoading";
 import AuthForm from "@/lib/components/ui/dialogs/auth/auth_form";
 import AuthContextType from "@/lib/types/contexts/auth_context";
-import { attemptRefresh, login, logout, signin } from "@/lib/service/auth_service";
+import { attemptRefresh, login, logout, signin } from "@/lib/service/auth/auth_service";
 
 // The authentication context
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

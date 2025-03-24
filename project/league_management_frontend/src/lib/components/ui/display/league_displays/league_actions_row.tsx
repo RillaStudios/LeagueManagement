@@ -5,6 +5,8 @@ import Row from "@/lib/components/layout/row";
 import { useDialog } from "@/lib/components/providers/dialog_provider";
 import { Button } from "@/lib/components/shadcn/button";
 import AddEditDivisionDialog from "../../dialogs/league/division/add_division";
+import AddEditConferenceDialog from "../../dialogs/league/conference/add_conference";
+import AddEditTeamDialog from "../../dialogs/league/team/add_team";
 
 interface LeagueActionRowProps {
     leagueId: number;
@@ -21,18 +23,27 @@ const LeagueActionRow: React.FC<LeagueActionRowProps> = ({ leagueId }) => {
                     openDialog("addDivision");
                 }}>Add Division</Button>
                 <Button onClick={() => {
-                    openDialog("editDivision");
+                    openDialog("addConference");
                 }}>Add Conference</Button>
+                <Button onClick={() => {
+                    openDialog("addTeam");
+                }}>Add Team</Button>
                 <Button variant={"destructive"} onClick={() => {
                     openDialog("deleteLeague");
                 }}>Delete League</Button>
             </Row>
-            {(dialogState['addDivision'] || dialogState['editDivision']) && (
+            {(dialogState['addDivision'] &&
                 <AddEditDivisionDialog
                     leagueId={leagueId}
-                    isEdit={dialogState['editDivision']}
-                />
-            )}
+                />)}
+            {(dialogState['addConference'] &&
+                <AddEditConferenceDialog
+                    leagueId={leagueId}
+                />)}
+            {(dialogState['addTeam'] &&
+                <AddEditTeamDialog
+                    leagueId={leagueId}
+                />)}
         </Container>
     );
 
