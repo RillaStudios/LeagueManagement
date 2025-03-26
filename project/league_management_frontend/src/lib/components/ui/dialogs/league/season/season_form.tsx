@@ -39,7 +39,7 @@ const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onS
         resolver: zodResolver(formSchema),
         defaultValues: {
             startDate: new Date(),
-            endDate: new Date(),
+            endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
         },
     });
 

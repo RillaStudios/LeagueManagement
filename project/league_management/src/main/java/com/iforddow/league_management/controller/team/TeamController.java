@@ -58,4 +58,11 @@ public class TeamController {
 
     }
 
+    @GetMapping("/{teamId}/{seasonId}/stats")
+    public ResponseEntity<TeamDTO> getTeamStats(@PathVariable Integer leagueId, @PathVariable Integer teamId, @PathVariable Integer seasonId) {
+
+        return teamService.getTeamById(leagueId, teamId);
+
+    }
+
 }

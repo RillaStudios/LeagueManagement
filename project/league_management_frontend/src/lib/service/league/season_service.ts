@@ -1,4 +1,5 @@
 import { Season } from "@/lib/types/league/season";
+import { TeamStats } from "@/lib/types/league/team_stats";
 
 // The URL of the API
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -44,7 +45,6 @@ export async function getSeason(leagueId: number, seasonId: number): Promise<Sea
 }
 
 export async function createSeason(leagueId: number, season: Partial<Season>): Promise<Season> {
-
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'POST',
         headers: {
@@ -56,10 +56,12 @@ export async function createSeason(leagueId: number, season: Partial<Season>): P
     });
 
     if (!res.ok) {
-        throw new Error('Failed to create season');
+        throw new Error("Failed to create season.");
     }
 
-    const newSeason: Season = JSON.parse(await res.json());
+    const text = await res.text();
+
+    const newSeason: Season = text ? JSON.parse(text) : [];
 
     return newSeason;
 }
@@ -97,4 +99,25 @@ export async function deleteSeason(leagueId: number, seasonId: number): Promise<
     if (!res.ok) {
         throw new Error('Failed to delete season');
     }
+}
+
+export async function getSeasonStats(leagueId: number, seasonId: number): Promise<TeamStats[]> {
+    const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/stats/${seasonId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch season stats');
+    }
+
+    const text = await res.text();
+
+    const stats = text ? JSON.parse(text) : [];
+
+    return stats;
 }

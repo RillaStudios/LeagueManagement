@@ -1,11 +1,18 @@
 package com.iforddow.league_management.service.league;
 
 import com.iforddow.league_management.dto.league.SeasonDTO;
+import com.iforddow.league_management.dto.team.TeamSeasonStatsDTO;
 import com.iforddow.league_management.exception.ResourceNotFoundException;
 import com.iforddow.league_management.jpa.entity.league.League;
 import com.iforddow.league_management.jpa.entity.league.Season;
+import com.iforddow.league_management.jpa.entity.team.Team;
+import com.iforddow.league_management.jpa.entity.team.TeamSeason;
+import com.iforddow.league_management.jpa.entity.team.TeamSeasonStats;
 import com.iforddow.league_management.repository.league.LeagueRepository;
 import com.iforddow.league_management.repository.league.SeasonRepository;
+import com.iforddow.league_management.repository.team.TeamRepository;
+import com.iforddow.league_management.repository.team.TeamSeasonRepository;
+import com.iforddow.league_management.repository.team.TeamSeasonStatsRepository;
 import com.iforddow.league_management.requests.league.SeasonRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +31,15 @@ public class SeasonService {
 
     // A repository for the League entity
     private final LeagueRepository leagueRepository;
+
+    // A repository for the TeamSeason entity
+    private final TeamSeasonRepository teamSeasonRepository;
+
+    // A repository for the TeamSeasonStats entity
+    private final TeamSeasonStatsRepository teamSeasonStatsRepository;
+
+    // A repository for teams
+    private final TeamRepository teamRepository;
 
     /*
     * A method to get all seasons under a league
@@ -93,6 +110,35 @@ public class SeasonService {
 
         seasonRepository.save(newSeason);
 
+        List<Team> teams = teamRepository.findTeamsByLeagueId(leagueId)
+                .orElse(null);
+
+        if(teams == null) {
+            return ResponseEntity.badRequest().body("No teams found for the league");
+        }
+
+        for(var team : teams) {
+
+            TeamSeason teamSeason = TeamSeason.builder()
+                    .team(team)
+                    .season(newSeason)
+                    .build();
+
+            teamSeasonRepository.save(teamSeason);
+
+            TeamSeasonStats teamSeasonStats = TeamSeasonStats.builder()
+                    .teamSeason(teamSeason)
+                    .totalWins(0)
+                    .totalLosses(0)
+                    .totalPointsAgainst(0)
+                    .totalTies(0)
+                    .totalPointsFor(0)
+                    .build();
+
+            teamSeasonStatsRepository.save(teamSeasonStats);
+
+        }
+
         return ResponseEntity.ok().body(new SeasonDTO(newSeason));
 
     }
@@ -144,6 +190,30 @@ public class SeasonService {
         seasonRepository.delete(season);
 
         return ResponseEntity.noContent().build();
+
+    }
+
+    public ResponseEntity<List<TeamSeasonStatsDTO>> getSeasonStats(Integer seasonId) {
+
+        List<TeamSeason> teamSeasons = teamSeasonRepository
+                .findTeamSeasonsBySeasonId(seasonId).stream()
+                .toList();
+
+        List<TeamSeasonStatsDTO> teamSeasonStatsList = teamSeasons.stream()
+                .map(teamSeason -> teamSeasonStatsRepository
+                        .findTeamSeasonStatsByTeamSeasonId(teamSeason.getId())
+                        .map(TeamSeasonStatsDTO::new)
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        System.out.println("teamSeasonStatsList = " + teamSeasonStatsList);
+
+        if (teamSeasonStatsList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(teamSeasonStatsList);
 
     }
 

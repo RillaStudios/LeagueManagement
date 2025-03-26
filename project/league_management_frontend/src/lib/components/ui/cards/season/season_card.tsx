@@ -7,12 +7,12 @@ export function SeasonCard({ season, onDelete, onEdit }: { season: Season, onDel
     return (
         <Card className="w-full mb-4">
             <CardHeader>
-                <CardTitle>{season.id}</CardTitle>
+                <CardTitle>ID: #{season.id}</CardTitle>
                 <CardDescription>Season Info</CardDescription>
             </CardHeader>
             <CardContent>
                 <div>Start Date: {season.startDate ? (typeof season.startDate === 'string' ? season.startDate : season.startDate) : "N/A"}</div>
-                <div>Conference: {season.endDate ? (typeof season.endDate === 'string' ? season.endDate : season.endDate) : "N/A"}</div>      </CardContent>
+                <div>End Date: {season.endDate ? (typeof season.endDate === 'string' ? season.endDate : season.endDate) : "N/A"}</div>      </CardContent>
             <CardFooter className="flex justify-between">
                 <Button variant={"default"} onClick={() => onEdit()}>Edit</Button>
                 <Button variant="destructive" onClick={() => onDelete()}>Delete</Button>

@@ -1,12 +1,16 @@
 package com.iforddow.league_management.dto.team;
 
-import com.iforddow.league_management.jpa.entity.team.TeamSeason;
+import com.iforddow.league_management.jpa.entity.team.TeamSeasonStats;
 
-public record TeamSeasonStatsDTO(Integer id, Integer teamId, Integer seasonId, Integer wins, Integer losses, Integer ties, Integer points, Integer pointsFor, Integer pointsAgainst) {
+public record TeamSeasonStatsDTO(Integer id, String teamName, Integer seasonId,
+                                 Integer wins, Integer losses, Integer ties,
+                                 Integer pointsFor, Integer pointsAgainst) {
 
-    public TeamSeasonStatsDTO(TeamSeason teamSeason) {
+    public TeamSeasonStatsDTO(TeamSeasonStats teamSeason) {
 
-
+            this(teamSeason.getId(), teamSeason.getTeamSeason().getTeam().getName(), teamSeason.getTeamSeason().getSeason().getId(),
+                    teamSeason.getTotalWins(), teamSeason.getTotalLosses(), teamSeason.getTotalTies(), teamSeason.getTotalPointsFor(),
+                    teamSeason.getTotalPointsAgainst());
 
     }
 

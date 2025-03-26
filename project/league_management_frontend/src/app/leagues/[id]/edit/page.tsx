@@ -14,8 +14,10 @@ import SeasonForm from "@/lib/components/ui/dialogs/league/season/season_form";
 import AddLeagueDisplay from "@/lib/components/ui/display/add_league_display";
 import LeagueActionRow from "@/lib/components/ui/display/league_displays/league_actions_row";
 import LeagueManagerRow from "@/lib/components/ui/display/league_manager_role";
+import StatEditorDisplay from "@/lib/components/ui/display/stat_editor_display";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
+import SeasonSelector from "@/lib/components/ui/other/season_selector";
 import { getConferences } from "@/lib/service/league/conference_service";
 import { getDivisions } from "@/lib/service/league/division_service";
 import { getLeague } from "@/lib/service/league/league_service";
@@ -142,12 +144,28 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                     text={"Edit Season(s)"}
                                 />
                                 <Separator className="my-4 md:mt-8 w-full md:w-2/3" />
-                                <Column expanded gap="4">
-                                    <HeadlineMedium text="Seasons" />
-                                    {seasons.length > 0 ?
-                                        <SeasonCardList seasons={seasons} />
-                                        : <BodySmall text="No seasons found." />}
-                                </Column>
+                                <Tabs defaultValue="seasons" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-2">
+                                        <TabsTrigger value="seasons">Seasons</TabsTrigger>
+                                        <TabsTrigger value="stats">Stats</TabsTrigger>
+                                    </TabsList>
+                                    <TabsContent value="seasons">
+                                        <Column expanded gap="4" width="full">
+                                            <HeadlineMedium text="Seasons" />
+                                            {seasons.length > 0 ?
+                                                <SeasonCardList seasons={seasons} />
+                                                : <BodySmall text="No seasons found." />}
+                                        </Column>
+                                    </TabsContent>
+                                    <TabsContent value="stats">
+                                        <Column expanded gap="4">
+                                            <HeadlineMedium text="Stats" />
+                                            {divisions.length > 0 ?
+                                                <StatEditorDisplay leagueId={id} />
+                                                : <BodySmall text="No divisions found." />}
+                                        </Column>
+                                    </TabsContent>
+                                </Tabs>
                             </Column>
                         </RowColumn>
                     </TabsContent>

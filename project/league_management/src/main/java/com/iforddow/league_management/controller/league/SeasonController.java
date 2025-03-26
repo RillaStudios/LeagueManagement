@@ -1,10 +1,13 @@
 package com.iforddow.league_management.controller.league;
 
+import com.iforddow.league_management.dto.team.TeamSeasonStatsDTO;
 import com.iforddow.league_management.requests.league.SeasonRequest;
 import com.iforddow.league_management.service.league.SeasonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,6 +61,13 @@ public class SeasonController {
     public ResponseEntity<?> deleteSeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId) {
 
         return seasonService.deleteSeason(leagueId, seasonId);
+
+    }
+
+    @GetMapping("/stats/{seasonId}")
+    public ResponseEntity<List<TeamSeasonStatsDTO>> getSeasonStats(@PathVariable String leagueId, @PathVariable Integer seasonId) {
+
+        return seasonService.getSeasonStats(seasonId);
 
     }
 
