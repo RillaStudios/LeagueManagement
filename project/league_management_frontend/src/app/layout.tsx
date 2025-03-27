@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/lib/components/providers/theme_provider"
 import { AuthProvider } from "@/lib/components/providers/auth_provider";
 import { DialogProvider } from "@/lib/components/providers/dialog_provider";
+import { Toaster } from "@/lib/components/shadcn/toaster";
 
 const poppins = Poppins({
   variable: "--font-popins",
@@ -47,6 +48,7 @@ export default function RootLayout({
           <DialogProvider>
             <AuthProvider>
               {children}
+              <Toaster />
             </AuthProvider>
           </DialogProvider>
         </ThemeProvider>

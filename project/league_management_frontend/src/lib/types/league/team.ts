@@ -1,5 +1,9 @@
-import { User } from "../user";
+/* 
+A interface that defines the structure of a team object
 
+@Author: IFD
+@Date: 2025-03-26
+*/
 export interface Team {
     teamId: number;
     teamName: string;

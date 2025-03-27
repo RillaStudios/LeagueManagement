@@ -1,6 +1,5 @@
 package com.iforddow.league_management.jpa.entity.league;
 
-import com.iforddow.league_management.jpa.entity.game.Game;
 import com.iforddow.league_management.jpa.entity.team.TeamSeason;
 import jakarta.persistence.*;
 import lombok.*;

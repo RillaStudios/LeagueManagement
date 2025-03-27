@@ -4,6 +4,18 @@ import { TeamStats } from "@/lib/types/league/team_stats";
 // The URL of the API
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+/* 
+A method that fetches all seasons for a league
+
+Parameters:
+- leagueId: The ID of the league
+
+Returns:
+- A promise that resolves to an array of seasons
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function getSeasons(leagueId: number): Promise<Season[]> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'GET',
@@ -25,6 +37,19 @@ export async function getSeasons(leagueId: number): Promise<Season[]> {
     return seasons;
 }
 
+/* 
+A method that fetches a season for a league
+
+Parameters:
+- leagueId: The ID of the league
+- seasonId: The ID of the season
+
+Returns:
+- A promise that resolves to a season
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function getSeason(leagueId: number, seasonId: number): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'GET',
@@ -44,6 +69,19 @@ export async function getSeason(leagueId: number, seasonId: number): Promise<Sea
     return season;
 }
 
+/* 
+A method that creates a season for a league
+
+Parameters:
+- leagueId: The ID of the league
+- season: The season object
+
+Returns:
+- A promise that resolves to the created season
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function createSeason(leagueId: number, season: Partial<Season>): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'POST',
@@ -66,6 +104,19 @@ export async function createSeason(leagueId: number, season: Partial<Season>): P
     return newSeason;
 }
 
+/* 
+A method that updates a season for a league
+
+Parameters:
+- leagueId: The ID of the league
+- seasonId: The ID of the season
+
+Returns:
+- A promise that resolves to the updated season
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'PUT',
@@ -86,6 +137,19 @@ export async function updateSeason(leagueId: number, seasonId: number, season: P
     return updatedSeason;
 }
 
+/* 
+A method that deletes a season for a league
+
+Parameters:
+- leagueId: The ID of the league
+- seasonId: The ID of the season
+
+Returns:
+- A promise that resolves to void
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function deleteSeason(leagueId: number, seasonId: number): Promise<void> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'DELETE',
@@ -101,6 +165,20 @@ export async function deleteSeason(leagueId: number, seasonId: number): Promise<
     }
 }
 
+
+/* 
+A method that fetches the stats for a season
+
+Parameters:
+- leagueId: The ID of the league
+- seasonId: The ID of the season
+
+Returns:
+- A promise that resolves to an array of team stats
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function getSeasonStats(leagueId: number, seasonId: number): Promise<TeamStats[]> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/stats/${seasonId}`, {
         method: 'GET',

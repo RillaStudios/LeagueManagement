@@ -7,6 +7,8 @@ import { Button } from "@/lib/components/shadcn/button";
 import AddEditDivisionDialog from "../../dialogs/league/division/add_division";
 import AddEditConferenceDialog from "../../dialogs/league/conference/add_conference";
 import AddEditTeamDialog from "../../dialogs/league/team/add_team";
+import { deleteLeague } from "@/lib/service/league/league_service";
+import { redirect } from "next/navigation";
 
 interface LeagueActionRowProps {
     leagueId: number;
@@ -28,8 +30,11 @@ const LeagueActionRow: React.FC<LeagueActionRowProps> = ({ leagueId }) => {
                 <Button onClick={() => {
                     openDialog("addTeam");
                 }}>Add Team</Button>
-                <Button variant={"destructive"} onClick={() => {
-                    openDialog("deleteLeague");
+                <Button variant={"destructive"} onClick={async () => {
+                    await deleteLeague(leagueId);
+
+                    redirect("/account/leagues");
+
                 }}>Delete League</Button>
             </Row>
             {(dialogState['addDivision'] &&

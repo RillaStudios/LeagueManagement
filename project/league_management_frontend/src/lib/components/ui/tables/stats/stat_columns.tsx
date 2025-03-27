@@ -19,6 +19,22 @@ export const stat_columns: ColumnDef<TeamStats>[] = [
     },
   },
   {
+    accessorFn: (row) => row.wins + row.losses + row.ties,
+    id: "gamesPlayed",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Games Played
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: (info) => info.getValue(),
+  },
+  {
     accessorKey: "wins",
     header: ({ column }) => {
       return (
@@ -88,4 +104,20 @@ export const stat_columns: ColumnDef<TeamStats>[] = [
       )
     },
   },
+  {
+    accessorFn: (row) => row.pointsFor - row.pointsAgainst,
+    id: "pointDifferential",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Point Differential
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: (info) => info.getValue(),
+  }
 ]

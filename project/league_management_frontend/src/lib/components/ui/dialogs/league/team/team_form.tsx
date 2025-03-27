@@ -22,6 +22,7 @@ import { createTeam, getTeam, updateTeam } from "@/lib/service/league/team_servi
 import { Team } from "@/lib/types/league/team";
 import { User } from "@/lib/types/user";
 import { getAllUsers } from "@/lib/service/user_service";
+import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -113,8 +114,23 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
             if (onSave) {
                 onSave(updatedTeam); // Call the onSave callback
             }
+
+            toast({
+                variant: "default",
+                title: "Success",
+                description: `Team ${isEdit ? "updated" : "added"} successfully.`,
+            })
+
         } catch (error: any) {
+
             setServerError(error.message || "An error occurred. Please try again.");
+
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: `Team could not be ${isEdit ? "updated" : "added"}!`,
+            })
+
         } finally {
             setLoading(false);
         }

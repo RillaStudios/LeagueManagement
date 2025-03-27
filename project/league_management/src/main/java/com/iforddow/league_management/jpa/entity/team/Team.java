@@ -1,7 +1,7 @@
 package com.iforddow.league_management.jpa.entity.team;
 
 import com.iforddow.league_management.jpa.entity.User;
-import com.iforddow.league_management.jpa.entity.game.Game;
+import com.iforddow.league_management.jpa.entity.league.Game;
 import com.iforddow.league_management.jpa.entity.league.Conference;
 import com.iforddow.league_management.jpa.entity.league.Division;
 import com.iforddow.league_management.jpa.entity.league.League;

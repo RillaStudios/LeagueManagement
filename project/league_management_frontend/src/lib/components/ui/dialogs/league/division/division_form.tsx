@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Conference } from "@/lib/types/league/conference";
 import { addDivision, getDivision, updateDivision } from "@/lib/service/league/division_service";
 import { getConferences } from "@/lib/service/league/conference_service";
+import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
     divName: z.string().min(1, {
@@ -88,8 +89,23 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionI
             if (onSave) {
                 onSave(updatedDivision); // Call the onSave callback
             }
+
+            toast({
+                variant: "default",
+                title: "Success",
+                description: `Division ${isEdit ? "updated" : "added"} successfully.`,
+            })
+
         } catch (error: any) {
+
             setServerError(error.message || "An error occurred. Please try again.");
+
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: `Division could not be ${isEdit ? "updated" : "added"}!`,
+            })
+
         } finally {
             setLoading(false);
         }

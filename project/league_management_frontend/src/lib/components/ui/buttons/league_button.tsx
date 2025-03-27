@@ -3,15 +3,16 @@
 import { useUserData } from "@/lib/hooks/useUserData";
 import { League } from "@/lib/types/league/league";
 import { Button } from "../../shadcn/button";
-import Row from "../../layout/row";
 import { usePathname } from 'next/navigation';
 import Link from "next/link";
 
-interface LeagueManagerRowProps {
+interface LeagueButtonProps {
     league: League;
+    className?: string;
+    variant?: 'default' | 'secondary' | 'outline';
 }
 
-const LeagueManagerRow: React.FC<LeagueManagerRowProps> = ({ league }) => {
+const LeagueButton: React.FC<LeagueButtonProps> = ({ league, className, variant }) => {
 
     const { user } = useUserData();
     const pathname = usePathname();
@@ -22,7 +23,17 @@ const LeagueManagerRow: React.FC<LeagueManagerRowProps> = ({ league }) => {
 
     const getButtonContext = () => {
         switch (pathname) {
+            case `/leagues`:
+                return {
+                    href: `/leagues/${league.id}/edit`,
+                    text: 'Edit League',
+                };
             case `/leagues/${league.id}`:
+                return {
+                    href: `/leagues/${league.id}/edit`,
+                    text: 'Edit League',
+                };
+            case `/account/leagues`:
                 return {
                     href: `/leagues/${league.id}/edit`,
                     text: 'Edit League',
@@ -36,12 +47,12 @@ const LeagueManagerRow: React.FC<LeagueManagerRowProps> = ({ league }) => {
     };
 
     return (
-        <Row mainAxisAlign="end" expanded>
-            <Link href={getButtonContext()['href']} passHref>
-                <Button className="m-4">{getButtonContext()['text']}</Button>
+        !user ? null : (
+            <Link href={getButtonContext().href} passHref>
+                <Button className={className || 'm-4'} variant={variant || 'default'}>{getButtonContext().text}</Button>
             </Link>
-        </Row>
+        )
     );
 }
 
-export default LeagueManagerRow;
+export default LeagueButton;

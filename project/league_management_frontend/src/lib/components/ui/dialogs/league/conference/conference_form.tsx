@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import useLoading from "@/lib/hooks/useLoading";
 import { Conference } from "@/lib/types/league/conference";
 import { addConference, getConference, updateConference } from "@/lib/service/league/conference_service";
+import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
     conferenceName: z.string().min(1, {
@@ -89,21 +90,38 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
             };
 
             let updatedConference: Conference;
+
             if (isEdit) {
+
                 updatedConference = await updateConference(leagueId, conferenceId!, newConference);
+
             } else {
+
                 updatedConference = await addConference(leagueId, newConference);
+
             }
 
             if (onSave) {
                 onSave(updatedConference); // Call the onSave callback
             }
 
+            toast({
+                variant: "default",
+                title: "Success",
+                description: `Conference ${isEdit ? "updated" : "added"} successfully.`,
+            })
+
 
         } catch (error: any) {
 
             // Set the server error
             setServerError(error.message?.toString() || "An error occurred. Please try again.");
+
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: `Conference could not be ${isEdit ? "updated" : "added"}!`,
+            })
 
         } finally {
 
@@ -133,7 +151,7 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
                 {serverError && <p className="text-red-500 text-sm text-center">{serverError}</p>}
                 <div className="flex justify-center">
                     <Button type="submit">
-                        {loading ? "Adding conference..." : "Add Conference"}
+                        {loading ? "Saving..." : isEdit ? "Edit Conference" : "Add Conference"}
                     </Button>
                 </div>
             </form>

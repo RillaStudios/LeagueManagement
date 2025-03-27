@@ -1,7 +1,5 @@
-package com.iforddow.league_management.jpa.entity.game;
+package com.iforddow.league_management.jpa.entity.league;
 
-import com.iforddow.league_management.jpa.entity.league.Season;
-import com.iforddow.league_management.jpa.entity.league.Venue;
 import com.iforddow.league_management.jpa.entity.team.Team;
 import com.iforddow.league_management.jpa.entity.team.TeamGameStats;
 import jakarta.persistence.*;
@@ -10,9 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder

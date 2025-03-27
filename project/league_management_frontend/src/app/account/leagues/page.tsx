@@ -4,7 +4,7 @@ import Page from "@/lib/components/layout/page";
 import RowColumn from "@/lib/components/layout/row_column";
 import { DisplayMedium } from "@/lib/components/layout/typography";
 import { Separator } from "@/lib/components/shadcn/separator";
-import AddLeagueDisplay from "@/lib/components/ui/display/add_league_display";
+import AddLeagueDisplay from "@/lib/components/ui/dialogs/league/add_league_form";
 import LeagueList from "@/lib/components/ui/display/league_list";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";

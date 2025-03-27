@@ -1,18 +1,18 @@
 'use client';
 
 import { useUserData } from "@/lib/hooks/useUserData";
-import { Input } from "../../shadcn/input";
+import { Input } from "../../../shadcn/input";
 import { z } from "zod";
 import { useState, useEffect } from "react";
 import useLoading from "@/lib/hooks/useLoading";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../shadcn/form";
-import { Button } from "../../shadcn/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../../shadcn/form";
+import { Button } from "../../../shadcn/button";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Textarea } from "../../shadcn/textarea";
-import { BodySmall } from "../../layout/typography";
-import Column from "../../layout/column";
+import { Textarea } from "../../../shadcn/textarea";
+import { BodySmall } from "../../../layout/typography";
+import Column from "../../../layout/column";
 import { addLeague, getLeague, updateLeague } from "@/lib/service/league/league_service";
 import { League } from "@/lib/types/league/league";
 
@@ -25,12 +25,12 @@ const formSchema = z.object({
     location: z.string(),
 });
 
-interface AddEditLeagueDisplayProps {
+interface AddEditLeagueFormProps {
     isEdit?: boolean;
     leagueId?: number;
 }
 
-const AddEditLeagueDisplay: React.FC<AddEditLeagueDisplayProps> = ({ isEdit, leagueId }) => {
+const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId }) => {
 
     const { accessToken } = useAuth();
     const { user } = useUserData();
@@ -184,4 +184,4 @@ const AddEditLeagueDisplay: React.FC<AddEditLeagueDisplayProps> = ({ isEdit, lea
     );
 }
 
-export default AddEditLeagueDisplay;
+export default AddEditLeagueForm;

@@ -11,19 +11,22 @@ import DivisionCardList from "@/lib/components/ui/cards/division/division_card_l
 import SeasonCardList from "@/lib/components/ui/cards/season/season_card_list";
 import TeamCardList from "@/lib/components/ui/cards/team/team_card_list";
 import SeasonForm from "@/lib/components/ui/dialogs/league/season/season_form";
-import AddLeagueDisplay from "@/lib/components/ui/display/add_league_display";
+import AddLeagueDisplay from "@/lib/components/ui/dialogs/league/add_league_form";
 import LeagueActionRow from "@/lib/components/ui/display/league_displays/league_actions_row";
-import LeagueManagerRow from "@/lib/components/ui/display/league_manager_role";
+import LeagueManagerRow from "@/lib/components/ui/buttons/league_button";
 import StatEditorDisplay from "@/lib/components/ui/display/stat_editor_display";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
-import SeasonSelector from "@/lib/components/ui/other/season_selector";
 import { getConferences } from "@/lib/service/league/conference_service";
 import { getDivisions } from "@/lib/service/league/division_service";
 import { getLeague } from "@/lib/service/league/league_service";
 import { getSeasons } from "@/lib/service/league/season_service";
 import { getTeams } from "@/lib/service/league/team_service";
 import Link from "next/link";
+import Row from "@/lib/components/layout/row";
+import VenueCardList from "@/lib/components/ui/cards/venues/venue_card_list";
+import { getVenues } from "@/lib/service/league/venue_service";
+import VenueForm from "@/lib/components/ui/dialogs/league/venue/venue_form";
 
 export default async function LeagueEditPage({ params }: { params: Promise<{ id: number }> }) {
 
@@ -38,6 +41,8 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
     const teams = await getTeams(id);
 
     const seasons = await getSeasons(id);
+
+    const venues = await getVenues(id);
 
     if (!league) {
         return (
@@ -60,14 +65,17 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
     return (
         <Page header={<Header />} footer={<Footer />}>
             <Container height="h-full" padding="p-4 md:p-8">
-                <LeagueManagerRow league={league} />
+                <Row expanded mainAxisAlign="end">
+                    <LeagueManagerRow league={league} />
+                </Row>
                 <DisplayLarge text={league.name ? league.name : "N/A"} />
                 <Separator className="my-8" />
                 <Tabs defaultValue="league" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="league">League</TabsTrigger>
                         <TabsTrigger value="seasons">Seasons</TabsTrigger>
                         <TabsTrigger value="news">News</TabsTrigger>
+                        <TabsTrigger value="venues">Venues</TabsTrigger>
                     </TabsList>
                     {/* League Editor */}
                     <TabsContent value="league" className="mt-8">
@@ -219,6 +227,36 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                         </Column>
                                     </TabsContent>
                                 </Tabs>
+                            </Column>
+                        </RowColumn>
+                    </TabsContent>
+                    <TabsContent value="venues" className="mt-8">
+                        <RowColumn expanded>
+                            <Column
+                                width="full"
+                                expanded>
+                                <DisplayMedium
+                                    text={"Create Venue"}
+                                />
+                                <Separator className="mt-4 md:mt-8 w-full md:w-2/3" />
+                                <div className="w-1/3">
+                                    <VenueForm leagueId={league.id} align="left" />
+                                </div>
+                            </Column>
+                            <Column
+                                width="full"
+                                expanded
+                            >
+                                <DisplayMedium
+                                    text={"Edit Venue(s)"}
+                                />
+                                <Separator className="my-4 md:mt-8 w-full md:w-2/3" />
+                                <Column expanded gap="4 w-full">
+                                    <HeadlineMedium text="Venues" />
+                                    {venues.length > 0 ?
+                                        <VenueCardList venues={venues} />
+                                        : <BodySmall text="No venues found." />}
+                                </Column>
                             </Column>
                         </RowColumn>
                     </TabsContent>

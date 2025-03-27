@@ -9,6 +9,7 @@ import { Separator } from "../../shadcn/separator";
 import Row from "../../layout/row";
 import { useUserData } from "@/lib/hooks/useUserData";
 import Link from "next/link";
+import LeagueButton from "../buttons/league_button";
 
 interface LeagueCardProps {
     league: League;
@@ -58,9 +59,7 @@ const LeagueCard: React.FC<LeagueCardProps> = ({ league }) => {
                         <Link href={`/leagues/${league.id}`}><Button>
                             View League
                         </Button></Link>
-                        {user && user.id === league.createdBy && <Button variant={"outline"}>
-                            Edit League
-                        </Button>}
+                        {user && user.id === league.createdBy && <LeagueButton league={league} className="m-0" variant="outline" />}
                     </Row>
                 </Column>
             </RowColumn>
