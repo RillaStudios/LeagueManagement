@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -52,6 +53,6 @@ public class Game {
     private String gameType;
 
     @OneToMany(mappedBy = "game")
-    private Set<TeamGameStats> teamGameStats = new LinkedHashSet<>();
+    private List<TeamGameStats> teamGameStats;
 
 }
