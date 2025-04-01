@@ -5,6 +5,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { useEffect, useState } from "react";
 import { Season } from "@/lib/types/league/season";
 
+
+/* 
+A season selector component for the app.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const SeasonSelector: React.FC<{ leagueId: number; onSeasonChange: (seasonId: string) => void }> = ({ leagueId, onSeasonChange }) => {
     const [seasons, setSeasons] = useState<Season[] | null>(null);
     const [selectedSeason, setSelectedSeason] = useState<string | undefined>(undefined); // Changed from null to undefined

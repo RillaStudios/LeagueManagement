@@ -30,6 +30,12 @@ interface AddEditLeagueFormProps {
     leagueId?: number;
 }
 
+/* 
+A form component for adding or editing a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId }) => {
 
     const { accessToken } = useAuth();

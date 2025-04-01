@@ -6,10 +6,12 @@ import com.iforddow.league_management.jpa.entity.User;
 import com.iforddow.league_management.jpa.entity.league.Division;
 import com.iforddow.league_management.jpa.entity.league.League;
 import com.iforddow.league_management.jpa.entity.team.Team;
+import com.iforddow.league_management.jpa.entity.team.TeamSeason;
 import com.iforddow.league_management.repository.UserRepository;
 import com.iforddow.league_management.repository.league.DivisionRepository;
 import com.iforddow.league_management.repository.league.LeagueRepository;
 import com.iforddow.league_management.repository.team.TeamRepository;
+import com.iforddow.league_management.repository.team.TeamSeasonRepository;
 import com.iforddow.league_management.requests.team.TeamRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +35,8 @@ public class TeamService {
     private final TeamRepository teamRepository;
 
     private final UserRepository userRepository;
+
+    private final TeamSeasonRepository teamSeasonRepository;
 
     /*
     * A method to get all teams of a league
@@ -81,7 +86,7 @@ public class TeamService {
     * @Since: 2025-02-11
     * */
     @Transactional
-    public ResponseEntity<?> createTeam(Integer leagueId, TeamRequest teamRequest) {
+    public ResponseEntity<TeamDTO> createTeam(Integer leagueId, TeamRequest teamRequest) {
 
         League league = leagueRepository
                 .findLeagueById(leagueId)
@@ -104,7 +109,7 @@ public class TeamService {
 
         teamRepository.save(team);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TeamDTO(team));
 
     }
 
@@ -120,7 +125,7 @@ public class TeamService {
     * @Since: 2025-02-11
     * */
     @Transactional
-    public ResponseEntity<?> updateTeam(Integer leagueId, Integer teamId, TeamRequest teamRequest) {
+    public ResponseEntity<TeamDTO> updateTeam(Integer leagueId, Integer teamId, TeamRequest teamRequest) {
 
         Team team = teamRepository.findTeamByIdAndLeagueId(teamId, leagueId)
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found"));
@@ -135,7 +140,7 @@ public class TeamService {
 
         teamRepository.save(team);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new TeamDTO(team));
 
     }
 
@@ -158,6 +163,41 @@ public class TeamService {
         teamRepository.delete(team);
 
         return ResponseEntity.ok().build();
+
+    }
+
+    /*
+    * A method to get all teams in a season
+    *
+    * @param leagueId: The ID of the league
+    * @param seasonId: The ID of the season
+    *
+    * @return A list of all teams in the season
+    *
+    * @Author: IFD
+    * @Since: 2025-03-29
+    * */
+    public ResponseEntity<List<TeamDTO>> getAllTeamsBySeason(Integer leagueId, Integer seasonId) {
+
+        List<TeamSeason> teamSeasons = teamSeasonRepository.findTeamSeasonsBySeasonId(seasonId);
+
+        if (teamSeasons.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<TeamDTO> teams = teamSeasons.stream()
+                .map(teamSeason -> teamRepository.findTeamByIdAndLeagueId(teamSeason.getTeam().getId(), leagueId)
+                        .map(TeamDTO::new)
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (teams.isEmpty()) {
+            return ResponseEntity.noContent().build();
+
+        }
+
+        return ResponseEntity.ok(teams);
 
     }
 

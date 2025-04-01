@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import useLoading from "@/lib/hooks/useLoading";
 import { Division } from "@/lib/types/league/division";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/shadcn/select";
-import { addDivision, getDivision, getDivisions, updateDivision } from "@/lib/service/league/division_service";
+import { getDivisions } from "@/lib/service/league/division_service";
 import { createTeam, getTeam, updateTeam } from "@/lib/service/league/team_service";
 import { Team } from "@/lib/types/league/team";
 import { User } from "@/lib/types/user";
@@ -39,9 +39,15 @@ interface TeamFormProps {
     leagueId: number;
     teamId?: number;
     isEdit?: boolean;
-    onSave?: (updatedDivision: Team) => void;
+    onSave?: (updatedTeam: Team) => void;
 }
 
+/* 
+A form component for adding or editing a team in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const [divisions, setDivisions] = useState<Division[] | null>(null);
@@ -69,11 +75,9 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
                 const users = await getAllUsers();
                 setUsers(users);
 
-                if (isEdit) {
+                if (isEdit && teamId) {
 
-                    const newTeam = await getTeam(leagueId, teamId!);
-
-                    console.log(newTeam);
+                    const newTeam = await getTeam(leagueId, teamId);
 
                     form.setValue('name', newTeam?.teamName || '');
                     form.setValue('location', newTeam?.location || '');
@@ -105,32 +109,34 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
             };
 
             let updatedTeam: Team;
-            if (isEdit) {
-                updatedTeam = await updateTeam(leagueId, newTeam);
+
+            if (isEdit && teamId) {
+                // Update the team if editing
+                updatedTeam = await updateTeam(leagueId, teamId, newTeam);
+
+                console.log("Updated team:", updatedTeam);
             } else {
+                // Create a new team if not editing
                 updatedTeam = await createTeam(leagueId, newTeam);
             }
 
             if (onSave) {
-                onSave(updatedTeam); // Call the onSave callback
+                onSave(updatedTeam);
             }
 
             toast({
                 variant: "default",
                 title: "Success",
                 description: `Team ${isEdit ? "updated" : "added"} successfully.`,
-            })
-
+            });
         } catch (error: any) {
-
             setServerError(error.message || "An error occurred. Please try again.");
 
             toast({
                 variant: "destructive",
                 title: "Error",
                 description: `Team could not be ${isEdit ? "updated" : "added"}!`,
-            })
-
+            });
         } finally {
             setLoading(false);
         }
@@ -216,7 +222,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
                 {serverError && <p className="text-red-500 text-sm text-center">{serverError}</p>}
                 <div className="flex justify-center">
                     <Button type="submit">
-                        {loading ? "Saving..." : isEdit ? "Edit Division" : "Add Division"}
+                        {loading ? "Saving..." : isEdit ? "Edit Team" : "Add Team"}
                     </Button>
                 </div>
             </form>

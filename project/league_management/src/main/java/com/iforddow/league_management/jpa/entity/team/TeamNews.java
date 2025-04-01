@@ -1,5 +1,6 @@
 package com.iforddow.league_management.jpa.entity.team;
 
+import com.iforddow.league_management.jpa.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -33,7 +34,8 @@ public class TeamNews {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "created_by", nullable = false)
-    private Integer createdBy;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
 
 }

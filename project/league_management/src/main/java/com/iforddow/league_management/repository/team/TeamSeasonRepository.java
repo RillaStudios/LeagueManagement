@@ -9,4 +9,6 @@ public interface TeamSeasonRepository extends JpaRepository<TeamSeason, Integer>
 
     List<TeamSeason> findTeamSeasonsBySeasonId(Integer seasonId);
 
+    TeamSeason findTeamSeasonByTeam_IdAndSeason_Id(Integer teamId, Integer seasonId);
+
 }

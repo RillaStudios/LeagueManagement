@@ -1,3 +1,12 @@
+/* 
+A template for the web menu component.
+
+It is currently outside the scope of the project,
+and is not used in the app.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export const components: { title: string; href: string; description: string }[] = [
     {
         title: "Leagues",

@@ -18,11 +18,18 @@ export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [dialogState, setDialogState] = useState<DialogState>({});
 
     const openDialog = (key: string) => {
-        setDialogState((prevState) => ({ ...prevState, [key]: true }));
+        console.log(`Opening dialog: ${key}`);
+        setDialogState((prevState) => ({
+            ...prevState,
+            [key]: true,
+        }));
     };
 
     const closeDialog = (key: string) => {
-        setDialogState((prevState) => ({ ...prevState, [key]: false }));
+        setDialogState((prevState) => ({
+            ...prevState,
+            [key]: false,
+        }));
     };
 
     return (

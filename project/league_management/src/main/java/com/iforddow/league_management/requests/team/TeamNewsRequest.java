@@ -1,4 +1,4 @@
-package com.iforddow.league_management.requests.league;
+package com.iforddow.league_management.requests.team;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LeagueNewsRequest {
+public class TeamNewsRequest {
 
     private String content;
 

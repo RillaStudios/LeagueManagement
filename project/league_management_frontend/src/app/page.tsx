@@ -1,11 +1,12 @@
-import Align from "@/lib/components/layout/align";
 import Column from "@/lib/components/layout/column";
-import Container from "@/lib/components/layout/container";
 import Page from "@/lib/components/layout/page";
-import Row from "@/lib/components/layout/row";
-import Stack from "@/lib/components/layout/stack";
+import { DisplayLarge, DisplaySmall, HeadlineLarge } from "@/lib/components/layout/typography";
+import { Button } from "@/lib/components/shadcn/button";
+import { Card } from "@/lib/components/shadcn/card";
+import { Separator } from "@/lib/components/shadcn/separator";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,61 +14,20 @@ export default function Home() {
       header={<Header />} // Empty header
       footer={<Footer />} // Empty footer
       children={
-        <div className="z-[-1]">
-          <div className="h-[800px]">
-            <Column
-              expanded={true} // Make the column expand to fill remaining space
-              mainAxisAlign="evenly" // Align content vertically with space between
-              crossAxisAlign="end" // Align content horizontally at the end
-              wrap={false} // Disable wrapping
-              gap={"5"} // Set the gap between children to 4
-            >
-              <h1>Title</h1>
-              <p>Some content</p>
-              <p>More content</p>
-              <h1>Title</h1>
-              <p>Some content</p>
-              <p>More content</p>
-            </Column>
-          </div>
-          <Container width="w-[100px]">
-            <Row
-              expanded={true}
-              mainAxisAlign="evenly"
-              crossAxisAlign="center"
-              wrap={false}
-            >
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-              <h1>Hello</h1>
-            </Row>
-          </Container>
-          <Container height="h-[800px]">
-            <Stack>
-              <Container color="bg-red-500" width="w-[200px] h-[200px]">
-                <h1>Stack</h1>
-              </Container>
-              <h1>Stack</h1>
-              <h1>Stack</h1>
-              <Container color="bg-blue-500" width="w-[30px] h-[30px]">
-                <h1>Stack</h1>
-              </Container>
-              <Align align="middle-center">
-                <Container color="bg-green-500" width="w-[20px] h-[20px]">
-                  <h1>Stack</h1>
-                </Container>
-              </Align>
-            </Stack>
-          </Container>
-          <div className="h-20"></div>
+        <div className="h-[820px] flex items-center justify-center">
+          <Column expanded crossAxisAlign="center" mainAxisAlign="center">
+            <Card className="flex flex-col items-center justify-center w-1/2 bg-gradient-to-b from-primary to-secondary p-8">
+              <DisplayLarge text="Welcome to the League Management System" className="text-center text-4xl font-bold text-primary-foreground" />
+              <DisplaySmall text="Manage your leagues, teams, and players with ease." className="text-center text-2xl font-semibold text-secondary-foreground" />
+              <Separator className="my-4" />
+              <HeadlineLarge text="Version 1.0" className="text-center text-3xl font-bold text-primary-foreground" />
+            </Card>
+            <Link href="/leagues" className="mt-8">
+              <Button variant={"outline"}>
+                View All Leagues
+              </Button>
+            </Link>
+          </Column>
         </div>
       }
     />

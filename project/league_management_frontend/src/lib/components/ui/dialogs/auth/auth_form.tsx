@@ -9,6 +9,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogOverlay, 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useSearchParams } from "next/navigation";
 
+/* 
+A component that renders a dialog for user authentication (login/register).
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const AuthForm: React.FC = () => {
     const { formOpen, defaultTab, closeAuthForm, openAuthForm, isAuthenticated } = useAuth();
     const [activeTab, setActiveTab] = useState<"login" | "register">(defaultTab);

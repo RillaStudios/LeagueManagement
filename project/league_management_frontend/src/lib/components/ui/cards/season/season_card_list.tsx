@@ -1,65 +1,104 @@
 'use client'
 
 import { useDialog } from "@/lib/components/providers/dialog_provider";
-import AddEditDivisionDialog from "../../dialogs/league/division/add_division";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Season } from "@/lib/types/league/season";
-import { deleteSeason } from "@/lib/service/league/season_service";
+import { deleteSeason, getSeasons } from "@/lib/service/league/season_service";
 import { SeasonCard } from "./season_card";
 import AddEditSeasonDialog from "../../dialogs/league/season/add_season";
+import { toast } from "@/hooks/use-toast";
+import { BodySmall } from "@/lib/components/layout/typography";
 
 interface SeasonCardListProps {
-    seasons: Season[];
+    leagueId: number;
 }
 
-const SeasonCardList: React.FC<SeasonCardListProps> = ({ seasons: initialSeasons }) => {
+const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
+
     const { dialogState, openDialog, closeDialog } = useDialog();
-    const [seasons, setSeasons] = useState<Season[]>(initialSeasons);
+    const [seasons, setSeasons] = useState<Season[]>([]); // State to hold the seasons
     const [activeSeasonId, setActiveSeasonId] = useState<number | null>(null);
 
+    const fetchSeasons = async () => {
+        await getSeasons(leagueId).then((response) => {
+            setSeasons(response); // Set the seasons in the state
+        }).catch((error) => {
+
+            toast({
+                title: "Error",
+                description: `Failed to fetch seasons: ${error.message}`,
+                variant: "destructive",
+                duration: 2000,
+            });
+
+        });
+    };
+
+    useEffect(() => {
+        fetchSeasons();
+    }, [leagueId]);
+
     const handleEdit = (seasonId: number) => {
-        setActiveSeasonId(seasonId); // Set the active division ID
+        setActiveSeasonId(seasonId); // Set the active season ID
         openDialog("editSeason"); // Open the dialog
     };
 
     const handleDelete = (seasonId: number) => {
-        const season = seasons.find((season) => season.id === seasonId);
+        const season = seasons.find((div) => div.id === seasonId);
 
-        // Remove the division from the list
+        // Remove the season from the list
         setSeasons(seasons.filter((season) => season.id !== seasonId));
 
         if (season) {
-            deleteSeason(season.leagueId, seasonId); // Delete the division
+            deleteSeason(leagueId, season.id).then(() => {
+                // Successfully deleted the season
+                toast({
+                    title: "Success",
+                    description: "Season deleted successfully.",
+                    variant: "default",
+                    duration: 2000,
+                });
+            }).catch(() => {
+                toast({
+                    title: "Error",
+                    description: `Failed to delete season: It is possible teams or divisions are still assigned to this season.`,
+                    variant: "destructive",
+                    duration: 2000,
+                });
+            });
         }
     };
 
-    const handleUpdate = (updatedSeason: Season) => {
-        // Update the division in the list
-        setSeasons(seasons.map((season) =>
-            season.id === updatedSeason.id ? updatedSeason : season
-        ));
+    const handleUpdate = () => {
+        fetchSeasons();
 
         closeDialog("editSeason"); // Close the dialog
     };
 
     return (
-        seasons.map((season: Season) => (
-            <React.Fragment key={season.id}>
-                <SeasonCard
-                    season={season}
-                    onDelete={() => handleDelete(season.id)} // Handle delete
-                    onEdit={() => handleEdit(season.id)} // Pass the division ID to handleEdit
-                />
-                {dialogState['editSeason'] && activeSeasonId === season.id && (
-                    <AddEditSeasonDialog
-                        leagueId={season.leagueId}
-                        seasonId={season.id}
-                        isEdit={true}
-                        onSave={handleUpdate} // Pass the update handler to the dialog
-                    />
-                )}
-            </React.Fragment>
-        ))
+        <>
+            {seasons.length === 0 ? (
+                <BodySmall text="No seasons found." />
+            ) : (
+                seasons.map((season: Season) => (
+                    <React.Fragment key={season.id}>
+                        <SeasonCard
+                            season={season}
+                            onDelete={() => handleDelete(season.id)}
+                            onEdit={() => handleEdit(season.id)}
+                        />
+                        {dialogState['editSeason'] && activeSeasonId === season.id && (
+                            <AddEditSeasonDialog
+                                leagueId={season.leagueId}
+                                seasonId={season.id}
+                                isEdit={true}
+                                onSave={handleUpdate}
+                            />
+                        )}
+                    </React.Fragment>
+                ))
+            )}
+        </>
     );
 }
 

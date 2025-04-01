@@ -14,6 +14,12 @@ interface AddEditSeasonnDialogProps {
     onSave?: (updatedSeason: Season) => void;
 }
 
+/* 
+A dialog component for adding or editing a season in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const AddEditSeasonDialog: React.FC<AddEditSeasonnDialogProps> = ({ leagueId, isEdit, seasonId, onSave }) => {
     const { dialogState, closeDialog } = useDialog();
     const isOpen = isEdit ? dialogState["editSeason"] : dialogState["addSeason"];

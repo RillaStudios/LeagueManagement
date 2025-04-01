@@ -36,6 +36,12 @@ interface DivisionFormProps {
     onSave?: (updatedDivision: Division) => void;
 }
 
+/* 
+A form component for adding or editing a division in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionId, onSave }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const [conferences, setConferences] = useState<Conference[] | null>(null);

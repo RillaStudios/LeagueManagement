@@ -2,14 +2,15 @@ package com.iforddow.league_management.jpa.entity.team;
 
 import com.iforddow.league_management.jpa.entity.league.Game;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "team_game_stats")
 public class TeamGameStats {

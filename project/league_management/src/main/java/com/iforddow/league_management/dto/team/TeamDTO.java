@@ -11,7 +11,7 @@ public record TeamDTO(Integer teamId, String teamName, String location, String l
 
         this(team.getId(), team.getName(), team.getLocation(), team.getLeague().getName(),
                 team.getDivision() != null ? team.getDivision().getName() : "No Division",
-                team.getConference() != null ? team.getConference().getName() : "No Conference",
+                team.getDivision() != null ? team.getDivision().getConference().getName() : "No Conference",
                 team.getOwner().getFirstName() + " "
                         + team.getOwner().getLastName(),
                 team.getOwner().getId(),

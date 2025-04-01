@@ -2,7 +2,7 @@ import Column from "@/lib/components/layout/column";
 import Container from "@/lib/components/layout/container";
 import Page from "@/lib/components/layout/page";
 import RowColumn from "@/lib/components/layout/row_column";
-import { BodySmall, DisplayLarge, DisplayMedium, HeadlineMedium } from "@/lib/components/layout/typography";
+import { DisplayLarge, DisplayMedium, HeadlineMedium } from "@/lib/components/layout/typography";
 import { Button } from "@/lib/components/shadcn/button";
 import { Separator } from "@/lib/components/shadcn/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/lib/components/shadcn/tabs";
@@ -12,37 +12,24 @@ import SeasonCardList from "@/lib/components/ui/cards/season/season_card_list";
 import TeamCardList from "@/lib/components/ui/cards/team/team_card_list";
 import SeasonForm from "@/lib/components/ui/dialogs/league/season/season_form";
 import AddLeagueDisplay from "@/lib/components/ui/dialogs/league/add_league_form";
-import LeagueActionRow from "@/lib/components/ui/display/league_displays/league_actions_row";
 import LeagueManagerRow from "@/lib/components/ui/buttons/league_button";
-import StatEditorDisplay from "@/lib/components/ui/display/stat_editor_display";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
-import { getConferences } from "@/lib/service/league/conference_service";
-import { getDivisions } from "@/lib/service/league/division_service";
 import { getLeague } from "@/lib/service/league/league_service";
-import { getSeasons } from "@/lib/service/league/season_service";
-import { getTeams } from "@/lib/service/league/team_service";
 import Link from "next/link";
 import Row from "@/lib/components/layout/row";
 import VenueCardList from "@/lib/components/ui/cards/venues/venue_card_list";
-import { getVenues } from "@/lib/service/league/venue_service";
 import VenueForm from "@/lib/components/ui/dialogs/league/venue/venue_form";
+import StatDisplay from "@/lib/components/ui/display/stat_display";
+import GameCardList from "@/lib/components/ui/cards/game/game_card_list";
+import NewsLeagueCardList from "@/lib/components/ui/cards/news_league/news_league_card_list";
+import PlayerCardList from "@/lib/components/ui/cards/player/player_card_list";
 
 export default async function LeagueEditPage({ params }: { params: Promise<{ id: number }> }) {
 
     const { id } = await params;
 
     const league = await getLeague(id);
-
-    const conferences = await getConferences(id);
-
-    const divisions = await getDivisions(id);
-
-    const teams = await getTeams(id);
-
-    const seasons = await getSeasons(id);
-
-    const venues = await getVenues(id);
 
     if (!league) {
         return (
@@ -71,11 +58,13 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                 <DisplayLarge text={league.name ? league.name : "N/A"} />
                 <Separator className="my-8" />
                 <Tabs defaultValue="league" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-6">
                         <TabsTrigger value="league">League</TabsTrigger>
                         <TabsTrigger value="seasons">Seasons</TabsTrigger>
+                        <TabsTrigger value="games">Games</TabsTrigger>
                         <TabsTrigger value="news">News</TabsTrigger>
                         <TabsTrigger value="venues">Venues</TabsTrigger>
+                        <TabsTrigger value="players">Players</TabsTrigger>
                     </TabsList>
                     {/* League Editor */}
                     <TabsContent value="league" className="mt-8">
@@ -106,31 +95,24 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                     <TabsContent value="conferences">
                                         <Column expanded gap="4">
                                             <HeadlineMedium text="Conferences" />
-                                            {conferences.length > 0 ?
-                                                <ConferenceCardList conferences={conferences} />
-                                                : <BodySmall text="No conferences found." />}
+                                            <ConferenceCardList leagueId={league.id} />
                                         </Column>
                                     </TabsContent>
                                     <TabsContent value="divisions">
                                         <Column expanded gap="4">
                                             <HeadlineMedium text="Divisions" />
-                                            {divisions.length > 0 ?
-                                                <DivisionCardList divisions={divisions} />
-                                                : <BodySmall text="No divisions found." />}
+                                            <DivisionCardList leagueId={league.id} />
                                         </Column>
                                     </TabsContent>
                                     <TabsContent value="teams">
                                         <Column expanded gap="4">
                                             <HeadlineMedium text="Teams" />
-                                            {teams.length > 0 ?
-                                                <TeamCardList teams={teams} />
-                                                : <BodySmall text="No teams found." />}
+                                            <TeamCardList leagueId={league.id} />
                                         </Column>
                                     </TabsContent>
                                 </Tabs>
                             </Column>
                         </RowColumn>
-                        <LeagueActionRow leagueId={id} />
                     </TabsContent>
                     {/* Season Editor */}
                     <TabsContent value="seasons" className="mt-8">
@@ -160,76 +142,52 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                     <TabsContent value="seasons">
                                         <Column expanded gap="4" width="full">
                                             <HeadlineMedium text="Seasons" />
-                                            {seasons.length > 0 ?
-                                                <SeasonCardList seasons={seasons} />
-                                                : <BodySmall text="No seasons found." />}
+                                            <SeasonCardList leagueId={league.id} />
                                         </Column>
                                     </TabsContent>
                                     <TabsContent value="stats">
                                         <Column expanded gap="4">
                                             <HeadlineMedium text="Stats" />
-                                            {divisions.length > 0 ?
-                                                <StatEditorDisplay leagueId={id} />
-                                                : <BodySmall text="No divisions found." />}
+                                            <StatDisplay leagueId={id} />
                                         </Column>
                                     </TabsContent>
                                 </Tabs>
                             </Column>
                         </RowColumn>
                     </TabsContent>
+                    {/* Games Editor */}
+                    <TabsContent value="games" className="mt-8">
+                        <RowColumn expanded>
+                            <Column
+                                width="full"
+                                expanded
+                            >
+                                <DisplayMedium
+                                    text={"Games Manager"}
+                                />
+                                <Separator className="my-4 md:mt-8 w-full md:w-2/3" />
+                                <Column expanded gap="4" width="full">
+                                    <HeadlineMedium text="Seasons" />
+                                    <GameCardList leagueId={league.id} />
+                                </Column>
+                            </Column>
+                        </RowColumn>
+                    </TabsContent>
+                    {/* News Editor */}
                     <TabsContent value="news" className="mt-8">
                         <RowColumn expanded>
                             <Column
                                 width="full"
                                 expanded>
                                 <DisplayMedium
-                                    text={"Create News Post"}
+                                    text={"News Post(s)"}
                                 />
                                 <Separator className="mt-4 md:mt-8 w-full md:w-2/3" />
-                                <AddLeagueDisplay isEdit leagueId={id} />
-                            </Column>
-                            <Column
-                                width="full"
-                                expanded
-                            >
-                                <DisplayMedium
-                                    text={"Edit News Post(s)"}
-                                />
-                                <Separator className="my-4 md:mt-8 w-full md:w-2/3" />
-                                <Tabs defaultValue="divisions" className="w-full">
-                                    <TabsList className="grid w-full grid-cols-3">
-                                        <TabsTrigger value="divisions">Divisions</TabsTrigger>
-                                        <TabsTrigger value="conferences">Conferences</TabsTrigger>
-                                        <TabsTrigger value="teams">Teams</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="divisions">
-                                        <Column expanded gap="4">
-                                            <HeadlineMedium text="Divisions" />
-                                            {divisions.length > 0 ?
-                                                <DivisionCardList divisions={divisions} />
-                                                : <BodySmall text="No divisions found." />}
-                                        </Column>
-                                    </TabsContent>
-                                    <TabsContent value="conferences">
-                                        <Column expanded gap="4">
-                                            <HeadlineMedium text="Conferences" />
-                                            {conferences.length > 0 ?
-                                                <ConferenceCardList conferences={conferences} />
-                                                : <BodySmall text="No conferences found." />}
-                                        </Column>
-                                    </TabsContent>
-                                    <TabsContent value="teams">
-                                        <Column expanded gap="4">
-                                            <HeadlineMedium text="Teams" />
-                                            {conferences.length > 0 ?
-                                                <ConferenceCardList conferences={conferences} />
-                                                : <BodySmall text="No conferences found." />}
-                                        </Column>
-                                    </TabsContent>
-                                </Tabs>
+                                <NewsLeagueCardList leagueId={id} />
                             </Column>
                         </RowColumn>
                     </TabsContent>
+                    {/* Venue Editor */}
                     <TabsContent value="venues" className="mt-8">
                         <RowColumn expanded>
                             <Column
@@ -253,12 +211,26 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                 <Separator className="my-4 md:mt-8 w-full md:w-2/3" />
                                 <Column expanded gap="4 w-full">
                                     <HeadlineMedium text="Venues" />
-                                    {venues.length > 0 ?
-                                        <VenueCardList venues={venues} />
-                                        : <BodySmall text="No venues found." />}
+                                    <VenueCardList leagueId={league.id} />
                                 </Column>
                             </Column>
                         </RowColumn>
+                    </TabsContent>
+                    {/* Players Editor */}
+                    <TabsContent value="players" className="mt-8">
+                        <Column
+                            width="full"
+                            expanded
+                        >
+                            <DisplayMedium
+                                text={"Player Manager"}
+                            />
+                            <Separator className="my-4 md:mt-8 w-full" />
+                            <Column expanded gap="4 w-full">
+                                <HeadlineMedium text="Players" />
+                                <PlayerCardList leagueId={league.id} />
+                            </Column>
+                        </Column>
                     </TabsContent>
                 </Tabs>
             </Container>

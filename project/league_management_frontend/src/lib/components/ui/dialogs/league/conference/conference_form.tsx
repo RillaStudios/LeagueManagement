@@ -32,6 +32,12 @@ interface ConferenceFormProps {
     onSave?: (updatedConference: Conference) => void;
 }
 
+/* 
+A form component for adding or editing a conference.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, conferenceId, onSave }) => {
 
     // Server error state

@@ -3,6 +3,12 @@ import { TeamStats } from "@/lib/types/league/team_stats";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react"
 
+/* 
+A table column definition for the team stats table.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export const stat_columns: ColumnDef<TeamStats>[] = [
   {
     accessorKey: "teamName",

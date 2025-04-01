@@ -33,6 +33,12 @@ const formSchema = z.object({
     path: ["confirmPassword"],
 })
 
+/* 
+A React component that renders a registration form.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const RegisterForm: React.FC = () => {
     // Server error state
     const [serverError, setServerError] = useState<string | null>(null);

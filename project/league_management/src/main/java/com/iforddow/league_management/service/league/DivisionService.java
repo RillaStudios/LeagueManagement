@@ -189,9 +189,9 @@ public class DivisionService {
     * @Since: 2025-02-11
     * */
     @Transactional
-    public ResponseEntity<?> deleteDivision(Integer id, Integer leagueId) {
+    public ResponseEntity<?> deleteDivision(Integer leagueId, Integer divisionId) {
 
-        Division division = divisionRepository.findDivisionByIdAndLeagueId(id, leagueId)
+        Division division = divisionRepository.findDivisionByIdAndLeagueId(divisionId, leagueId)
                 .orElseThrow(() -> new ResourceNotFoundException("Division not found"));
 
         divisionRepository.delete(division);

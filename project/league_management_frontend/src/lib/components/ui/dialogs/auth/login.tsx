@@ -28,6 +28,12 @@ const formSchema = z.object({
     }),
 });
 
+/* 
+A React component that renders a login form.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const LoginForm: React.FC = () => {
 
     // Server error state

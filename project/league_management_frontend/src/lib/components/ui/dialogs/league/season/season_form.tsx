@@ -32,6 +32,12 @@ interface SeasonFormProps {
     onSave?: (updatedSeason: Season) => void;
 }
 
+/* 
+A form component for adding or editing a season in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onSave, align }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const { loading, setLoading } = useLoading();

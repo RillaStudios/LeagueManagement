@@ -68,6 +68,41 @@ export async function getTeam(leagueId: number, teamId: number): Promise<Team | 
 }
 
 /* 
+A function to get teams by season
+
+@Parameters:
+- leagueId: The ID of the league
+- seasonId: The ID of the season
+
+@Returns:
+- An array of teams
+
+@Author: IFD
+@Date: 2025-03-29
+*/
+export async function getTeamsBySeason(leagueId: number, seasonId: number): Promise<Team[]> {
+    const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/season/${seasonId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        cache: 'no-store',
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch team');
+    }
+
+    const text = await response.text();
+
+    const teams: Team[] = text ? JSON.parse(text) : [];
+
+    return teams;
+}
+
+
+/* 
 A function to create a team
 
 Parameters:
@@ -117,8 +152,8 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateTeam(leagueId: number, team: Partial<Team>): Promise<Team> {
-    const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/${team.teamId}`, {
+export async function updateTeam(leagueId: number, teamId: number, team: Partial<Team>): Promise<Team> {
+    const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/${teamId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

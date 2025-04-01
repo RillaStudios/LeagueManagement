@@ -148,6 +148,6 @@ export async function deleteConference(leagueId: number, conferenceId: number): 
     });
 
     if (!response.ok) {
-        throw new Error('Failed to delete conference');
+        throw new Error('Failed to delete conference: ' + await response.text());
     }
 }

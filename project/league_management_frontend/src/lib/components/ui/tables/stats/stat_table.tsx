@@ -9,6 +9,12 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
+/* 
+A generic data table component that uses react-table to display data in a table format.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export function DataTable<TData, TValue>({
     columns,
     data,

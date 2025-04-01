@@ -12,11 +12,18 @@ interface AddEditDivisionDialogProps {
     divisionId?: number;
     isEdit?: boolean;
     onSave?: (updatedDivision: Division) => void;
+    onClose?: () => void; // Add this prop
 }
 
-const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId, isEdit, divisionId, onSave }) => {
+/* 
+A dialog component for adding or editing a division in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
+const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId, isEdit, divisionId, onSave, onClose }) => {
     const { dialogState, closeDialog } = useDialog();
-    const isOpen = isEdit ? dialogState["editDivision"] : dialogState["addDivision"];
+    const isOpen = isEdit ? dialogState["editDivision"] : true;
 
     const handleSave = (updatedDivision: Division) => {
         if (onSave) {
@@ -26,7 +33,18 @@ const AddEditDivisionDialog: React.FC<AddEditDivisionDialogProps> = ({ leagueId,
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={() => closeDialog(isEdit ? "editDivision" : "addDivision")}>
+        <Dialog
+            open={isOpen}
+            onOpenChange={(open) => {
+                if (!open) {
+                    if (isEdit) {
+                        closeDialog("editDivision");
+                    } else if (onClose) {
+                        onClose(); // Call onClose for add dialog
+                    }
+                }
+            }}
+        >
             <DialogPortal>
                 <DialogOverlay onClick={() => closeDialog(isEdit ? "editDivision" : "addDivision")} className="fixed inset-0 bg-black/30 backdrop-blur-none" />
                 <DialogContent onFocusOutside={() => closeDialog(isEdit ? "editDivision" : "addDivision")} className="w-full max-w-[300px] md:max-w-[500px] bg-popover">

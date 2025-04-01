@@ -12,24 +12,71 @@ interface AddEditConferenceDialogProps {
     isEdit?: boolean;
     conferenceId?: number;
     onSave?: (updatedConference: Conference) => void;
+    onClose?: () => void; // Add this prop
 }
 
-const AddEditConferenceDialog: React.FC<AddEditConferenceDialogProps> = ({ leagueId, isEdit, conferenceId, onSave }) => {
+/* 
+A dialog component for adding or editing a conference.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
+const AddEditConferenceDialog: React.FC<AddEditConferenceDialogProps> = ({
+    leagueId,
+    isEdit,
+    conferenceId,
+    onSave,
+    onClose  // Add this prop
+}) => {
     const { dialogState, closeDialog } = useDialog();
-    const isOpen = isEdit ? dialogState["editConference"] : dialogState["addConference"];
+
+    // If it's an edit dialog, use dialogState, otherwise assume it's always open (controlled by parent)
+    const isOpen = isEdit ? dialogState["editConference"] : true;
 
     const handleSave = (updatedConference: Conference) => {
+
         if (onSave) {
-            onSave(updatedConference); // Call the onSave callback
+            onSave(updatedConference);
         }
-        closeDialog(isEdit ? "editConference" : "addConference"); // Close the dialog
+
+        // Only close through dialogState if it's an edit dialog
+        if (isEdit) {
+            closeDialog("editConference");
+        }
+
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={() => closeDialog(isEdit ? "editConference" : "addConference")}>
+        <Dialog
+            open={isOpen}
+            onOpenChange={(open) => {
+                if (!open) {
+                    if (isEdit) {
+                        closeDialog("editConference");
+                    } else if (onClose) {
+                        onClose(); // Call onClose for add dialog
+                    }
+                }
+            }}
+        >
             <DialogPortal>
-                <DialogOverlay onClick={() => closeDialog(isEdit ? "editConference" : "addConference")} className="fixed inset-0 bg-black/30 backdrop-blur-none" />
-                <DialogContent onFocusOutside={() => closeDialog(isEdit ? "editConference" : "addConference")} className="w-full max-w-[300px] md:max-w-[500px] bg-popover">
+                <DialogOverlay
+                    className="fixed inset-0 bg-black/30 backdrop-blur-none"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (isEdit) {
+                            closeDialog("editConference");
+                        } else if (onClose) {
+                            onClose(); // Call onClose for add dialog
+                        }
+                    }}
+                />
+                <DialogContent
+                    className="w-full max-w-[300px] md:max-w-[500px] bg-popover"
+                    onFocusOutside={(e) => {
+                        e.preventDefault(); // Prevent accidental closing
+                    }}
+                >
                     <DialogHeader>
                         <DialogTitle>{isEdit ? "Edit Conference" : "Add Conference"}</DialogTitle>
                         <DialogDescription>
@@ -37,7 +84,7 @@ const AddEditConferenceDialog: React.FC<AddEditConferenceDialogProps> = ({ leagu
                         </DialogDescription>
                     </DialogHeader>
                     <Separator />
-                    <ConferenceForm leagueId={leagueId} isEdit={isEdit ? isEdit : false} onSave={handleSave} conferenceId={conferenceId} />
+                    <ConferenceForm leagueId={leagueId} isEdit={isEdit || false} onSave={handleSave} conferenceId={conferenceId} />
                 </DialogContent>
             </DialogPortal>
         </Dialog>

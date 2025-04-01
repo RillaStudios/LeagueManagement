@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,6 +17,6 @@ public class GameRequest {
     private Integer awayTeamId;
     private Integer seasonId;
     private Integer venueId;
-    private String gameType;
+    private Instant gameDate;
 
 }

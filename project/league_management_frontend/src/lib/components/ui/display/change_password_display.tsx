@@ -25,6 +25,12 @@ const formSchema = z.object({
     path: ["confirmPassword"],
 });
 
+/* 
+A component that displays a form for changing the password.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const ChangePasswordDisplay: React.FC<{}> = () => {
 
     const { accessToken } = useAuth();

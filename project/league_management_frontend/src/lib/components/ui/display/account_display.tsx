@@ -22,6 +22,12 @@ const formSchema = z.object({
     }),
 });
 
+/* 
+A component that displays the account information of the user.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const AccountDisplay: React.FC<{}> = () => {
     const { accessToken } = useAuth();
     const { user } = useUserData();

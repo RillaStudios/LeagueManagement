@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "game")
 public class Game {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id", nullable = false)
@@ -45,10 +47,7 @@ public class Game {
     @JoinColumn(name = "venue_id")
     private Venue venue;
 
-    @Column(name = "game_type")
-    private String gameType;
-
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamGameStats> teamGameStats;
 
 }

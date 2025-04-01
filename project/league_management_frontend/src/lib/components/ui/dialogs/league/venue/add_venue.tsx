@@ -15,6 +15,12 @@ interface AddEditVenueDialogProps {
     onSave?: (updatedConference: Venue) => void;
 }
 
+/* 
+A dialog component for adding or editing a venue in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const AddEditVenueDialog: React.FC<AddEditVenueDialogProps> = ({ leagueId, isEdit, venueId, onSave }) => {
     const { dialogState, closeDialog } = useDialog();
     const isOpen = isEdit ? dialogState["editVenue"] : dialogState["addVenue"];

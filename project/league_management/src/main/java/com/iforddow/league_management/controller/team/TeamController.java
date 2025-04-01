@@ -30,15 +30,22 @@ public class TeamController {
 
     }
 
+    @GetMapping("/season/{seasonId}")
+    public ResponseEntity<List<TeamDTO>> getAllTeamsBySeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId) {
+
+        return teamService.getAllTeamsBySeason(leagueId, seasonId);
+
+    }
+
     @PostMapping("/")
-    public ResponseEntity<?> createTeam(@PathVariable Integer leagueId, @RequestBody TeamRequest teamRequest) {
+    public ResponseEntity<TeamDTO> createTeam(@PathVariable Integer leagueId, @RequestBody TeamRequest teamRequest) {
 
         return teamService.createTeam(leagueId, teamRequest);
 
     }
 
     @PatchMapping("/{teamId}")
-    public ResponseEntity<?> updateTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId, @RequestBody TeamRequest teamRequest) {
+    public ResponseEntity<TeamDTO> updateTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId, @RequestBody TeamRequest teamRequest) {
 
         return teamService.updateTeam(leagueId, teamId, teamRequest);
 

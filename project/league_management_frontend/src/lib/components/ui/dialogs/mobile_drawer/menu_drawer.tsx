@@ -9,6 +9,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useDrawer } from "../../../providers/ham_menu_provider";
 import { useAuth } from "@/lib/hooks/useAuth";
 
+/* 
+A drawer component for displaying the menu in mobile view.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const MenuDrawer: React.FC = () => {
     const { drawerOpen, closeDrawer } = useDrawer();
     const { openAuthForm, isAuthenticated, logout } = useAuth();

@@ -12,6 +12,15 @@ import React from "react";
 import { components, features } from "./web_menu/web_menu_gen";
 
 
+/* 
+A navigation menu component for the app.
+
+It is currently outside the scope of the project,
+and is not used in the app.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const NavMenu: React.FC = () => {
 
     return (

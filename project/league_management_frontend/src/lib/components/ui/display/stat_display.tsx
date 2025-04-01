@@ -7,11 +7,17 @@ import { TeamStats } from "@/lib/types/league/team_stats";
 import { stat_columns } from "../tables/stats/stat_columns";
 import { DataTable } from "../tables/stats/stat_table";
 
-export interface StatEditorDisplayProps {
+export interface StatDisplayProps {
     leagueId: number;
 }
 
-const StatEditorDisplay: React.FC<StatEditorDisplayProps> = ({ leagueId }) => {
+/* 
+A component that displays the stats for a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
+const StatDisplay: React.FC<StatDisplayProps> = ({ leagueId }) => {
 
     const [seasonStats, setSeasonStats] = useState<TeamStats[]>([]);
     const [seasonId, setSeasonId] = useState<number | null>(null);
@@ -45,4 +51,4 @@ const StatEditorDisplay: React.FC<StatEditorDisplayProps> = ({ leagueId }) => {
 
 };
 
-export default StatEditorDisplay;
+export default StatDisplay;

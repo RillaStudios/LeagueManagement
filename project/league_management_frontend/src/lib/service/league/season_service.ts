@@ -119,22 +119,24 @@ Returns:
 */
 export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
         },
         credentials: 'include',
         cache: 'no-store',
-        body: JSON.stringify(season),
+        body: JSON.stringify({ startDate: season.startDate, endDate: season.endDate }),
     });
 
     if (!res.ok) {
         throw new Error('Failed to update season');
     }
 
-    const updatedSeason: Season = await res.json();
+    const text = await res.text();
 
-    return updatedSeason;
+    const newSeason: Season = text ? JSON.parse(text) : [];
+
+    return newSeason;
 }
 
 /* 

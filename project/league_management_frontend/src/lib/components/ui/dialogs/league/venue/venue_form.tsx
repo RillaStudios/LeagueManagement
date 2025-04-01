@@ -34,6 +34,12 @@ interface VenueFormProps {
     onSave?: (updatedVenue: Venue) => void;
 }
 
+/* 
+A form component for adding or editing a venue in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const VenueForm: React.FC<VenueFormProps> = ({ leagueId, isEdit, venueId, onSave, align }) => {
 
     // Server error state

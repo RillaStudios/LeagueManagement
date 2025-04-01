@@ -11,6 +11,12 @@ interface LeagueListProps {
     cardWidth?: string;
 }
 
+/* 
+A list of leagues for the user.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 const LeagueList: React.FC<LeagueListProps> = ({ accountLeagues, alignList = "center", cardWidth }) => {
 
     const { leagues, loading } = accountLeagues ? useUserLeagues() : useLeagues();

@@ -138,6 +138,12 @@ export async function updateUserData(accessToken: string, data: Partial<User>): 
     }
 }
 
+/* 
+A function that sends a request to the server to get all users
+
+@Author: IFD
+@Since: 2025-02-25
+*/
 export async function getAllUsers(): Promise<User[]> {
 
     const res = await fetch(`${API_URL}/account/users`, {
@@ -165,8 +171,6 @@ export async function getAllUsers(): Promise<User[]> {
     const text = await res.text();
 
     const users: User[] = text ? JSON.parse(text) : [];
-
-    console.log(users);
 
     return users;
 }
