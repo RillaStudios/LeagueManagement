@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/leagues/{leagueId}/teams")
+@RequestMapping({"/leagues/{leagueId}/teams", "/teams"})
 public class TeamController {
 
     private final TeamService teamService;
@@ -24,7 +24,12 @@ public class TeamController {
     }
 
     @GetMapping("/{teamId}")
-    public ResponseEntity<TeamDTO> getTeamById(@PathVariable Integer leagueId, @PathVariable Integer teamId) {
+    public ResponseEntity<TeamDTO> getTeamById(@PathVariable(required = false) Integer leagueId,
+                                               @PathVariable Integer teamId) {
+
+        if(leagueId == null) {
+            return teamService.getTeamById(teamId);
+        }
 
         return teamService.getTeamById(leagueId, teamId);
 

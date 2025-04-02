@@ -2,9 +2,11 @@ package com.iforddow.league_management.service;
 
 import com.iforddow.league_management.dto.UserDTO;
 import com.iforddow.league_management.dto.league.LeagueDTO;
+import com.iforddow.league_management.dto.team.TeamDTO;
 import com.iforddow.league_management.exception.NoContentException;
 import com.iforddow.league_management.jpa.entity.league.League;
 import com.iforddow.league_management.repository.league.LeagueRepository;
+import com.iforddow.league_management.repository.team.TeamRepository;
 import com.iforddow.league_management.requests.UserRequest;
 import com.iforddow.league_management.requests.auth.ChangePasswordRequest;
 import com.iforddow.league_management.jpa.entity.User;
@@ -41,6 +43,9 @@ public class UserService {
 
     //League repository
     private final LeagueRepository leagueRepository;
+
+    // Team repository
+    private final TeamRepository teamRepository;
 
     public ResponseEntity<UserDTO> getUser(Principal connectedUser) {
 
@@ -136,6 +141,21 @@ public class UserService {
 
     public ResponseEntity<List<UserDTO>> getUsers() {
         return ResponseEntity.ok(userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList()));
+    }
+
+    public ResponseEntity<List<TeamDTO>> getTeams(Principal connectedUser) {
+
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        List<TeamDTO> teams = teamRepository.findTeamsByOwner_IdOrLeagueCreatedBy_Id(user.getId(), user.getId())
+                .stream().map(TeamDTO::new).toList();
+
+        if (teams.isEmpty()) {
+            throw new NoContentException("No teams found");
+        }
+
+        return ResponseEntity.ok(teams);
+
     }
 
 }

@@ -60,6 +60,24 @@ public class TeamService {
     /*
     * A method to get a team by its ID
     *
+    * @param teamId: The ID of the team
+    *
+    * @return The team with the given ID
+    *
+    * @Author: IFD
+    * @Since: 2025-02-11
+    * */
+    public ResponseEntity<TeamDTO> getTeamById(Integer teamId) {
+
+        return ResponseEntity.ok(teamRepository.findById(teamId)
+                .map(TeamDTO::new)
+                .orElseThrow(() -> new ResourceNotFoundException("Team not found")));
+
+    }
+
+    /*
+    * A method to get a team by its ID
+    *
     * @param leagueId: The ID of the league
     * @param teamId: The ID of the team
     * @return The team with the given ID

@@ -5,47 +5,77 @@ import React, { useEffect, useState } from "react";
 import { Team } from "@/lib/types/league/team";
 import { TeamCard } from "./team_card";
 import AddEditTeamDialog from "../../dialogs/league/team/add_team";
-import { deleteTeam, getTeams } from "@/lib/service/league/team_service";
+import { deleteTeam, getTeams, getAllUserTeams } from "@/lib/service/league/team_service";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
 import { Button } from "@/lib/components/shadcn/button";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useUserData } from "@/lib/hooks/useUserData";
 
 interface TeamCardListProps {
-    leagueId: number;
+    leagueId?: number;
+    useOwner?: boolean;
 }
 
-const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId }) => {
+const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [teams, setTeams] = useState<Team[]>([]);
     const [activeTeamId, setActiveTeamId] = useState<number | null>(null);
-
-    // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const { accessToken } = useAuth();
+
+    const { user } = useUserData();
+
 
     const fetchTeams = async () => {
-        await getTeams(leagueId).then((response) => {
-            setTeams(response); // Set the teams in the state
+        if (!leagueId && !useOwner) {
+            console.warn("Either leagueId or useOwner must be provided");
+            return;
         }
-        ).catch((error) => {
 
+        setIsLoading(true);
+        try {
+            let fetchedTeams: Team[] = [];
+
+            if (leagueId) {
+                fetchedTeams = await getTeams(leagueId);
+                console.log(`Fetched ${fetchedTeams.length} teams by league ID:`, fetchedTeams);
+            } else if (useOwner && accessToken) {
+                const userTeams = await getAllUserTeams(accessToken);
+                fetchedTeams = userTeams || [];
+                console.log(`Fetched ${fetchedTeams.length} teams by owner:`, fetchedTeams);
+            }
+
+            // Ensure we have an array of teams
+            if (!Array.isArray(fetchedTeams)) {
+                console.error("API returned non-array data:", fetchedTeams);
+                fetchedTeams = [];
+            }
+
+            setTeams(fetchedTeams);
+        } catch (error: any) {
+            console.error("Error fetching teams:", error);
             toast({
                 title: "Error",
-                description: `Failed to fetch conferences: ${error.message}`,
+                description: `Failed to fetch teams: ${error.message}`,
                 variant: "destructive",
                 duration: 2000,
             });
-
-        });
+            setTeams([]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
+    // Use an effect to fetch teams when the component mounts or when dependencies change
     useEffect(() => {
         fetchTeams();
-    }
-        , [leagueId]);
+    }, [leagueId, useOwner, accessToken]);
 
     const handleEdit = (teamId: number) => {
-        setActiveTeamId(teamId); // Set the active team ID
-        openDialog("editTeam"); // Open the dialog
+        setActiveTeamId(teamId);
+        openDialog("editTeam");
     };
 
     const handleDelete = (teamId: number) => {
@@ -53,7 +83,6 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId }) => {
 
         if (team) {
             deleteTeam(team.leagueId, teamId).then(() => {
-                // Successfully deleted the team
                 toast({
                     title: "Success",
                     description: "Team deleted successfully.",
@@ -61,7 +90,6 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId }) => {
                     duration: 2000,
                 });
 
-                // Remove the team from the list
                 setTeams(teams.filter((team) => team.teamId !== teamId));
 
             }).catch(() => {
@@ -76,16 +104,13 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId }) => {
     };
 
     const handleUpdate = (updatedTeam: Team) => {
-        // Update the division in the list
         setTeams(teams.map((team) =>
             team.teamId === updatedTeam.teamId ? updatedTeam : team
         ));
 
-        // Close dialogs based on which one is open
         if (dialogState['editTeam']) {
             closeDialog('editTeam');
         }
-        // Use local state for add dialog
         if (isAddDialogOpen) {
             setIsAddDialogOpen(false);
         }
@@ -93,45 +118,48 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId }) => {
 
     return (
         <>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-                Add Team
-            </Button>
+            {/* Only show Add Team button when viewing by league */}
+            {leagueId && (
+                <Button onClick={() => setIsAddDialogOpen(true)}>
+                    Add Team
+                </Button>
+            )}
 
-            {isAddDialogOpen && (
+            {leagueId && isAddDialogOpen && (
                 <AddEditTeamDialog
                     leagueId={leagueId}
                     isEdit={false}
                     onSave={handleUpdate}
-                    onClose={() => setIsAddDialogOpen(false)} // Add this prop
+                    onClose={() => setIsAddDialogOpen(false)}
                 />
             )}
 
-            {
-                teams.length === 0 ? (
-                    <BodySmall text="No teams found." />
-                ) : (
-                    teams.map((team: Team) => (
-                        <React.Fragment key={team.teamId}>
-                            <TeamCard
-                                team={team}
-                                onDelete={() => handleDelete(team.teamId)}
-                                onEdit={() => handleEdit(team.teamId)}
+            {isLoading ? (
+                <BodySmall text="Loading teams..." />
+            ) : teams.length === 0 ? (
+                <BodySmall text="No teams found." />
+            ) : (
+                teams.map((team: Team) => (
+                    <React.Fragment key={team.teamId}>
+                        <TeamCard
+                            team={team}
+                            onDelete={() => handleDelete(team.teamId)}
+                            onEdit={() => handleEdit(team.teamId)}
+                            leagueOwnerId={user?.id}
+                        />
+                        {dialogState['editTeam'] && activeTeamId === team.teamId && (
+                            <AddEditTeamDialog
+                                leagueId={team.leagueId}
+                                teamId={team.teamId}
+                                isEdit={true}
+                                onSave={handleUpdate}
                             />
-                            {dialogState['editTeam'] && activeTeamId === team.teamId && (
-                                <AddEditTeamDialog
-                                    leagueId={team.leagueId}
-                                    teamId={team.teamId}
-                                    isEdit={true}
-                                    onSave={handleUpdate}
-                                />
-                            )}
-                        </React.Fragment>
-                    ))
-                )
-            }
+                        )}
+                    </React.Fragment>
+                ))
+            )}
         </>
     );
-
 }
 
 export default TeamCardList;

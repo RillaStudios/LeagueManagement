@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/leagues/{leagueId}/players",})
+@RequestMapping({"/leagues/{leagueId}/players", "/players"})
 public class PlayerController {
 
     private final PlayerService playerService;
@@ -24,7 +24,8 @@ public class PlayerController {
     }
 
     @GetMapping("/team/{teamId}")
-    public ResponseEntity<List<PlayerDTO>> getAllPlayersByTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId) {
+    public ResponseEntity<List<PlayerDTO>> getAllPlayersByTeam(@PathVariable(required = false) Integer leagueId,
+                                                               @PathVariable Integer teamId) {
 
         return playerService.getAllPlayersByTeam(teamId);
 

@@ -2,6 +2,7 @@ package com.iforddow.league_management.controller;
 
 import com.iforddow.league_management.dto.UserDTO;
 import com.iforddow.league_management.dto.league.LeagueDTO;
+import com.iforddow.league_management.dto.team.TeamDTO;
 import com.iforddow.league_management.requests.UserRequest;
 import com.iforddow.league_management.requests.auth.ChangePasswordRequest;
 import com.iforddow.league_management.service.UserService;
@@ -72,6 +73,13 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsers() {
 
         return userService.getUsers();
+
+    }
+
+    @GetMapping("/teams")
+    public ResponseEntity<List<TeamDTO>> getTeams(Principal connectedUser) {
+
+        return userService.getTeams(connectedUser);
 
     }
 

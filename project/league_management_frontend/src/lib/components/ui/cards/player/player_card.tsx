@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "../../../shadcn/button";
 import { Player } from "@/lib/types/league/player";
 
-export function PlayerCard({ leagueId, player, onDelete, onEdit, teamName }: { leagueId: number, player: Player, onDelete: () => void, onEdit: () => void, teamName: string }) {
+export function PlayerCard({ leagueId, player, onDelete, onEdit, teamName, displayEdit }: { displayEdit: boolean, leagueId: number, player: Player, onDelete?: () => void, onEdit?: () => void, teamName: string }) {
 
     return (
         <Card className="w-full mb-4">
@@ -17,10 +17,12 @@ export function PlayerCard({ leagueId, player, onDelete, onEdit, teamName }: { l
                 <div>Skill Level: {player.skillLevel ? (typeof player.skillLevel === 'string' ? player.skillLevel : player.skillLevel) : "N/A"}</div>
                 <div>Team Name: {teamName ? (typeof teamName === 'string' ? teamName : teamName) : "N/A"}</div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-                <Button variant={"default"} onClick={() => onEdit()}>Edit</Button>
-                <Button variant="destructive" onClick={() => onDelete()}>Delete</Button>
-            </CardFooter>
+            {displayEdit && (
+                <CardFooter className="flex justify-between">
+                    <Button variant={"default"} onClick={() => onEdit!()}>Edit</Button>
+                    <Button variant="destructive" onClick={() => onDelete!()}>Delete</Button>
+                </CardFooter>
+            )}
         </Card>
     );
 }

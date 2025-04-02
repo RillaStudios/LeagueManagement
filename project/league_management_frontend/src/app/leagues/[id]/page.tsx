@@ -13,6 +13,8 @@ import LeagueManagerRow from "@/lib/components/ui/buttons/league_button";
 import PlayerDisplay from "@/lib/components/ui/display/player_display";
 import ScheduleDisplay from "@/lib/components/ui/display/schedule_display";
 import StatDisplay from "@/lib/components/ui/display/stat_display";
+import TeamList from "@/lib/components/ui/display/team_list";
+import TeamListByLeague from "@/lib/components/ui/display/team_list_by_league";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 import { getLeague } from "@/lib/service/league/league_service";
@@ -55,8 +57,9 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: num
                     <LeagueManagerRow league={league} />
                 </Row>
                 <Tabs defaultValue="league" className="w-full">
-                    <TabsList className="grid w-full grid-cols-5">
+                    <TabsList className="grid w-full grid-cols-6">
                         <TabsTrigger value="league">League</TabsTrigger>
+                        <TabsTrigger value="teams">Teams</TabsTrigger>
                         <TabsTrigger value="news">News</TabsTrigger>
                         <TabsTrigger value="schedule">Schedule</TabsTrigger>
                         <TabsTrigger value="standings">Standings</TabsTrigger>
@@ -126,6 +129,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: num
                                                     <TableHead>Team Owner</TableHead>
                                                     <TableHead>Conference</TableHead>
                                                     <TableHead>Division</TableHead>
+                                                    <TableHead>Actions</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -137,6 +141,11 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: num
                                                         <TableCell>{team.teamOwnerName}</TableCell>
                                                         <TableCell>{team.conferenceName}</TableCell>
                                                         <TableCell>{team.divisionName}</TableCell>
+                                                        <TableCell>
+                                                            <Link href={`/teams/${team.teamId}`} passHref>
+                                                                <Button variant="default">View</Button>
+                                                            </Link>
+                                                        </TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
@@ -144,6 +153,18 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: num
                                     </Card>
                                 </Column>
 
+                            </RowColumn>
+                        </Column>
+                    </TabsContent>
+                    {/* League Info */}
+                    <TabsContent value="teams" className="mt-8">
+                        <Column expanded gap="8">
+                            <DisplayMedium
+                                text={"League Info"}
+                            />
+                            <Separator className="w-full" />
+                            <RowColumn gap="8" expanded>
+                                <TeamListByLeague accountTeams={false} league={league} />
                             </RowColumn>
                         </Column>
                     </TabsContent>

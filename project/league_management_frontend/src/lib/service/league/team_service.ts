@@ -33,6 +33,30 @@ export async function getTeams(leagueId: number): Promise<Team[]> {
     return teams;
 }
 
+export async function getAllUserTeams(accessToken: string): Promise<Team[] | null> {
+
+    // Send a GET request to the API to get all the leagues that a user owns
+    const response = await fetch(`${API_URL}/account/teams`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    });
+
+    // If the response is not ok, throw an error
+    if (!response.ok) {
+        return null;
+    }
+
+    // Parse the response as JSON
+    const teams: Team[] = await response.json();
+
+    // Return the leagues
+    return teams;
+}
+
 /* 
 A function to get a team by ID
 
@@ -66,6 +90,29 @@ export async function getTeam(leagueId: number, teamId: number): Promise<Team | 
 
     return team;
 }
+
+
+export async function getTeamById(teamId: number): Promise<Team | null> {
+    const response = await fetch(`${API_URL}/teams/${teamId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        cache: 'no-store',
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch team');
+    }
+
+    const text = await response.text();
+
+    const team: Team = text ? JSON.parse(text) : null;
+
+    return team;
+}
+
 
 /* 
 A function to get teams by season

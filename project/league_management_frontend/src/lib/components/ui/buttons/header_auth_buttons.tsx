@@ -45,7 +45,7 @@ const HeaderAuthButtons: React.FC = () => {
                             <DropdownMenuSeparator />
                             <Link href={"/account"} passHref><DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem></Link>
                             <Link href={"/account/leagues"} passHref><DropdownMenuItem className="cursor-pointer">Leagues</DropdownMenuItem></Link>
-                            <DropdownMenuItem>Teams</DropdownMenuItem>
+                            <Link href={"/account/teams"}><DropdownMenuItem>Teams</DropdownMenuItem></Link>
                             <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

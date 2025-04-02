@@ -1,8 +1,11 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../../shadcn/card";
 import { Button } from "../../../shadcn/button";
 import { Team } from "@/lib/types/league/team";
+import { useUserData } from "@/lib/hooks/useUserData";
 
-export function TeamCard({ team, onDelete, onEdit }: { team: Team, onDelete: () => void, onEdit: () => void }) {
+export function TeamCard({ team, onDelete, onEdit, leagueOwnerId }: { team: Team, onDelete?: () => void, onEdit?: () => void, leagueOwnerId?: number }) {
+
+    const { user } = useUserData();
 
     return (
         <Card className="w-full mb-4">
@@ -17,8 +20,10 @@ export function TeamCard({ team, onDelete, onEdit }: { team: Team, onDelete: () 
                 <div>Owner: {team.teamOwnerName ? (typeof team.teamOwnerName === 'string' ? team.teamOwnerName : team.teamOwnerName) : "N/A"}</div>
             </CardContent>
             <CardFooter className="flex justify-between">
-                <Button variant={"default"} onClick={() => onEdit()}>Edit</Button>
-                <Button variant="destructive" onClick={() => onDelete()}>Delete</Button>
+                {((user && user.id === team.ownerId) || (user && user.id === leagueOwnerId)) && <>
+                    <Button variant={"default"} onClick={() => onEdit!()}>Edit</Button>
+                    <Button variant="destructive" onClick={() => onDelete!()}>Delete</Button>
+                </>}
             </CardFooter>
         </Card>
     );
