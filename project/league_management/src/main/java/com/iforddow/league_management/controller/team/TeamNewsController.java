@@ -5,6 +5,7 @@ import com.iforddow.league_management.requests.team.TeamNewsRequest;
 import com.iforddow.league_management.service.team.TeamNewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -28,18 +29,21 @@ public class TeamNewsController {
     }
 
     @PatchMapping("/{newsId}")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
     public ResponseEntity<TeamNewsDTO> updateTeamNews(@PathVariable Integer leagueId, @PathVariable Integer teamId,
                                                       @PathVariable Integer newsId, @RequestBody TeamNewsRequest teamNewsRequest) {
         return teamNewsService.updateTeamNews(teamId, newsId, teamNewsRequest);
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
     public ResponseEntity<TeamNewsDTO> createTeamNews(@PathVariable Integer leagueId, @PathVariable Integer teamId,
                                                       @RequestBody TeamNewsRequest teamNewsRequest, Principal connectedUser) {
         return teamNewsService.createTeamNews(teamId, teamNewsRequest, connectedUser);
     }
 
     @DeleteMapping("/{newsId}")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
     public ResponseEntity<?> deleteTeamNews(@PathVariable Integer leagueId, @PathVariable Integer teamId,
                                             @PathVariable Integer newsId) {
         return teamNewsService.deleteTeamNews(teamId, newsId);

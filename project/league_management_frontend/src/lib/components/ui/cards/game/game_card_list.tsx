@@ -1,7 +1,7 @@
 'use client'
 
 import { useDialog } from "@/lib/components/providers/dialog_provider";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
 import { Game } from "@/lib/types/league/game";
@@ -17,6 +17,7 @@ import Row from "@/lib/components/layout/row";
 import { Button } from "@/lib/components/shadcn/button";
 import { getAllGameStats, getGameStats } from "@/lib/service/league/game_stats_service";
 import { GameStats } from "@/lib/types/league/game_stats";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface GameCardListProps {
     leagueId: number;
@@ -30,6 +31,7 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
     const [seasonId, setSeasonId] = useState<number | null>(null);
     const [teams, setTeams] = useState<Team[]>([]); // State to hold the teams
     const [venues, setVenues] = useState<Venue[]>([]); // State to hold the venues
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     const fetchGames = async () => {
         if (seasonId === null) return; // If no season is selected, do not fetch games
@@ -93,17 +95,16 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
         fetchGames();
     }, [leagueId, seasonId]);
 
-    const handleEdit = (gameId: number) => {
-        setActiveGameId(gameId); // Set the active game ID
-        openDialog("editGame"); // Open the dialog
-    };
+    const handleEdit = useCallback((gameId: number) => {
+        setActiveGameId(gameId);
+        openDialog("editGame");
+    }, [openDialog]);
 
-    const handleDelete = (gameId: number) => {
+    const handleDelete = useCallback((gameId: number) => {
         const game = games.find((g) => g.gameId === gameId);
 
         if (game) {
-            deleteGame(leagueId, seasonId!, gameId).then(() => {
-                // Successfully deleted the game
+            deleteGame(leagueId, seasonId!, gameId, accessToken!).then(() => {
                 toast({
                     title: "Success",
                     description: "Game deleted successfully.",
@@ -111,10 +112,9 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
                     duration: 2000,
                 });
 
-                // Remove the game from the list
-                setGames(games.filter((game) => game.gameId !== gameId));
+                // Use functional update pattern
+                setGames(prevGames => prevGames.filter(game => game.gameId !== gameId));
             }).catch(() => {
-                // Handle error if needed
                 toast({
                     title: "Error",
                     description: `Failed to delete game: ${gameId}.`,
@@ -123,30 +123,26 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
                 });
             });
         }
-    };
+    }, [leagueId, seasonId, accessToken]); // Add dependencies
 
-    const handleUpdate = (updatedGame: Game) => {
+    const handleUpdate = useCallback((updatedGame: Game) => {
         setGames((prevGames) => {
             const gameExists = prevGames.some((game) => game.gameId === updatedGame.gameId);
             if (gameExists) {
-                // Update the existing game
                 return prevGames.map((game) =>
                     game.gameId === updatedGame.gameId ? updatedGame : game
                 );
             } else {
-                // Add the new game
                 return [...prevGames, updatedGame];
             }
         });
 
-        closeDialog("editGame"); // Close the dialog
-    };
+        closeDialog("editGame");
+    }, [closeDialog]);
 
-
-    const handleStatUpdate = (updatedGameStats: GameStats[]) => {
-
-        // Update the game stats in the list
-        setGames(games.map((game) => {
+    const handleStatUpdate = useCallback((updatedGameStats: GameStats[]) => {
+        // Use functional update pattern
+        setGames(prevGames => prevGames.map((game) => {
             const gameStats = updatedGameStats.filter(stat => stat.gameId === game.gameId);
             if (gameStats.length > 0) {
                 return {
@@ -157,9 +153,8 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
             return game;
         }));
 
-        closeDialog("editGame"); // Close the dialog
-    };
-
+        closeDialog("editGame");
+    }, [closeDialog]);
     const handleSeasonChange = (seasonId: string) => {
         setSeasonId(parseInt(seasonId));
     };

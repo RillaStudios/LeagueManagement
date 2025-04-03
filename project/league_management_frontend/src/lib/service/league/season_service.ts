@@ -82,11 +82,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function createSeason(leagueId: number, season: Partial<Season>): Promise<Season> {
+export async function createSeason(leagueId: number, season: Partial<Season>, accessToken: string): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -117,11 +118,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>): Promise<Season> {
+export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>, accessToken: string): Promise<Season> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -152,11 +154,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function deleteSeason(leagueId: number, seasonId: number): Promise<void> {
+export async function deleteSeason(leagueId: number, seasonId: number, accessToken: string): Promise<void> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',

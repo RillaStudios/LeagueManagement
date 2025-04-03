@@ -8,6 +8,7 @@ import com.iforddow.league_management.service.league.GameService;
 import com.iforddow.league_management.service.league.GameStatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,16 +38,19 @@ public class GameController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<GameDTO> createGame(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @RequestBody GameRequest gameRequest) {
         return gameService.createGame(leagueId, seasonId, gameRequest);
     }
 
     @PatchMapping("/{gameId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<GameDTO> updateGame(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @PathVariable Integer gameId, @RequestBody GameRequest gameRequest) {
         return gameService.updateGame(leagueId, seasonId, gameId, gameRequest);
     }
 
     @DeleteMapping("/{gameId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deleteGame(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @PathVariable Integer gameId) {
         return gameService.deleteGame(leagueId, seasonId, gameId);
     }
@@ -62,6 +66,7 @@ public class GameController {
     }
 
     @PatchMapping("/{gameId}/stats")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<List<TeamGameStatDTO>> updateGameStats(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @PathVariable Integer gameId, @RequestBody List<GameStatRequest> gameStatRequests) {
         return gameStatService.updateGameStatsByGameId(gameId, seasonId, gameStatRequests);
     }

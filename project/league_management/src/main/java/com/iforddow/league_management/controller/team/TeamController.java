@@ -5,6 +5,7 @@ import com.iforddow.league_management.requests.team.TeamRequest;
 import com.iforddow.league_management.service.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class TeamController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<TeamDTO> createTeam(@PathVariable Integer leagueId, @RequestBody TeamRequest teamRequest) {
 
         return teamService.createTeam(leagueId, teamRequest);
@@ -50,6 +52,7 @@ public class TeamController {
     }
 
     @PatchMapping("/{teamId}")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
     public ResponseEntity<TeamDTO> updateTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId, @RequestBody TeamRequest teamRequest) {
 
         return teamService.updateTeam(leagueId, teamId, teamRequest);
@@ -57,6 +60,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamId}")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
     public ResponseEntity<?> deleteTeam(@PathVariable Integer leagueId, @PathVariable Integer teamId) {
 
         return teamService.deleteTeam(leagueId, teamId);

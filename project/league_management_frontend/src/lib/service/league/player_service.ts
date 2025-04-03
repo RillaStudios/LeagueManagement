@@ -17,9 +17,9 @@ export async function getPlayersByLeague(leagueId: number): Promise<Player[]> {
     return players;
 }
 
-export async function getPlayersByTeam(teamId: number): Promise<Player[]> {
+export async function getPlayersByTeam(leagueId: number, teamId: number): Promise<Player[]> {
 
-    const response = await fetch(`${API_URL}/players/team/${teamId}`);
+    const response = await fetch(`${API_URL}/leagues/${leagueId}/players/team/${teamId}`);
 
     if (!response.ok) {
         throw new Error(`Error fetching players: ${response.statusText}`);
@@ -46,11 +46,12 @@ export async function getPlayer(leagueId: number, playerId: number): Promise<Pla
     return player;
 }
 
-export async function createPlayer(leagueId: number, player: Partial<Player>): Promise<Player> {
+export async function createPlayer(leagueId: number, player: Partial<Player>, accessToken: string): Promise<Player> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(player),
     });
@@ -66,11 +67,12 @@ export async function createPlayer(leagueId: number, player: Partial<Player>): P
     return playerRes;
 }
 
-export async function updatePlayer(leagueId: number, playerId: number, player: Partial<Player>): Promise<Player> {
+export async function updatePlayer(leagueId: number, playerId: number, player: Partial<Player>, accessToken: string): Promise<Player> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/${playerId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
+            'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(player),
     });
@@ -86,9 +88,14 @@ export async function updatePlayer(leagueId: number, playerId: number, player: P
     return playerRes;
 }
 
-export async function deletePlayer(leagueId: number, playerId: number): Promise<void> {
+export async function deletePlayer(leagueId: number, teamId: number, playerId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/${playerId}`, {
         method: "DELETE",
+        headers: {
+            'Content-Type': "application/json",
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(teamId),
     });
 
     if (!response.ok) {

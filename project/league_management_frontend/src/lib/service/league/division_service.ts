@@ -70,11 +70,12 @@ A method to add a division to a league
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function addDivision(leagueId: number, division: Partial<Division>): Promise<Division> {
+export async function addDivision(leagueId: number, division: Partial<Division>, accessToken: string): Promise<Division> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -101,11 +102,12 @@ A method to update a division
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function updateDivision(leagueId: number, divisionId: number, division: Partial<Division>): Promise<Division> {
+export async function updateDivision(leagueId: number, divisionId: number, division: Partial<Division>, accessToken: string): Promise<Division> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/${divisionId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -131,11 +133,12 @@ A method to delete a division
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function deleteDivision(leagueId: number, divisionId: number): Promise<void> {
+export async function deleteDivision(leagueId: number, divisionId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/${divisionId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',

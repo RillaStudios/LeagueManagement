@@ -106,7 +106,7 @@ const NewsLeagueForm: React.FC<NewsLeagueProps> = ({ leagueId, isEdit, newsId, a
             let updatedNews: NewsLeague;
 
             if (isEdit) {
-                updatedNews = await updateNewsLeague(leagueId, newsId!, newNews);
+                updatedNews = await updateNewsLeague(leagueId, newsId!, newNews, accessToken!);
             } else {
                 updatedNews = await createNewsLeague(leagueId, newNews, accessToken!);
             }

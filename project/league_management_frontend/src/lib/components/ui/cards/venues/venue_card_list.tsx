@@ -8,6 +8,7 @@ import AddEditVenueDialog from "../../dialogs/league/venue/add_venue";
 import { deleteVenue, getVenues } from "@/lib/service/league/venue_service";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface VenueCardListProps {
     leagueId: number;
@@ -17,6 +18,7 @@ const VenueCardList: React.FC<VenueCardListProps> = ({ leagueId }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [venues, setVenues] = useState<Venue[]>([]);
     const [activeVenueId, setActiveVenueId] = useState<number | null>(null);
+    const { accessToken } = useAuth();
 
 
     const fetchVenues = async () => {
@@ -46,7 +48,7 @@ const VenueCardList: React.FC<VenueCardListProps> = ({ leagueId }) => {
         const venue = venues.find((venue) => venueId === venueId);
 
         if (venue) {
-            deleteVenue(venue.leagueId, venueId).then(() => {
+            deleteVenue(venue.leagueId, venueId, accessToken!).then(() => {
                 toast({
                     title: "Success",
                     description: `Venue deleted successfully.`,

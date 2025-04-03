@@ -10,6 +10,7 @@ import { Button } from "../../shadcn/button";
 import { useState } from "react";
 import { changePassword } from "@/lib/service/user_service";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useUserData } from "@/lib/hooks/useUserData";
 
 const formSchema = z.object({
     oldPassword: z.string()
@@ -35,6 +36,8 @@ const ChangePasswordDisplay: React.FC<{}> = () => {
 
     const { accessToken } = useAuth();
 
+    const { user } = useUserData();
+
     const [serverError, setServerError] = useState<string | null>(null);
 
     const { loading, setLoading } = useLoading();
@@ -55,7 +58,7 @@ const ChangePasswordDisplay: React.FC<{}> = () => {
             //Set loading to true
             setLoading(true);
 
-            await changePassword(accessToken!, values.oldPassword, values.newPassword, values.confirmNewPassword);
+            await changePassword(accessToken!, values.oldPassword, values.newPassword, values.confirmNewPassword, user?.id!);
 
             form.reset({
                 oldPassword: "",

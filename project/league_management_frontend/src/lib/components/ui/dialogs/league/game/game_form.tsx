@@ -23,6 +23,7 @@ import { Game } from "@/lib/types/league/game";
 import { Venue } from "@/lib/types/league/venue";
 import { getVenues } from "@/lib/service/league/venue_service";
 import { DateTimePicker } from "@/lib/components/shadcn/date-time-picker";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     homeTeam: z.string(),
@@ -50,6 +51,7 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
     const [teams, setTeams] = useState<Team[] | null>(null);
     const [venues, setVenues] = useState<Venue[] | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -117,9 +119,9 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
             let updatedGame: Game;
 
             if (isEdit) {
-                updatedGame = await updateGame(leagueId, seasonId!, gameId!, newGame);
+                updatedGame = await updateGame(leagueId, seasonId!, gameId!, newGame, accessToken!);
             } else {
-                updatedGame = await createGame(leagueId, seasonId!, newGame);
+                updatedGame = await createGame(leagueId, seasonId!, newGame, accessToken!);
             }
 
             if (onSave) {

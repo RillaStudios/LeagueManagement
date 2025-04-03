@@ -99,11 +99,31 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /*
+    * A method to update the user
+    *
+    * @param userRequest: the request containing the new user
+    *
+    * @param connectedUser: the connected user
+    *
+    * @throws IllegalStateException: if the user is not found
+    *
+    * @return void
+    *
+    * @Permission: User
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     @Transactional
     public void updateUser(UserRequest userRequest, Principal connectedUser) {
 
         // Set the user
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        if(user == null) {
+            throw new IllegalStateException("User not found");
+        }
 
         // Update the user
         user.setFirstName(userRequest.getFirstName());
@@ -127,6 +147,10 @@ public class UserService {
         // Set the user
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
+        if(user == null) {
+            throw new IllegalStateException("User not found");
+        }
+
         // Get the leagues of the user
         List<LeagueDTO> leagues = leagueRepository.findLeagueByCreatedBy_Id(user.getId())
                 .stream().map(LeagueDTO::new).collect(Collectors.toList());
@@ -139,15 +163,39 @@ public class UserService {
 
     }
 
+    /*
+    * A method to get the users of the application
+    *
+    * @param connectedUser: the connected user
+    *
+    * @return a list of users
+    *
+    * @Permission: None
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     public ResponseEntity<List<UserDTO>> getUsers() {
         return ResponseEntity.ok(userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList()));
     }
 
+    /*
+    * A method to get the teams of a user
+    *
+    * @param connectedUser: the connected user
+    *
+    * @return a list of teams
+    *
+    * @Permission: None
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     public ResponseEntity<List<TeamDTO>> getTeams(Principal connectedUser) {
 
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        List<TeamDTO> teams = teamRepository.findTeamsByOwner_IdOrLeagueCreatedBy_Id(user.getId(), user.getId())
+        List<TeamDTO> teams = teamRepository.findTeamsByOwner_IdOrLeagueCreatedBy_Id(user.getId())
                 .stream().map(TeamDTO::new).toList();
 
         if (teams.isEmpty()) {

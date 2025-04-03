@@ -9,6 +9,7 @@ import { ConferenceCard } from "./conference_card";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
 import { Button } from "@/lib/components/shadcn/button";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface ConferenceCardListProps {
     leagueId: number;
@@ -18,6 +19,8 @@ const ConferenceCardList: React.FC<ConferenceCardListProps> = ({ leagueId }) => 
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [conferences, setConferences] = useState<Conference[]>([]);
     const [activeConferenceId, setActiveConferenceId] = useState<number | null>(null);
+
+    const { accessToken } = useAuth();
 
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -50,7 +53,7 @@ const ConferenceCardList: React.FC<ConferenceCardListProps> = ({ leagueId }) => 
         const conference = conferences.find((conf) => conf.id === conferenceId);
 
         if (conference) {
-            deleteConference(conference.leagueId, conferenceId).then(() => {
+            deleteConference(conference.leagueId, conferenceId, accessToken!).then(() => {
                 setConferences(conferences.filter((conf) => conf.id !== conferenceId));
             }).catch(() => {
                 toast({

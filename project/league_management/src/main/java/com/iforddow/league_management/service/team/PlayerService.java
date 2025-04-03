@@ -2,8 +2,10 @@ package com.iforddow.league_management.service.team;
 
 import com.iforddow.league_management.dto.team.PlayerDTO;
 import com.iforddow.league_management.exception.ResourceNotFoundException;
+import com.iforddow.league_management.jpa.entity.league.League;
 import com.iforddow.league_management.jpa.entity.team.Player;
 import com.iforddow.league_management.jpa.entity.team.Team;
+import com.iforddow.league_management.repository.league.LeagueRepository;
 import com.iforddow.league_management.repository.team.PlayerRepository;
 import com.iforddow.league_management.repository.team.TeamRepository;
 import com.iforddow.league_management.requests.team.PlayerRequest;
@@ -20,6 +22,8 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
 
     private final TeamRepository teamRepository;
+
+    private final LeagueRepository leagueRepository;
 
     public ResponseEntity<List<PlayerDTO>> getAllPlayersByLeague(Integer leagueId) {
 
@@ -55,7 +59,9 @@ public class PlayerService {
 
     }
 
-    public ResponseEntity<PlayerDTO> createPlayer(PlayerRequest playerRequest) {
+    public ResponseEntity<PlayerDTO> createPlayer(Integer leagueId, PlayerRequest playerRequest) {
+
+        leagueRepository.findLeagueById(leagueId).orElseThrow(() -> new ResourceNotFoundException("League not found"));
 
         Team team = teamRepository.findById(playerRequest.getTeamId()).orElseThrow(() -> new ResourceNotFoundException("Team not found"));
 
@@ -74,7 +80,9 @@ public class PlayerService {
 
     }
 
-    public ResponseEntity<PlayerDTO> updatePlayer(Integer playerId, PlayerRequest playerRequest) {
+    public ResponseEntity<PlayerDTO> updatePlayer(Integer leagueId, Integer playerId, PlayerRequest playerRequest) {
+
+        leagueRepository.findLeagueById(leagueId).orElseThrow(() -> new ResourceNotFoundException("League not found"));
 
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new ResourceNotFoundException("Player not found"));
 
@@ -89,7 +97,9 @@ public class PlayerService {
         return ResponseEntity.ok(new PlayerDTO(player));
     }
 
-    public ResponseEntity<?> deletePlayer(Integer playerId) {
+    public ResponseEntity<?> deletePlayer(Integer leagueId, Integer playerId) {
+
+        leagueRepository.findLeagueById(leagueId).orElseThrow(() -> new ResourceNotFoundException("League not found"));
 
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new ResourceNotFoundException("Player not found"));
 

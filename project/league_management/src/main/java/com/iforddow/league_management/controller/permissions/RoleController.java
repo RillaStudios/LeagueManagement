@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 /*
 * A controller class for handling requests related to roles.
 *
+* NOTE: This is outside the current scope of the project. It technically works,
+* but it is not used in the project. It is here for future use.
+*
 * @Author: IFD
 * @Since: 2025-02-07
 * */

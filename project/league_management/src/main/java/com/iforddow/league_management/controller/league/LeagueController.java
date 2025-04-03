@@ -4,6 +4,7 @@ import com.iforddow.league_management.requests.league.LeagueRequest;
 import com.iforddow.league_management.service.league.LeagueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -80,6 +81,7 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @PatchMapping("/{leagueId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> updateLeague(@PathVariable Integer leagueId, @RequestBody LeagueRequest leagueRequest) {
 
         return leagueService.updateLeague(leagueId, leagueRequest);
@@ -96,6 +98,7 @@ public class LeagueController {
     * @Since: 2025-02-07
     * */
     @DeleteMapping("/{leagueId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deleteLeague(@PathVariable Integer leagueId) {
 
         return leagueService.deleteLeague(leagueId);

@@ -82,7 +82,7 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
         const team = teams.find((team) => team.teamId === teamId);
 
         if (team) {
-            deleteTeam(team.leagueId, teamId).then(() => {
+            deleteTeam(team.leagueId, teamId, accessToken!).then(() => {
                 toast({
                     title: "Success",
                     description: "Team deleted successfully.",

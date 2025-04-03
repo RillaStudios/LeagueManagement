@@ -11,6 +11,7 @@ import { deletePlayer, getPlayersByLeague } from "@/lib/service/league/player_se
 import AddEditPlayerDialog from "../../dialogs/league/player/add_player";
 import { Team } from "@/lib/types/league/team";
 import { getTeams } from "@/lib/service/league/team_service";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface PlayerCardListProps {
     leagueId: number;
@@ -21,6 +22,7 @@ const PlayerCardList: React.FC<PlayerCardListProps> = ({ leagueId }) => {
     const [players, setPlayers] = useState<Player[]>([]);
     const [activePlayerId, setActivePlayerId] = useState<number | null>(null);
     const [teams, setTeams] = useState<Team[] | null>(null); // Add local state for team name
+    const { accessToken } = useAuth();
 
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -69,7 +71,7 @@ const PlayerCardList: React.FC<PlayerCardListProps> = ({ leagueId }) => {
         const player = players.find((player) => player.playerId === playerId);
 
         if (player) {
-            deletePlayer(leagueId, player.playerId).then(() => {
+            deletePlayer(leagueId, player.teamId, player.playerId, accessToken!).then(() => {
                 // Successfully deleted the team
                 toast({
                     title: "Success",
@@ -142,6 +144,7 @@ const PlayerCardList: React.FC<PlayerCardListProps> = ({ leagueId }) => {
                                 teamName={teams?.find((team) => team.teamId === player.teamId)?.teamName || "N/A"}
                                 onDelete={() => handleDelete(player.playerId)}
                                 onEdit={() => handleEdit(player.playerId)}
+                                displayEdit
                             />
                             {dialogState['editPlayer'] && activePlayerId === player.playerId && (
                                 <AddEditPlayerDialog

@@ -19,6 +19,7 @@ import { toast } from "@/hooks/use-toast";
 import { Team } from "@/lib/types/league/team";
 import { GameStats } from "@/lib/types/league/game_stats";
 import { updateGameStats } from "@/lib/service/league/game_stats_service";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     homeTeamScore: z
@@ -50,6 +51,7 @@ A form component for updating game results.
 const GameResultForm: React.FC<GameFormProps> = ({ leagueId, gameId, seasonId, homeTeam, awayTeam, gameStats, onSave }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -110,7 +112,7 @@ const GameResultForm: React.FC<GameFormProps> = ({ leagueId, gameId, seasonId, h
 
             console.log("New Game Stats:", newGameStats);
 
-            await updateGameStats(leagueId, seasonId!, gameId!, newGameStats);
+            await updateGameStats(leagueId, seasonId!, gameId!, newGameStats, accessToken!);
 
 
             toast({

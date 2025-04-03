@@ -6,6 +6,7 @@ import com.iforddow.league_management.requests.league.DivisionRequest;
 import com.iforddow.league_management.service.league.DivisionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class DivisionController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<DivisionDTO> addDivision(@PathVariable Integer leagueId, @RequestBody DivisionRequest divisionRequest) {
 
         return divisionService.addDivision(leagueId, divisionRequest);
@@ -39,6 +41,7 @@ public class DivisionController {
     }
 
     @PatchMapping("/{divisionId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<DivisionDTO> updateDivision(@PathVariable Integer leagueId, @PathVariable Integer divisionId, @RequestBody DivisionRequest divisionRequest) {
 
         return divisionService.updateDivision(leagueId, divisionId, divisionRequest);
@@ -46,6 +49,7 @@ public class DivisionController {
     }
 
     @DeleteMapping("/{divisionId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deleteDivision(@PathVariable Integer leagueId, @PathVariable Integer divisionId) {
 
         return divisionService.deleteDivision(leagueId, divisionId);

@@ -18,6 +18,7 @@ import { DatePicker } from "@/lib/components/shadcn/input_date";
 import { Season } from "@/lib/types/league/season";
 import { createSeason, getSeason, updateSeason } from "@/lib/service/league/season_service";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     startDate: z.date(),
@@ -41,6 +42,7 @@ A form component for adding or editing a season in a league.
 const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onSave, align }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -87,9 +89,9 @@ const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onS
             let updatedSeason: Season;
 
             if (isEdit) {
-                updatedSeason = await updateSeason(leagueId, seasonId!, newSeason);
+                updatedSeason = await updateSeason(leagueId, seasonId!, newSeason, accessToken!);
             } else {
-                updatedSeason = await createSeason(leagueId, newSeason);
+                updatedSeason = await createSeason(leagueId, newSeason, accessToken!);
             }
 
             if (onSave) {

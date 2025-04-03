@@ -1,11 +1,10 @@
 'use client'
 
-import { getSeasons } from "@/lib/service/league/season_service";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../shadcn/select";
 import { useEffect, useState } from "react";
-import { Season } from "@/lib/types/league/season";
 import { League } from "@/lib/types/league/league";
-import { getAllLeagues } from "@/lib/service/league/league_service";
+import { getAllLeagues, getAllUserLeagues } from "@/lib/service/league/league_service";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 
 /* 
@@ -14,13 +13,14 @@ A season selector component for the app.
 @Author: IFD
 @Date: 2025-04-01
 */
-const LeagueSelector: React.FC<{ onLeagueChange: (leagueId: string) => void }> = ({ onLeagueChange }) => {
+const LeagueSelector: React.FC<{ onLeagueChange: (leagueId: string) => void, userLeagues?: boolean }> = ({ onLeagueChange, userLeagues }) => {
     const [leagues, setLeagues] = useState<League[] | null>(null);
     const [selectedLeague, setSelectedLeague] = useState<string | undefined>(undefined); // Changed from null to undefined
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     useEffect(() => {
         const fetchLeagues = async () => {
-            const leagues = await getAllLeagues();
+            const leagues = userLeagues ? await getAllUserLeagues(accessToken!) : await getAllLeagues();
             setLeagues(leagues);
         };
         fetchLeagues();

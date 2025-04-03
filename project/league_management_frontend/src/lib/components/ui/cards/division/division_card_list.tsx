@@ -9,6 +9,7 @@ import { deleteDivision, getDivisions } from "@/lib/service/league/division_serv
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
 import { Button } from "@/lib/components/shadcn/button";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface DivisionCardListProps {
     leagueId: number;
@@ -19,6 +20,7 @@ const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [divisions, setDivisions] = useState<Division[]>([]); // State to hold the divisions
     const [activeDivisionId, setActiveDivisionId] = useState<number | null>(null);
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -53,7 +55,7 @@ const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
         const division = divisions.find((div) => div.id === divisionId);
 
         if (division) {
-            deleteDivision(division.leagueId, divisionId).then((res) => {
+            deleteDivision(division.leagueId, divisionId, accessToken!).then((res) => {
                 // Successfully deleted the division
                 toast({
                     title: "Success",

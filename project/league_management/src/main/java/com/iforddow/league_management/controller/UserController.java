@@ -8,6 +8,7 @@ import com.iforddow.league_management.requests.auth.ChangePasswordRequest;
 import com.iforddow.league_management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -45,6 +46,7 @@ public class UserController {
     * @Since: 2025-02-07
     * */
     @PatchMapping("/change-password")
+    @PreAuthorize("#request.id == authentication.principal.id")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request, Principal connectedUser) {
 
         userService.changePassword(request, connectedUser);
@@ -53,7 +55,20 @@ public class UserController {
 
     }
 
+    /*
+    * A method that updates the user.
+    *
+    * @param userDTO
+    *
+    * @param connectedUser
+    *
+    * @return ResponseEntity<?>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     @PatchMapping("/")
+    @PreAuthorize("#userDTO.id == authentication.principal.id")
     public ResponseEntity<?> updateUser(@RequestBody UserRequest userDTO, Principal connectedUser) {
 
         userService.updateUser(userDTO, connectedUser);
@@ -62,6 +77,16 @@ public class UserController {
 
     }
 
+    /*
+    * A method that gets all the leagues of the connected user.
+    *
+    * @param connectedUser
+    *
+    * @return ResponseEntity<List<LeagueDTO>>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     @GetMapping("/leagues")
     public ResponseEntity<List<LeagueDTO>> getLeagues(Principal connectedUser) {
 
@@ -69,6 +94,16 @@ public class UserController {
 
     }
 
+    /*
+    * A method that gets all the users.
+    *
+    * @param connectedUser
+    *
+    * @return ResponseEntity<List<UserDTO>>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getUsers() {
 
@@ -76,6 +111,16 @@ public class UserController {
 
     }
 
+    /*
+    * A method that gets all the teams of the connected user.
+    *
+    * @param connectedUser
+    *
+    * @return ResponseEntity<List<TeamDTO>>
+    *
+    * @Author: IFD
+    * @Since: 2025-02-07
+    * */
     @GetMapping("/teams")
     public ResponseEntity<List<TeamDTO>> getTeams(Principal connectedUser) {
 

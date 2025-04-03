@@ -75,11 +75,12 @@ A function that adds a conference to a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function addConference(leagueId: number, conference: Partial<Conference>): Promise<Conference> {
+export async function addConference(leagueId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         body: JSON.stringify(conference),
@@ -107,11 +108,12 @@ A function that updates a conference in a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function updateConference(leagueId: number, conferenceId: number, conference: Partial<Conference>): Promise<Conference> {
+export async function updateConference(leagueId: number, conferenceId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/${conferenceId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         body: JSON.stringify(conference),
@@ -138,11 +140,12 @@ A function that deletes a conference from a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function deleteConference(leagueId: number, conferenceId: number): Promise<void> {
+export async function deleteConference(leagueId: number, conferenceId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/${conferenceId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
     });

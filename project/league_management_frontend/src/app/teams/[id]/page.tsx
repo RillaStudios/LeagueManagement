@@ -22,7 +22,7 @@ export default async function TeamPage({ params }: { params: Promise<{ id: numbe
 
     const team = await getTeamById(id);
 
-    const players = await getPlayersByTeam(id);
+    const players = await getPlayersByTeam(team?.leagueId!, id);
 
     if (!team) {
         return (

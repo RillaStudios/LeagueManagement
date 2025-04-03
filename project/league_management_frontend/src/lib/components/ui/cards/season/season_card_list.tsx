@@ -8,6 +8,7 @@ import { SeasonCard } from "./season_card";
 import AddEditSeasonDialog from "../../dialogs/league/season/add_season";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface SeasonCardListProps {
     leagueId: number;
@@ -18,6 +19,7 @@ const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [seasons, setSeasons] = useState<Season[]>([]); // State to hold the seasons
     const [activeSeasonId, setActiveSeasonId] = useState<number | null>(null);
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     const fetchSeasons = async () => {
         await getSeasons(leagueId).then((response) => {
@@ -50,7 +52,7 @@ const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
         setSeasons(seasons.filter((season) => season.id !== seasonId));
 
         if (season) {
-            deleteSeason(leagueId, season.id).then(() => {
+            deleteSeason(leagueId, season.id, accessToken!).then(() => {
                 // Successfully deleted the season
                 toast({
                     title: "Success",

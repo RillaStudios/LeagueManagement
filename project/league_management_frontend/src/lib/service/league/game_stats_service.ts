@@ -47,7 +47,7 @@ A method to get all game stats by team ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getAllGameStats(leagueId: number, seasonId: number): Promise<GameStats[]> {
+export async function getAllGameStats(leagueId: number, seasonId: number, accessToken: string): Promise<GameStats[]> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/stats`);
 
     if (!response.ok) {
@@ -66,11 +66,12 @@ A method to update game stats by game ID and team ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function updateGameStats(leagueId: number, seasonId: number, gameId: number, gameStats: Partial<GameStats>[]): Promise<GameStats> {
+export async function updateGameStats(leagueId: number, seasonId: number, gameId: number, gameStats: Partial<GameStats>[], accessToken: string): Promise<GameStats> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/stats`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(gameStats),
     });

@@ -59,7 +59,10 @@ const AccountDisplay: React.FC<{}> = () => {
             // Set loading to true
             setLoading(true);
 
-            await updateUserData(accessToken!, values);
+            await updateUserData(accessToken!, {
+                ...values,
+                id: user?.id
+            });
 
             form.reset({
                 email: values.email,

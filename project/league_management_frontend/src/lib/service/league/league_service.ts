@@ -166,11 +166,12 @@ A function that deletes a league from the database
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function deleteLeague(leagueId: number): Promise<void> {
+export async function deleteLeague(leagueId: number, accessToken: string): Promise<void> {
     await fetch(`${API_URL}/leagues/${leagueId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
     });

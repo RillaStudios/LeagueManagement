@@ -54,12 +54,13 @@ export const createNewsLeague = async (leagueId: number, news: Partial<NewsLeagu
     return response.json();
 }
 
-export const updateNewsLeague = async (leagueId: number, newsId: number, news: Partial<NewsLeague>): Promise<NewsLeague> => {
+export const updateNewsLeague = async (leagueId: number, newsId: number, news: Partial<NewsLeague>, accessToken: string): Promise<NewsLeague> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/${newsId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(news),
     });
@@ -71,12 +72,13 @@ export const updateNewsLeague = async (leagueId: number, newsId: number, news: P
     return response.json();
 }
 
-export const deleteNewsLeague = async (leagueId: number, newsId: number): Promise<void> => {
+export const deleteNewsLeague = async (leagueId: number, newsId: number, accessToken: string): Promise<void> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/${newsId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
     });
 

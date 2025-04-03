@@ -6,6 +6,7 @@ import com.iforddow.league_management.requests.league.ConferenceRequest;
 import com.iforddow.league_management.service.league.ConferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class ConferenceController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<ConferenceDTO> addConference(@PathVariable Integer leagueId, @RequestBody ConferenceRequest conferenceRequest) {
 
         return conferenceService.addConference(leagueId, conferenceRequest);
@@ -39,6 +41,7 @@ public class ConferenceController {
     }
 
     @PatchMapping("/{conferenceId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<ConferenceDTO> updateConference(@PathVariable Integer leagueId, @PathVariable Integer conferenceId, @RequestBody ConferenceRequest conferenceRequest) {
 
         return conferenceService.updateConference(leagueId, conferenceId, conferenceRequest);
@@ -46,6 +49,7 @@ public class ConferenceController {
     }
 
     @DeleteMapping("/{conferenceId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deleteConference(@PathVariable Integer leagueId, @PathVariable Integer conferenceId) {
 
         return conferenceService.deleteConference(leagueId, conferenceId);

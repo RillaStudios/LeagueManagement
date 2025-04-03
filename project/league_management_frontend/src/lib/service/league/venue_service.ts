@@ -81,11 +81,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function addVenue(leagueId: number, venue: Partial<Venue>): Promise<Venue> {
+export async function addVenue(leagueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -115,11 +116,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateVenue(leagueId: number, venueId: number, venue: Partial<Venue>): Promise<Venue> {
+export async function updateVenue(leagueId: number, venueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/${venueId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -146,11 +148,12 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function deleteVenue(leagueId: number, venueId: number): Promise<void> {
+export async function deleteVenue(leagueId: number, venueId: number, accessToken: string): Promise<void> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/${venueId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',

@@ -7,6 +7,7 @@ import { Separator } from "@/lib/components/shadcn/separator";
 import PlayerCardList from "@/lib/components/ui/cards/player/player_card_list";
 import TeamCardList from "@/lib/components/ui/cards/team/team_card_list";
 import AddLeagueDisplay from "@/lib/components/ui/dialogs/league/add_league_form";
+import AccountPlayerListDisplay from "@/lib/components/ui/display/account_player_list_display";
 import { PlayerView } from "@/lib/components/ui/display/player_view";
 import TeamList from "@/lib/components/ui/display/team_list";
 import Footer from "@/lib/components/ui/layout/footer/footer";
@@ -41,6 +42,7 @@ export default async function AccountTeamsPage() {
                             text={"My Players"}
                         />
                         <Separator className="mt-4 md:mt-8 w-full md:w-2/3" />
+                        <AccountPlayerListDisplay />
                     </Column>
                 </RowColumn>
             </Container>

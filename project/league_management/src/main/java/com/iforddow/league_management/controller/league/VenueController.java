@@ -5,6 +5,7 @@ import com.iforddow.league_management.requests.league.VenueRequest;
 import com.iforddow.league_management.service.league.VenueService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class VenueController {
     * @Since: 2025-03-26
     * */
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<VenueDTO> createVenue(@PathVariable Integer leagueId, @RequestBody VenueRequest venueRequest) {
         return venueService.createVenue(leagueId, venueRequest);
     }
@@ -57,6 +59,7 @@ public class VenueController {
     * @Since: 2025-03-26
     * */
     @PatchMapping("/{venueId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<VenueDTO> updateVenue(@PathVariable Integer leagueId, @PathVariable Integer venueId, @RequestBody VenueRequest venueRequest) {
         return venueService.updateVenue(leagueId, venueId, venueRequest);
     }
@@ -68,6 +71,7 @@ public class VenueController {
     * @Since: 2025-03-26
     * */
     @DeleteMapping("/{venueId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<Void> deleteVenue(@PathVariable Integer leagueId, @PathVariable Integer venueId) {
         return venueService.deleteVenue(leagueId, venueId);
     }

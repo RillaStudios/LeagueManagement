@@ -21,6 +21,7 @@ import { Conference } from "@/lib/types/league/conference";
 import { addDivision, getDivision, updateDivision } from "@/lib/service/league/division_service";
 import { getConferences } from "@/lib/service/league/conference_service";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     divName: z.string().min(1, {
@@ -46,6 +47,7 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionI
     const [serverError, setServerError] = useState<string | null>(null);
     const [conferences, setConferences] = useState<Conference[] | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -87,9 +89,9 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionI
 
             let updatedDivision: Division;
             if (isEdit) {
-                updatedDivision = await updateDivision(leagueId, divisionId!, newDivision);
+                updatedDivision = await updateDivision(leagueId, divisionId!, newDivision, accessToken!);
             } else {
-                updatedDivision = await addDivision(leagueId, newDivision);
+                updatedDivision = await addDivision(leagueId, newDivision, accessToken!);
             }
 
             if (onSave) {

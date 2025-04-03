@@ -22,6 +22,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangePasswordRequest {
 
+    // The id of the user
+    private Integer id;
+
     // The current password of the user
     private String currentPassword;
 

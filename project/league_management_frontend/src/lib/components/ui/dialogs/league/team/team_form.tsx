@@ -23,6 +23,7 @@ import { Team } from "@/lib/types/league/team";
 import { User } from "@/lib/types/user";
 import { getAllUsers } from "@/lib/service/user_service";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -53,6 +54,7 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
     const [divisions, setDivisions] = useState<Division[] | null>(null);
     const [users, setUsers] = useState<User[] | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -112,12 +114,12 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
 
             if (isEdit && teamId) {
                 // Update the team if editing
-                updatedTeam = await updateTeam(leagueId, teamId, newTeam);
+                updatedTeam = await updateTeam(leagueId, teamId, newTeam, accessToken!);
 
                 console.log("Updated team:", updatedTeam);
             } else {
                 // Create a new team if not editing
-                updatedTeam = await createTeam(leagueId, newTeam);
+                updatedTeam = await createTeam(leagueId, newTeam, accessToken!);
             }
 
             if (onSave) {

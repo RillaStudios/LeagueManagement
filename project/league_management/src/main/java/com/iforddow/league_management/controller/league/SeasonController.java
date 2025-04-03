@@ -5,6 +5,7 @@ import com.iforddow.league_management.requests.league.SeasonRequest;
 import com.iforddow.league_management.service.league.SeasonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class SeasonController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> createSeason(@PathVariable Integer leagueId, @RequestBody SeasonRequest seasonRequest) {
 
         return seasonService.createSeason(leagueId, seasonRequest);
@@ -51,6 +53,7 @@ public class SeasonController {
     }
 
     @PatchMapping("/{seasonId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> updateSeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId, @RequestBody SeasonRequest seasonRequest) {
 
         return seasonService.updateSeason(leagueId, seasonId, seasonRequest);
@@ -58,6 +61,7 @@ public class SeasonController {
     }
 
     @DeleteMapping("/{seasonId}")
+    @PreAuthorize("@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deleteSeason(@PathVariable Integer leagueId, @PathVariable Integer seasonId) {
 
         return seasonService.deleteSeason(leagueId, seasonId);

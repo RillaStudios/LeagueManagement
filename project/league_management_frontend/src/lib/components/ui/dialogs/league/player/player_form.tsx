@@ -22,6 +22,7 @@ import { toast } from "@/hooks/use-toast";
 import { createPlayer, getPlayer, updatePlayer } from "@/lib/service/league/player_service";
 import { Player } from "@/lib/types/league/player";
 import { DatePicker } from "@/lib/components/shadcn/input_date";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -59,6 +60,7 @@ const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSav
     const [serverError, setServerError] = useState<string | null>(null);
     const [teams, setTeams] = useState<Team[] | null>(null);
     const { loading, setLoading } = useLoading();
+    const { accessToken } = useAuth(); // Get the access token from the auth context
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -123,11 +125,11 @@ const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSav
 
             if (isEdit && playerId) {
                 // Update the team if editing
-                updatedPlayer = await updatePlayer(leagueId, playerId, newPlayer);
+                updatedPlayer = await updatePlayer(leagueId, playerId, newPlayer, accessToken!);
 
             } else {
                 // Create a new team if not editing
-                updatedPlayer = await createPlayer(leagueId, newPlayer);
+                updatedPlayer = await createPlayer(leagueId, newPlayer, accessToken!);
             }
 
             if (onSave) {

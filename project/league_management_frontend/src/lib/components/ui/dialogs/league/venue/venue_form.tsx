@@ -18,6 +18,7 @@ import useLoading from "@/lib/hooks/useLoading";
 import { toast } from "@/hooks/use-toast";
 import { Venue } from "@/lib/types/league/venue";
 import { addVenue, getVenue, updateVenue } from "@/lib/service/league/venue_service";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     address: z.string().min(1, {
@@ -47,6 +48,8 @@ const VenueForm: React.FC<VenueFormProps> = ({ leagueId, isEdit, venueId, onSave
 
     // Use the loading hook
     const { loading, setLoading } = useLoading();
+
+    const { accessToken } = useAuth();
 
     // Create a form
     const form = useForm<z.infer<typeof formSchema>>({
@@ -112,11 +115,11 @@ const VenueForm: React.FC<VenueFormProps> = ({ leagueId, isEdit, venueId, onSave
 
             if (isEdit) {
 
-                updatedVenue = await updateVenue(leagueId, venueId!, newVenue);
+                updatedVenue = await updateVenue(leagueId, venueId!, newVenue, accessToken!);
 
             } else {
 
-                updatedVenue = await addVenue(leagueId, newVenue);
+                updatedVenue = await addVenue(leagueId, newVenue, accessToken!);
 
             }
 

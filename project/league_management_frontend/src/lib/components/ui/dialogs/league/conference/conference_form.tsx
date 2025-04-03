@@ -18,6 +18,7 @@ import useLoading from "@/lib/hooks/useLoading";
 import { Conference } from "@/lib/types/league/conference";
 import { addConference, getConference, updateConference } from "@/lib/service/league/conference_service";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 const formSchema = z.object({
     conferenceName: z.string().min(1, {
@@ -42,6 +43,8 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
 
     // Server error state
     const [serverError, setServerError] = useState<string | null>(null);
+
+    const { accessToken } = useAuth();
 
     // Use the loading hook
     const { loading, setLoading } = useLoading();
@@ -99,11 +102,11 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
 
             if (isEdit) {
 
-                updatedConference = await updateConference(leagueId, conferenceId!, newConference);
+                updatedConference = await updateConference(leagueId, conferenceId!, newConference, accessToken!);
 
             } else {
 
-                updatedConference = await addConference(leagueId, newConference);
+                updatedConference = await addConference(leagueId, newConference, accessToken!);
 
             }
 

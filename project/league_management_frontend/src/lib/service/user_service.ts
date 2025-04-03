@@ -60,7 +60,7 @@ server to change the user's password
 @Author: IFD
 @Since: 2025-02-25
 */
-export async function changePassword(accessToken: string, oldPassword: string, newPassword: string, confirmNewPassword: string,): Promise<void> {
+export async function changePassword(accessToken: string, oldPassword: string, newPassword: string, confirmNewPassword: string, userId: number): Promise<void> {
 
     // Send a request to the server to change the user's password
     const res = await fetch(`${API_URL}/account/change-password`, {
@@ -74,7 +74,8 @@ export async function changePassword(accessToken: string, oldPassword: string, n
         body: JSON.stringify({
             currentPassword: oldPassword,
             newPassword: newPassword,
-            confirmationPassword: newPassword
+            confirmationPassword: confirmNewPassword,
+            id: userId,
         }),
     });
 
@@ -116,7 +117,7 @@ export async function updateUserData(accessToken: string, data: Partial<User>): 
         },
         credentials: "include",
         cache: "no-store",
-        body: JSON.stringify({ firstName: data.firstName, lastName: data.lastName }),
+        body: JSON.stringify({ firstName: data.firstName, lastName: data.lastName, id: data.id }),
     });
 
     // Check if the server returned an error

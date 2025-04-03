@@ -9,6 +9,7 @@ import { Button } from "@/lib/components/shadcn/button";
 import { NewsLeague } from "@/lib/types/league/news_league";
 import { deleteNewsLeague, getNewsLeagues } from "@/lib/service/league/news_league_service";
 import AddEditNewsLeagueDialog from "../../dialogs/league/news_league/add_news_league";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface NewsLeagueCardListProps {
     leagueId: number;
@@ -18,6 +19,7 @@ const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => 
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [news, setNews] = useState<NewsLeague[]>([]);
     const [activeNewsId, setActiveNewsId] = useState<number | null>(null);
+    const { accessToken } = useAuth();
 
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -50,7 +52,7 @@ const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => 
         const newsItem = news.find((newsRes) => newsRes.leagueNewsId === newsId);
 
         if (newsItem) {
-            deleteNewsLeague(leagueId, newsId).then(() => {
+            deleteNewsLeague(leagueId, newsId, accessToken!).then(() => {
                 setNews(news.filter((newsRes) => newsRes.leagueNewsId !== newsId));
             }).catch(() => {
                 toast({

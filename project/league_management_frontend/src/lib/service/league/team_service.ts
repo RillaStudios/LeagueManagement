@@ -162,11 +162,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function createTeam(leagueId: number, team: Partial<Team>): Promise<Team> {
+export async function createTeam(leagueId: number, team: Partial<Team>, accessToken: string): Promise<Team> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -199,11 +200,12 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateTeam(leagueId: number, teamId: number, team: Partial<Team>): Promise<Team> {
+export async function updateTeam(leagueId: number, teamId: number, team: Partial<Team>, accessToken: string): Promise<Team> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/${teamId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',
@@ -231,11 +233,12 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function deleteTeam(leagueId: number, teamId: number): Promise<void> {
+export async function deleteTeam(leagueId: number, teamId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/${teamId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         cache: 'no-store',

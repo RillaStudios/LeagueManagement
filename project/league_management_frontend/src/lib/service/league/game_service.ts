@@ -62,11 +62,12 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function createGame(leagueId: number, seasonId: number, game: Partial<Game>): Promise<Game> {
+export async function createGame(leagueId: number, seasonId: number, game: Partial<Game>, accessToken: string): Promise<Game> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -96,11 +97,12 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function updateGame(leagueId: number, seasonId: number, gameId: number, game: Partial<Game>): Promise<Game> {
+export async function updateGame(leagueId: number, seasonId: number, gameId: number, game: Partial<Game>, accessToken: string): Promise<Game> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify(game),
     });
@@ -123,8 +125,12 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function deleteGame(leagueId: number, seasonId: number, gameId: number): Promise<void> {
+export async function deleteGame(leagueId: number, seasonId: number, gameId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
         method: 'DELETE',
     });
 

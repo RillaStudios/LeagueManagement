@@ -5,13 +5,14 @@ import com.iforddow.league_management.requests.team.PlayerRequest;
 import com.iforddow.league_management.service.team.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping({"/leagues/{leagueId}/players", "/players"})
+@RequestMapping("/leagues/{leagueId}/players")
 public class PlayerController {
 
     private final PlayerService playerService;
@@ -39,23 +40,26 @@ public class PlayerController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #player.teamId, authentication)")
     public ResponseEntity<PlayerDTO> createPlayer(@PathVariable Integer leagueId, @RequestBody PlayerRequest player) {
 
-        return playerService.createPlayer(player);
+        return playerService.createPlayer(leagueId, player);
 
     }
 
     @PatchMapping("/{playerId}")
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #player.teamId, authentication)")
     public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Integer leagueId, @PathVariable Integer playerId, @RequestBody PlayerRequest player) {
 
-        return playerService.updatePlayer(playerId, player);
+        return playerService.updatePlayer(leagueId, playerId, player);
 
     }
 
     @DeleteMapping("/{playerId}")
-    public ResponseEntity<?> deletePlayer(@PathVariable Integer leagueId, @PathVariable Integer playerId) {
+    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
+    public ResponseEntity<?> deletePlayer(@PathVariable Integer leagueId, @PathVariable Integer playerId, @RequestBody Integer teamId) {
 
-        return playerService.deletePlayer(playerId);
+        return playerService.deletePlayer(leagueId, playerId);
 
     }
 
