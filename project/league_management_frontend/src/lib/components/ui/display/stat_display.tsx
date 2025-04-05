@@ -34,7 +34,6 @@ const StatDisplay: React.FC<StatDisplayProps> = ({ leagueId }) => {
                 const stats = await getSeasonStats(leagueId, seasonId);
                 setSeasonStats(stats);
             } catch (error) {
-                console.error("Failed to fetch stats:", error);
             }
         }
 

@@ -67,6 +67,10 @@ const NewsLeagueForm: React.FC<NewsLeagueProps> = ({ leagueId, isEdit, newsId, a
 
                     const newNews = await getNewsLeague(leagueId, newsId!);
 
+                    if (!newNews) {
+                        throw new Error("News not found");
+                    }
+
                     const newsContent = JSON.parse(newNews.content);
 
                     form.setValue('title', newsContent.title || '');
@@ -103,12 +107,16 @@ const NewsLeagueForm: React.FC<NewsLeagueProps> = ({ leagueId, isEdit, newsId, a
 
             };
 
-            let updatedNews: NewsLeague;
+            let updatedNews: NewsLeague | null;
 
             if (isEdit) {
                 updatedNews = await updateNewsLeague(leagueId, newsId!, newNews, accessToken!);
             } else {
                 updatedNews = await createNewsLeague(leagueId, newNews, accessToken!);
+            }
+
+            if (!updatedNews) {
+                throw new Error("Failed to save news.");
             }
 
             if (onSave) {

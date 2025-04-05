@@ -22,6 +22,12 @@ import { getNewsLeagues } from "@/lib/service/league/news_league_service";
 import { getTeams } from "@/lib/service/league/team_service";
 import Link from "next/link";
 
+/* 
+A page that displays the league information and the teams in the league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export default async function LeaguePage({ params }: { params: Promise<{ id: number }> }) {
 
     const { id } = await params;
@@ -156,7 +162,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: num
                             </RowColumn>
                         </Column>
                     </TabsContent>
-                    {/* League Info */}
+                    {/* Team Info */}
                     <TabsContent value="teams" className="mt-8">
                         <Column expanded gap="8">
                             <DisplayMedium

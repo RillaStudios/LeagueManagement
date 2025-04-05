@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -158,6 +159,8 @@ public class GameStatService {
 
             if (teamGameStat.getTeam().getId().equals(teamSeasonStats.getTeamSeason().getTeam().getId())) {
 
+                Instant gameDate = teamGameStat.getGame().getDate();
+
                 teamSeasonStats.setTotalPointsFor(teamSeasonStats.getTotalPointsFor() + teamGameStat.getPointsFor());
                 teamSeasonStats.setTotalPointsAgainst(teamSeasonStats.getTotalPointsAgainst() + teamGameStat.getPointsAgainst());
 
@@ -166,7 +169,9 @@ public class GameStatService {
                 } else if (teamGameStat.getPointsFor() < teamGameStat.getPointsAgainst()) {
                     teamSeasonStats.setTotalLosses(teamSeasonStats.getTotalLosses() + 1);
                 } else {
-                    teamSeasonStats.setTotalTies(teamSeasonStats.getTotalTies() + 1);
+                    if (!(gameDate.isAfter(Instant.now()) && teamGameStat.getPointsFor() == 0 && teamGameStat.getPointsAgainst() == 0)) {
+                        teamSeasonStats.setTotalTies(teamSeasonStats.getTotalTies() + 1);
+                    }
                 }
 
             }

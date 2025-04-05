@@ -9,6 +9,13 @@ import LeagueList from "@/lib/components/ui/display/league_list";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 
+/* 
+A page that displays the leagues the user 
+is a member of and allows them to add a new league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export default async function AccountLeaguesPage() {
 
     return (

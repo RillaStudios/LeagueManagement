@@ -43,7 +43,6 @@ const TeamList: React.FC<TeamListProps> = ({ accountTeams, alignList = "center",
                     : await getTeams(leagueId!);
                 setTeams(response || []);
             } catch (error) {
-                console.error("Failed to fetch teams:", error);
                 setTeams([]);
             } finally {
                 setLoading(false);
@@ -67,7 +66,6 @@ const TeamList: React.FC<TeamListProps> = ({ accountTeams, alignList = "center",
                 const league = await getLeague(leagueId);
                 setLeague(league!);
             } catch (error) {
-                console.error("Failed to fetch stats:", error);
             }
         }
 

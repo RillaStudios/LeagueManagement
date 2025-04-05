@@ -5,6 +5,12 @@ interface HamMenuButtonProps {
     onClick: () => void;
 }
 
+/* 
+A button component that displays a hamburger menu icon.
+
+@Author: IFD
+@Date: 2025-02-25
+*/
 const HamMenuButton: React.FC<HamMenuButtonProps> = ({ onClick }) => {
     return (
         <Button

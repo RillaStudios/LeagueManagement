@@ -8,14 +8,15 @@ import java.util.stream.Collectors;
 
 public record LeagueDTO(Integer id, String name, String gameType, Instant createdAt,
                         String description, Integer currentSeason,
-                        List<ConferenceDTO> conferences, List<DivisionDTO> divisions, Integer createdBy) {
+                        List<ConferenceDTO> conferences, List<DivisionDTO> divisions,
+                        String location, Integer createdBy) {
 
     public LeagueDTO(League league) {
         this(league.getId(), league.getName(), league.getGameType(),
                 league.getCreatedAt(), league.getDescription(), league.getCurrentSeasonId(),
                 league.getConferences().stream().map(ConferenceDTO::new).collect(Collectors.toList()),
                 league.getDivisions().stream().map(DivisionDTO::new).collect(Collectors.toList()),
-                league.getCreatedBy().getId());
+                league.getLocation(), league.getCreatedBy().getId());
     }
 
 }

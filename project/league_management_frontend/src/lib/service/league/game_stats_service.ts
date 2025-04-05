@@ -9,11 +9,11 @@ A method to get game stats by game ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getGameStats(leagueId: number, seasonId: number, gameId: number): Promise<GameStats[]> {
+export async function getGameStats(leagueId: number, seasonId: number, gameId: number): Promise<GameStats[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/stats`);
 
     if (!response.ok) {
-        throw new Error('Failed to fetch game stats');
+        return [];
     }
 
     const text = await response.text();
@@ -28,11 +28,11 @@ A method to get game stats by game ID and team ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getGameStatsByTeam(leagueId: number, seasonId: number, gameId: number, teamId: number): Promise<GameStats[]> {
+export async function getGameStatsByTeam(leagueId: number, seasonId: number, gameId: number, teamId: number): Promise<GameStats[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/teams/${teamId}/stats/`);
 
     if (!response.ok) {
-        throw new Error('Failed to fetch game stats');
+        return [];
     }
 
     const text = await response.text();
@@ -47,11 +47,11 @@ A method to get all game stats by team ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getAllGameStats(leagueId: number, seasonId: number, accessToken: string): Promise<GameStats[]> {
+export async function getAllGameStats(leagueId: number, seasonId: number, accessToken: string): Promise<GameStats[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/stats`);
 
     if (!response.ok) {
-        throw new Error('Failed to fetch game stats');
+        return [];
     }
 
     const text = await response.text();
@@ -66,7 +66,7 @@ A method to update game stats by game ID and team ID
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function updateGameStats(leagueId: number, seasonId: number, gameId: number, gameStats: Partial<GameStats>[], accessToken: string): Promise<GameStats> {
+export async function updateGameStats(leagueId: number, seasonId: number, gameId: number, gameStats: Partial<GameStats>[], accessToken: string): Promise<GameStats | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}/stats`, {
         method: 'PATCH',
         headers: {
@@ -77,7 +77,7 @@ export async function updateGameStats(leagueId: number, seasonId: number, gameId
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update game stats');
+        return null;
     }
 
     const text = await response.text();

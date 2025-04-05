@@ -1,6 +1,5 @@
 'use client';
 
-import Column from "../../layout/column";
 import { Card, CardTitle } from "../../shadcn/card";
 import { PlayerCard } from "../cards/player/player_card";
 import { Player } from "@/lib/types/league/player";
@@ -8,20 +7,22 @@ import { Player } from "@/lib/types/league/player";
 // Define props interface with required fields
 interface PlayerViewProps {
     players: Player[];
-    leagueId: number;
     teamName: string;
 }
 
-export const PlayerView: React.FC<PlayerViewProps> = ({ players, leagueId, teamName }) => {
+/* 
+A component that displays a list of player
+
+@Author: IFD
+@Date: 2025-04-03
+*/
+export const PlayerView: React.FC<PlayerViewProps> = ({ players, teamName }) => {
     return (
-        <Column
-            expanded
-            width="full"
-        >
+        <>
             {players && players.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="w-1/2">
                     {players.map((player) => (
-                        <PlayerCard key={player.playerId} player={player} leagueId={leagueId} teamName={teamName} displayEdit={false} />
+                        <PlayerCard key={player.playerId} player={player} teamName={teamName} displayEdit={false} />
                     ))}
                 </div>
             ) : (
@@ -30,6 +31,6 @@ export const PlayerView: React.FC<PlayerViewProps> = ({ players, leagueId, teamN
                     <p>This team doesn't have any players yet.</p>
                 </Card>
             )}
-        </Column>
+        </>
     );
 }

@@ -8,6 +8,12 @@ import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 import Link from "next/link";
 
+/* 
+A simple home page for the League Management System.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 export default function Home() {
   return (
     <Page

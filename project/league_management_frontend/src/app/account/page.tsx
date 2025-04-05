@@ -9,6 +9,13 @@ import ChangePasswordDisplay from "@/lib/components/ui/display/change_password_d
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 
+/* 
+A page that displays the account information 
+of the user and allows them to change their password.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export default async function AccountPage() {
 
     return (

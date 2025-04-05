@@ -11,51 +11,62 @@ import { BodySmall } from "@/lib/components/layout/typography";
 import { Button } from "@/lib/components/shadcn/button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useUserData } from "@/lib/hooks/useUserData";
+import { League } from "@/lib/types/league/league";
+import { getLeague } from "@/lib/service/league/league_service";
 
 interface TeamCardListProps {
     leagueId?: number;
     useOwner?: boolean;
 }
 
+/* 
+A list of team cards for a given league. It fetches the 
+teams from the server and displays them in a list.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [teams, setTeams] = useState<Team[]>([]);
     const [activeTeamId, setActiveTeamId] = useState<number | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [league, setLeague] = useState<League>(); // Add local state for league name
     const { accessToken } = useAuth();
 
     const { user } = useUserData();
 
+    /* 
+    A function to fetch teams from the server.
 
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const fetchTeams = async () => {
         if (!leagueId && !useOwner) {
-            console.warn("Either leagueId or useOwner must be provided");
             return;
         }
 
         setIsLoading(true);
         try {
+
             let fetchedTeams: Team[] = [];
 
             if (leagueId) {
-                fetchedTeams = await getTeams(leagueId);
-                console.log(`Fetched ${fetchedTeams.length} teams by league ID:`, fetchedTeams);
+                fetchedTeams = await getTeams(leagueId) || [];
             } else if (useOwner && accessToken) {
                 const userTeams = await getAllUserTeams(accessToken);
                 fetchedTeams = userTeams || [];
-                console.log(`Fetched ${fetchedTeams.length} teams by owner:`, fetchedTeams);
             }
 
             // Ensure we have an array of teams
             if (!Array.isArray(fetchedTeams)) {
-                console.error("API returned non-array data:", fetchedTeams);
                 fetchedTeams = [];
             }
 
             setTeams(fetchedTeams);
         } catch (error: any) {
-            console.error("Error fetching teams:", error);
             toast({
                 title: "Error",
                 description: `Failed to fetch teams: ${error.message}`,
@@ -68,16 +79,35 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
         }
     };
 
-    // Use an effect to fetch teams when the component mounts or when dependencies change
-    useEffect(() => {
-        fetchTeams();
-    }, [leagueId, useOwner, accessToken]);
+    /* 
+    A useEffect hook to fetch teams when the
+    component mounts or when the leagueId or useOwner changes.
 
+    @Author: IFD
+    @Date: 2025-03-22
+    */
+    useEffect(() => {
+
+        fetchTeams();
+    }, [leagueId, useOwner, accessToken, user]);
+
+    /*
+    A function to handle editing a team.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleEdit = (teamId: number) => {
         setActiveTeamId(teamId);
         openDialog("editTeam");
     };
 
+    /* 
+    A function to handle deleting a team.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleDelete = (teamId: number) => {
         const team = teams.find((team) => team.teamId === teamId);
 
@@ -103,10 +133,24 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
         }
     };
 
+    /* 
+    A function to handle updating a team.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleUpdate = (updatedTeam: Team) => {
-        setTeams(teams.map((team) =>
-            team.teamId === updatedTeam.teamId ? updatedTeam : team
-        ));
+
+        setTeams((prevTeams) => {
+            const divExists = prevTeams.some((team) => team.teamId === updatedTeam.teamId);
+            if (divExists) {
+                return prevTeams.map((team) =>
+                    team.teamId === updatedTeam.teamId ? updatedTeam : team
+                );
+            } else {
+                return [...prevTeams, updatedTeam];
+            }
+        });
 
         if (dialogState['editTeam']) {
             closeDialog('editTeam');
@@ -145,7 +189,6 @@ const TeamCardList: React.FC<TeamCardListProps> = ({ leagueId, useOwner }) => {
                             team={team}
                             onDelete={() => handleDelete(team.teamId)}
                             onEdit={() => handleEdit(team.teamId)}
-                            leagueOwnerId={user?.id}
                         />
                         {dialogState['editTeam'] && activeTeamId === team.teamId && (
                             <AddEditTeamDialog

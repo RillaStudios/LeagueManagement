@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PlayerRequest {
 
+    private Integer playerId;
     private String name;
     private String height;
     private String weight;

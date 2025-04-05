@@ -1,3 +1,9 @@
+/* 
+A TypeScript interface representing a player in a league.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export interface Player {
     playerId: number;
     name: string;

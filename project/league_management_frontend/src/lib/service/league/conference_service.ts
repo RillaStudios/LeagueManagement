@@ -13,7 +13,7 @@ A function that gets all the divisions in a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function getConferences(leagueId: number): Promise<Conference[]> {
+export async function getConferences(leagueId: number): Promise<Conference[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/`, {
         method: 'GET',
         headers: {
@@ -24,7 +24,7 @@ export async function getConferences(leagueId: number): Promise<Conference[]> {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch conferences');
+        return [];
     }
 
     const text = await response.text();
@@ -55,7 +55,7 @@ export async function getConference(leagueId: number, conferenceId: number): Pro
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch conference');
+        return null;
     }
 
     const text = await response.text();
@@ -75,7 +75,7 @@ A function that adds a conference to a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function addConference(leagueId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference> {
+export async function addConference(leagueId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/`, {
         method: 'POST',
         headers: {
@@ -87,7 +87,7 @@ export async function addConference(leagueId: number, conference: Partial<Confer
     });
 
     if (!response.ok) {
-        throw new Error('Failed to add conference');
+        return null;
     }
 
     const text = await response.text();
@@ -108,7 +108,7 @@ A function that updates a conference in a league
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function updateConference(leagueId: number, conferenceId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference> {
+export async function updateConference(leagueId: number, conferenceId: number, conference: Partial<Conference>, accessToken: string): Promise<Conference | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/conferences/${conferenceId}`, {
         method: 'PATCH',
         headers: {
@@ -120,7 +120,7 @@ export async function updateConference(leagueId: number, conferenceId: number, c
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update conference');
+        return null;
     }
 
     const text = await response.text();

@@ -48,7 +48,6 @@ const PlayerDisplay: React.FC<PlayerDisplayProps> = ({ leagueId }) => {
 
                 setFilteredPlayers(enrichedPlayers); // Initially show all players
             } catch (error) {
-                console.error("Failed to fetch players:", error);
             }
         }
 

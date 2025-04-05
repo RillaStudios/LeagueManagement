@@ -34,13 +34,11 @@ export function useLeagues() {
             getAllLeagues()
                 // Set the user data
                 .then(function (leagues) {
-                    console.log("Fetched leagues data:", leagues);
 
                     return setLeagues(leagues);
                 })
                 // Handle errors
                 .catch((error) => {
-                    console.error("Failed to fetch leagues data:", error);
                     setLeagues(null);
                 })
                 // Set loading status to false

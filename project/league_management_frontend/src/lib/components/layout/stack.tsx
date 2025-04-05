@@ -7,6 +7,12 @@ interface StackProps {
     children: React.ReactNode;
 }
 
+/* 
+A Stack component that arranges its children in a vertical stack with customizable alignment and spacing.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Stack: React.FC<StackProps> = ({
     gap = '0',
     mainAxisAlign = 'start',

@@ -9,7 +9,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useUserData } from "@/lib/hooks/useUserData";
 import { useAuth } from "@/lib/hooks/useAuth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+/* 
+A component that displays authentication buttons in the header.
+
+@Author: IFD
+@Date: 2025-02-25
+*/
 const HeaderAuthButtons: React.FC = () => {
     // Get authentication state
     const { isAuthenticated, openAuthForm, logout } = useAuth();
@@ -46,7 +53,10 @@ const HeaderAuthButtons: React.FC = () => {
                             <Link href={"/account"} passHref><DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem></Link>
                             <Link href={"/account/leagues"} passHref><DropdownMenuItem className="cursor-pointer">Leagues</DropdownMenuItem></Link>
                             <Link href={"/account/teams"}><DropdownMenuItem className="cursor-pointer">Teams</DropdownMenuItem></Link>
-                            <DropdownMenuItem className="cursor-pointer" onClick={logout}>Logout</DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => {
+                                logout();
+                                redirect("/");
+                            }}>Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
 

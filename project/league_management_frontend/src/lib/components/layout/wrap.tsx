@@ -7,6 +7,12 @@ interface WrapProps {
     children: React.ReactNode;
 }
 
+/* 
+A flexbox wrapper component that allows for flexible layout of child components.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Wrap: React.FC<WrapProps> = ({
     gap = '4',
     justifyContent = 'flex-start',

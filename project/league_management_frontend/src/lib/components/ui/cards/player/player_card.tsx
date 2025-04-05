@@ -2,7 +2,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "../../../shadcn/button";
 import { Player } from "@/lib/types/league/player";
 
-export function PlayerCard({ leagueId, player, onDelete, onEdit, teamName, displayEdit }: { displayEdit?: boolean, leagueId: number, player: Player, onDelete?: () => void, onEdit?: () => void, teamName: string }) {
+/* 
+A card component that displays the details of a player.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
+export function PlayerCard({ player, onDelete, onEdit, teamName, displayEdit }: { displayEdit?: boolean, player: Player, onDelete?: () => void, onEdit?: () => void, teamName: string }) {
 
     return (
         <Card className="w-full mb-4">

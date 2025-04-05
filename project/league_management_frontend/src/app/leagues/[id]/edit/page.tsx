@@ -24,7 +24,15 @@ import StatDisplay from "@/lib/components/ui/display/stat_display";
 import GameCardList from "@/lib/components/ui/cards/game/game_card_list";
 import NewsLeagueCardList from "@/lib/components/ui/cards/news_league/news_league_card_list";
 import PlayerCardList from "@/lib/components/ui/cards/player/player_card_list";
+import DelLeagueButton from "@/lib/components/ui/buttons/del_league_button";
 
+/*
+A page that displays the league attributes and allows
+editing of such by a user with permissions.
+
+@Author: IFD
+@Date: 2025-04-01
+ */
 export default async function LeagueEditPage({ params }: { params: Promise<{ id: number }> }) {
 
     const { id } = await params;
@@ -77,6 +85,7 @@ export default async function LeagueEditPage({ params }: { params: Promise<{ id:
                                 />
                                 <Separator className="mt-4 md:mt-8 w-full md:w-2/3" />
                                 <AddLeagueDisplay isEdit leagueId={id} />
+                                <DelLeagueButton leagueId={id} />
                             </Column>
                             <Column
                                 width="full"

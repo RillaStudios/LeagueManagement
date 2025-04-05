@@ -15,7 +15,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function getVenues(leagueId: number): Promise<Venue[]> {
+export async function getVenues(leagueId: number): Promise<Venue[] | []> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/`, {
         method: 'GET',
         headers: {
@@ -26,7 +26,7 @@ export async function getVenues(leagueId: number): Promise<Venue[]> {
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch venues');
+        return [];
     }
 
     const text = await res.text();
@@ -49,7 +49,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function getVenue(leagueId: number, venueId: number): Promise<Venue> {
+export async function getVenue(leagueId: number, venueId: number): Promise<Venue | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/${venueId}`, {
         method: 'GET',
         headers: {
@@ -60,7 +60,7 @@ export async function getVenue(leagueId: number, venueId: number): Promise<Venue
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch venue');
+        return null;
     }
 
     const venue: Venue = await res.json();
@@ -81,7 +81,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function addVenue(leagueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue> {
+export async function addVenue(leagueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/`, {
         method: 'POST',
         headers: {
@@ -94,7 +94,7 @@ export async function addVenue(leagueId: number, venue: Partial<Venue>, accessTo
     });
 
     if (!res.ok) {
-        throw new Error('Failed to add venue');
+        return null;
     }
 
     const newVenue: Venue = await res.json();
@@ -116,7 +116,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateVenue(leagueId: number, venueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue> {
+export async function updateVenue(leagueId: number, venueId: number, venue: Partial<Venue>, accessToken: string): Promise<Venue | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/venues/${venueId}`, {
         method: 'PATCH',
         headers: {
@@ -129,7 +129,7 @@ export async function updateVenue(leagueId: number, venueId: number, venue: Part
     });
 
     if (!res.ok) {
-        throw new Error('Failed to update venue');
+        return null;
     }
 
     const newVenue: Venue = await res.json();

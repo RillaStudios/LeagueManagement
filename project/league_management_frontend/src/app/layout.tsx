@@ -31,6 +31,12 @@ export const metadata: Metadata = {
   robots: "index, follow",
 };
 
+/* 
+A simple layout for the League Management System.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -14,6 +14,12 @@ type ContainerProps = {
     className?: string;
 };
 
+/* 
+A generic container component that can be used to wrap any content.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 export default function Container({
     children,
     color = "bg-transparent", // Default background color

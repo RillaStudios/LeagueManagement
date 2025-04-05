@@ -98,7 +98,7 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
                 name: values.conferenceName,
             };
 
-            let updatedConference: Conference;
+            let updatedConference: Conference | null;
 
             if (isEdit) {
 
@@ -108,6 +108,10 @@ const ConferenceForm: React.FC<ConferenceFormProps> = ({ leagueId, isEdit, confe
 
                 updatedConference = await addConference(leagueId, newConference, accessToken!);
 
+            }
+
+            if (!updatedConference) {
+                throw new Error("Conference could not be added or updated.");
             }
 
             if (onSave) {

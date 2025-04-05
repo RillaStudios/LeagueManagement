@@ -7,6 +7,13 @@ interface TextProps {
     className?: string;
 }
 
+/* 
+A collection of typography components for displaying text in different styles and sizes.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
+
 const DisplayLarge: React.FC<TextProps> = ({ text, align = "left", color, weight = "normal", italic = false, className = "" }) => (
     <h1 className={`text-2xl md:text-3xl lg:text-4xl text-${align} ${color ? `text-${color}` : ""} font-${weight} ${italic ? "italic" : ""} ${className}`.trim()}>
         {text}

@@ -15,6 +15,13 @@ interface DivisionCardListProps {
     leagueId: number;
 }
 
+/* 
+A list of division cards for a given league. It fetches the 
+divisions from the server and displays them in a list.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
 
     const { dialogState, openDialog, closeDialog } = useDialog();
@@ -25,6 +32,12 @@ const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+    /* 
+    A function to fetch divisions from the server.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const fetchDivisions = async () => {
         await getDivisions(leagueId).then((response) => {
             setDivisions(response); // Set the conferences in the state
@@ -42,15 +55,34 @@ const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
         );
     };
 
+    /* 
+    A useEffect hook to fetch divisions when the
+    component mounts or when the leagueId changes.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     useEffect(() => {
         fetchDivisions();
     }, [leagueId]);
 
+    /* 
+    A function to handle editing a division.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleEdit = (divisionId: number) => {
         setActiveDivisionId(divisionId); // Set the active division ID
         openDialog("editDivision"); // Open the dialog
     };
 
+    /* 
+    A function to handle deleting a division.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleDelete = (divisionId: number) => {
         const division = divisions.find((div) => div.id === divisionId);
 
@@ -77,11 +109,24 @@ const DivisionCardList: React.FC<DivisionCardListProps> = ({ leagueId }) => {
         }
     };
 
+    /* 
+    A function to handle updating a division.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleUpdate = (updatedDivision: Division) => {
-        // Update the division in the list
-        setDivisions(divisions.map((division) =>
-            division.id === updatedDivision.id ? updatedDivision : division
-        ));
+
+        setDivisions((prevDivisions) => {
+            const divExists = prevDivisions.some((div) => div.id === updatedDivision.id);
+            if (divExists) {
+                return prevDivisions.map((div) =>
+                    div.id === updatedDivision.id ? updatedDivision : div
+                );
+            } else {
+                return [...prevDivisions, updatedDivision];
+            }
+        });
 
         // Close dialogs based on which one is open
         if (dialogState['editDivision']) {

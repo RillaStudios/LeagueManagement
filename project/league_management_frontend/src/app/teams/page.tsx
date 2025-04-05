@@ -4,6 +4,12 @@ import TeamList from "@/lib/components/ui/display/team_list";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 
+/* 
+A function to render the teams page
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export default function TeamsPage() {
     return (
         <Page

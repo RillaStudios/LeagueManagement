@@ -66,6 +66,11 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionI
 
                 if (isEdit) {
                     const newDivision = await getDivision(leagueId, divisionId!);
+
+                    if (!newDivision) {
+                        throw new Error("Division not found");
+                    }
+
                     form.setValue('divName', newDivision.divisionName || '');
                     form.setValue('selectConference', newDivision.conferenceId?.toString() || '');
                 }
@@ -87,11 +92,15 @@ const DivisionForm: React.FC<DivisionFormProps> = ({ leagueId, isEdit, divisionI
                 conferenceId: parseInt(values.selectConference),
             };
 
-            let updatedDivision: Division;
+            let updatedDivision: Division | null;
             if (isEdit) {
                 updatedDivision = await updateDivision(leagueId, divisionId!, newDivision, accessToken!);
             } else {
                 updatedDivision = await addDivision(leagueId, newDivision, accessToken!);
+            }
+
+            if (!updatedDivision) {
+                throw new Error("Division not found");
             }
 
             if (onSave) {

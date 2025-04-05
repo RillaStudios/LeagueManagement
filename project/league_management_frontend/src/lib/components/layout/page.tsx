@@ -6,6 +6,12 @@ interface PageProps {
     children: React.ReactNode;
 }
 
+/* 
+A generic page layout component that can be used to wrap any page in the app.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Page: React.FC<PageProps> = ({
     header,
     footer,

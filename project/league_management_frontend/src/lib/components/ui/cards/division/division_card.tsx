@@ -2,6 +2,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "../../../shadcn/button";
 import { Division } from "@/lib/types/league/division";
 
+/* 
+A card component to display a division in a league.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 export function DivisionCard({ division, onDelete, onEdit }: { division: Division, onDelete: () => void, onEdit: () => void }) {
 
     return (

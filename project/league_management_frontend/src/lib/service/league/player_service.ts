@@ -3,11 +3,17 @@ import { Player } from "@/lib/types/league/player";
 // The URL of the API
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export async function getPlayersByLeague(leagueId: number): Promise<Player[]> {
+/* 
+A function to get all the players in the league
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function getPlayersByLeague(leagueId: number): Promise<Player[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/`);
 
     if (!response.ok) {
-        throw new Error(`Error fetching players: ${response.statusText}`);
+        return [];
     }
 
     const text = await response.text();
@@ -17,12 +23,18 @@ export async function getPlayersByLeague(leagueId: number): Promise<Player[]> {
     return players;
 }
 
-export async function getPlayersByTeam(leagueId: number, teamId: number): Promise<Player[]> {
+/* 
+A function to get all the players by team id
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function getPlayersByTeam(leagueId: number, teamId: number): Promise<Player[] | null> {
 
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/team/${teamId}`);
 
     if (!response.ok) {
-        throw new Error(`Error fetching players: ${response.statusText}`);
+        return null;
     }
 
     const text = await response.text();
@@ -32,11 +44,17 @@ export async function getPlayersByTeam(leagueId: number, teamId: number): Promis
     return players;
 }
 
-export async function getPlayer(leagueId: number, playerId: number): Promise<Player> {
+/* 
+A function to get a player by id
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function getPlayer(leagueId: number, playerId: number): Promise<Player | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/${playerId}`);
 
     if (!response.ok) {
-        throw new Error(`Error fetching player: ${response.statusText}`);
+        return null;
     }
 
     const text = await response.text();
@@ -46,7 +64,13 @@ export async function getPlayer(leagueId: number, playerId: number): Promise<Pla
     return player;
 }
 
-export async function createPlayer(leagueId: number, player: Partial<Player>, accessToken: string): Promise<Player> {
+/* 
+A function to create a player
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function createPlayer(leagueId: number, player: Partial<Player>, accessToken: string): Promise<Player | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/`, {
         method: "POST",
         headers: {
@@ -57,7 +81,7 @@ export async function createPlayer(leagueId: number, player: Partial<Player>, ac
     });
 
     if (!response.ok) {
-        throw new Error(`Error creating player: ${response.statusText}`);
+        return null;
     }
 
     const text = await response.text();
@@ -67,7 +91,13 @@ export async function createPlayer(leagueId: number, player: Partial<Player>, ac
     return playerRes;
 }
 
-export async function updatePlayer(leagueId: number, playerId: number, player: Partial<Player>, accessToken: string): Promise<Player> {
+/* 
+A function to update a player
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function updatePlayer(leagueId: number, playerId: number, player: Partial<Player>, accessToken: string): Promise<Player | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/${playerId}`, {
         method: "PATCH",
         headers: {
@@ -78,7 +108,7 @@ export async function updatePlayer(leagueId: number, playerId: number, player: P
     });
 
     if (!response.ok) {
-        throw new Error(`Error updating player: ${response.statusText}`);
+        return null;
     }
 
     const text = await response.text();
@@ -88,6 +118,12 @@ export async function updatePlayer(leagueId: number, playerId: number, player: P
     return playerRes;
 }
 
+/* 
+A function to delete a player
+
+@Author: IFD
+@Date: 2025-03-23
+*/
 export async function deletePlayer(leagueId: number, teamId: number, playerId: number, accessToken: string): Promise<void> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/players/${playerId}`, {
         method: "DELETE",

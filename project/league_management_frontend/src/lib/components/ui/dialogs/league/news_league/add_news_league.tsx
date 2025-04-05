@@ -23,7 +23,7 @@ A dialog component for adding or editing a news post in a league.
 */
 const AddEditNewsLeagueDialog: React.FC<AddEditNewsLeagueDialogProps> = ({ leagueId, isEdit, newsId, onClose, onSave }) => {
     const { dialogState, closeDialog } = useDialog();
-    const isOpen = isEdit ? dialogState["editDivision"] : true;
+    const isOpen = isEdit ? dialogState["editNewsLeague"] : true;
 
     const handleSave = (updatedNews: NewsLeague) => {
         if (onSave) {
@@ -49,7 +49,7 @@ const AddEditNewsLeagueDialog: React.FC<AddEditNewsLeagueDialogProps> = ({ leagu
                 <DialogOverlay onClick={() => closeDialog(isEdit ? "editNewsLeague" : "addNewsLeague")} className="fixed inset-0 bg-black/30 backdrop-blur-none" />
                 <DialogContent onFocusOutside={() => closeDialog(isEdit ? "editNewsLeague" : "addNewsLeague")} className="w-full max-w-[300px] md:max-w-[500px] bg-popover">
                     <DialogHeader>
-                        <DialogTitle>{isEdit ? "Edit Game" : "Add Game"}</DialogTitle>
+                        <DialogTitle>{isEdit ? "Edit News" : "Add News"}</DialogTitle>
                         <DialogDescription>
                             {isEdit ? "Edit " : "Add "} the following news post for the league.
                         </DialogDescription>

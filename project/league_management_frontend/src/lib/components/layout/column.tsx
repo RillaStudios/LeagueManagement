@@ -11,6 +11,12 @@ interface ColumnProps {
     children: React.ReactNode;
 }
 
+/* 
+A flexbox column layout component that allows for easy alignment and spacing of child elements.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Column: React.FC<ColumnProps> = ({
     gap = 0,
     mainAxisAlign = 'start',

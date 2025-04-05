@@ -12,7 +12,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-23
 */
-export async function getTeams(leagueId: number): Promise<Team[]> {
+export async function getTeams(leagueId: number): Promise<Team[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/`, {
         method: 'GET',
         headers: {
@@ -23,7 +23,7 @@ export async function getTeams(leagueId: number): Promise<Team[]> {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch teams');
+        return [];
     }
 
     const text = await response.text();
@@ -33,7 +33,16 @@ export async function getTeams(leagueId: number): Promise<Team[]> {
     return teams;
 }
 
-export async function getAllUserTeams(accessToken: string): Promise<Team[] | null> {
+/* 
+A function to get all the teams in the league that the user owns
+
+Parameters:
+- accessToken: The access token of the user
+
+@Author: IFD
+@Date: 2025-03-23
+*/
+export async function getAllUserTeams(accessToken: string): Promise<Team[] | []> {
 
     // Send a GET request to the API to get all the leagues that a user owns
     const response = await fetch(`${API_URL}/account/teams`, {
@@ -47,11 +56,12 @@ export async function getAllUserTeams(accessToken: string): Promise<Team[] | nul
 
     // If the response is not ok, throw an error
     if (!response.ok) {
-        return null;
+        return [];
     }
 
-    // Parse the response as JSON
-    const teams: Team[] = await response.json();
+    const text = await response.text();
+
+    const teams: Team[] = text ? JSON.parse(text) : [];
 
     // Return the leagues
     return teams;
@@ -81,7 +91,7 @@ export async function getTeam(leagueId: number, teamId: number): Promise<Team | 
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch team');
+        return null;
     }
 
     const text = await response.text();
@@ -92,6 +102,18 @@ export async function getTeam(leagueId: number, teamId: number): Promise<Team | 
 }
 
 
+/* 
+A function to get a team by ID
+
+Parameters:
+- teamId: The ID of the team
+
+Returns:
+- The team object
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export async function getTeamById(teamId: number): Promise<Team | null> {
     const response = await fetch(`${API_URL}/teams/${teamId}`, {
         method: 'GET',
@@ -103,7 +125,7 @@ export async function getTeamById(teamId: number): Promise<Team | null> {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch team');
+        return null;
     }
 
     const text = await response.text();
@@ -127,7 +149,7 @@ A function to get teams by season
 @Author: IFD
 @Date: 2025-03-29
 */
-export async function getTeamsBySeason(leagueId: number, seasonId: number): Promise<Team[]> {
+export async function getTeamsBySeason(leagueId: number, seasonId: number): Promise<Team[] | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/season/${seasonId}`, {
         method: 'GET',
         headers: {
@@ -138,7 +160,7 @@ export async function getTeamsBySeason(leagueId: number, seasonId: number): Prom
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch team');
+        return null;
     }
 
     const text = await response.text();
@@ -162,7 +184,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function createTeam(leagueId: number, team: Partial<Team>, accessToken: string): Promise<Team> {
+export async function createTeam(leagueId: number, team: Partial<Team>, accessToken: string): Promise<Team | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/`, {
         method: 'POST',
         headers: {
@@ -175,9 +197,7 @@ export async function createTeam(leagueId: number, team: Partial<Team>, accessTo
     });
 
     if (!response.ok) {
-        const errorMessage = await response.text(); // Read error message from response
-        console.error('Failed to create team:', errorMessage);
-        throw new Error(`Failed to create team: ${errorMessage}`);
+        return null;
     }
 
     const text = await response.text();
@@ -200,7 +220,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateTeam(leagueId: number, teamId: number, team: Partial<Team>, accessToken: string): Promise<Team> {
+export async function updateTeam(leagueId: number, teamId: number, team: Partial<Team>, accessToken: string): Promise<Team | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/teams/${teamId}`, {
         method: 'PATCH',
         headers: {
@@ -213,7 +233,7 @@ export async function updateTeam(leagueId: number, teamId: number, team: Partial
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update team');
+        return null;
     }
 
     const text = await response.text();

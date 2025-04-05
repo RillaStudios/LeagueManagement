@@ -12,7 +12,7 @@ A method to get all divisions for a league
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function getDivisions(leagueId: number): Promise<Division[]> {
+export async function getDivisions(leagueId: number): Promise<Division[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/`, {
         method: 'GET',
         headers: {
@@ -23,7 +23,7 @@ export async function getDivisions(leagueId: number): Promise<Division[]> {
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch divisions');
+        return [];
     }
 
     const divisions: Division[] = await response.json();
@@ -41,7 +41,7 @@ A method to get a division by ID
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function getDivision(leagueId: number, divisionId: number): Promise<Division> {
+export async function getDivision(leagueId: number, divisionId: number): Promise<Division | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/${divisionId}`, {
         method: 'GET',
         headers: {
@@ -52,7 +52,7 @@ export async function getDivision(leagueId: number, divisionId: number): Promise
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch division');
+        return null;
     }
 
     const division: Division = await response.json();
@@ -70,7 +70,7 @@ A method to add a division to a league
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function addDivision(leagueId: number, division: Partial<Division>, accessToken: string): Promise<Division> {
+export async function addDivision(leagueId: number, division: Partial<Division>, accessToken: string): Promise<Division | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/`, {
         method: 'POST',
         headers: {
@@ -83,7 +83,7 @@ export async function addDivision(leagueId: number, division: Partial<Division>,
     });
 
     if (!response.ok) {
-        throw new Error('Failed to add division');
+        return null;
     }
 
     const newDivision: Division = await response.json();
@@ -102,7 +102,7 @@ A method to update a division
 @Author: IFD
 @Since: 2025-03-22
 */
-export async function updateDivision(leagueId: number, divisionId: number, division: Partial<Division>, accessToken: string): Promise<Division> {
+export async function updateDivision(leagueId: number, divisionId: number, division: Partial<Division>, accessToken: string): Promise<Division | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/divisions/${divisionId}`, {
         method: 'PATCH',
         headers: {
@@ -115,7 +115,7 @@ export async function updateDivision(leagueId: number, divisionId: number, divis
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update division');
+        return null;
     }
 
     const updatedDivision: Division = await response.json();

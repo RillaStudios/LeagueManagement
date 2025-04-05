@@ -4,6 +4,12 @@ import LeagueList from "@/lib/components/ui/display/league_list";
 import Footer from "@/lib/components/ui/layout/footer/footer";
 import Header from "@/lib/components/ui/layout/header/header";
 
+/* 
+A page that displays all leagues.
+
+@Author: IFD
+@Date: 2025-04-01
+*/
 export default function LeaguesPage() {
     return (
         <Page

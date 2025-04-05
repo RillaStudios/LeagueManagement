@@ -4,7 +4,13 @@ import { access } from "fs";
 // The URL of the API
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getNewsLeagues = async (leagueId: number): Promise<NewsLeague[]> => {
+/* 
+A function to get all the news leagues in the league
+
+@Author: IFD
+@Date: 2025-03-26
+*/
+export const getNewsLeagues = async (leagueId: number): Promise<NewsLeague[] | []> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/`, {
         method: 'GET',
         headers: {
@@ -14,13 +20,19 @@ export const getNewsLeagues = async (leagueId: number): Promise<NewsLeague[]> =>
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch news leagues');
+        return [];
     }
 
     return response.json();
 }
 
-export const getNewsLeague = async (leagueId: number, newsId: number): Promise<NewsLeague> => {
+/* 
+A function to get a news league by its ID
+
+@Author: IFD
+@Date: 2025-03-26
+*/
+export const getNewsLeague = async (leagueId: number, newsId: number): Promise<NewsLeague | null> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/${newsId}`, {
         method: 'GET',
         headers: {
@@ -30,13 +42,19 @@ export const getNewsLeague = async (leagueId: number, newsId: number): Promise<N
     });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch news league');
+        return null;
     }
 
     return response.json();
 }
 
-export const createNewsLeague = async (leagueId: number, news: Partial<NewsLeague>, accessToken: string): Promise<NewsLeague> => {
+/* 
+A function to create a news league
+
+@Author: IFD
+@Date: 2025-03-26
+*/
+export const createNewsLeague = async (leagueId: number, news: Partial<NewsLeague>, accessToken: string): Promise<NewsLeague | null> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/`, {
         method: 'POST',
         headers: {
@@ -48,13 +66,19 @@ export const createNewsLeague = async (leagueId: number, news: Partial<NewsLeagu
     });
 
     if (!response.ok) {
-        throw new Error('Failed to create news league');
+        return null;
     }
 
     return response.json();
 }
 
-export const updateNewsLeague = async (leagueId: number, newsId: number, news: Partial<NewsLeague>, accessToken: string): Promise<NewsLeague> => {
+/* 
+A function to update a news league
+
+@Author: IFD
+@Date: 2025-03-26
+*/
+export const updateNewsLeague = async (leagueId: number, newsId: number, news: Partial<NewsLeague>, accessToken: string): Promise<NewsLeague | null> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/${newsId}`, {
         method: 'PATCH',
         headers: {
@@ -66,12 +90,18 @@ export const updateNewsLeague = async (leagueId: number, newsId: number, news: P
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update news league');
+        return null;
     }
 
     return response.json();
 }
 
+/* 
+A function to delete a news league
+
+@Author: IFD
+@Date: 2025-03-26
+*/
 export const deleteNewsLeague = async (leagueId: number, newsId: number, accessToken: string): Promise<void> => {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/news/${newsId}`, {
         method: 'DELETE',

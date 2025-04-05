@@ -16,13 +16,14 @@ import { Input } from "@/lib/components/shadcn/input";
 import { useEffect, useState } from "react";
 import useLoading from "@/lib/hooks/useLoading";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/lib/components/shadcn/select";
-import { getTeams } from "@/lib/service/league/team_service";
+import { getAllUserTeams, getTeams } from "@/lib/service/league/team_service";
 import { Team } from "@/lib/types/league/team";
 import { toast } from "@/hooks/use-toast";
 import { createPlayer, getPlayer, updatePlayer } from "@/lib/service/league/player_service";
 import { Player } from "@/lib/types/league/player";
 import { DatePicker } from "@/lib/components/shadcn/input_date";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useUserData } from "@/lib/hooks/useUserData";
 
 const formSchema = z.object({
     name: z.string().min(1, {
@@ -48,6 +49,7 @@ interface TeamFormProps {
     playerId?: number;
     isEdit?: boolean;
     onSave?: (updatedPlayer: Player) => void;
+    coachEdit?: boolean;
 }
 
 /* 
@@ -56,11 +58,12 @@ A form component for adding or editing a player in a league. It uses react-hook-
 @Author: IFD
 @Date: 2025-04-01
 */
-const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSave }) => {
+const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSave, coachEdit }) => {
     const [serverError, setServerError] = useState<string | null>(null);
     const [teams, setTeams] = useState<Team[] | null>(null);
     const { loading, setLoading } = useLoading();
     const { accessToken } = useAuth(); // Get the access token from the auth context
+    const { user } = useUserData(); // Get the user data from the user context
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -75,29 +78,39 @@ const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSav
     });
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchTeams = async () => {
             try {
                 setLoading(true);
 
-                const teams = await getTeams(leagueId);
-                setTeams(teams);
+                if (user && coachEdit) {
+                    await getAllUserTeams(accessToken!).then((response) => {
+                        setTeams(response);
 
-                if (isEdit && playerId) {
-
-                    const newPlayer = await getPlayer(leagueId, playerId);
-
-                    const teamName = teams.find((team) => team.teamId === newPlayer.teamId)?.teamName || "N/A";
-
-                    form.setValue('name', newPlayer?.name || '');
-                    form.setValue('weight', newPlayer?.weight.toString() || '');
-                    form.setValue('height', newPlayer?.height.toString() || '');
-                    form.setValue('skillLevel', newPlayer?.skillLevel || '');
-                    form.setValue('dob', newPlayer?.dob || new Date());
-                    form.setValue('teamId', teamName || '');
-
+                        if (leagueId) {
+                            leagueId = response[0].leagueId;
+                        }
+                    }).catch((error) => {
+                        toast({
+                            title: "Error",
+                            description: `Failed to fetch teams: ${error.message}`,
+                            variant: "destructive",
+                            duration: 2000,
+                        });
+                    });
+                } else {
+                    if (leagueId) {
+                        await getTeams(leagueId!).then((response) => {
+                            setTeams(response);
+                        }).catch((error) => {
+                            toast({
+                                title: "Error",
+                                description: `Failed to fetch teams: ${error.message}`,
+                                variant: "destructive",
+                                duration: 2000,
+                            });
+                        });
+                    }
                 }
-
-
             } catch (error) {
                 setServerError(error instanceof Error ? error.message : 'An error occurred');
             } finally {
@@ -105,14 +118,45 @@ const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSav
             }
         };
 
-        fetchData();
-    }, [isEdit, form]);
+        fetchTeams();
+    }, [user, coachEdit, leagueId, accessToken]);
+
+    // Separate useEffect for loading player data after teams are loaded
+    useEffect(() => {
+        const fetchPlayerData = async () => {
+            if (isEdit && playerId && teams) {
+                try {
+                    setLoading(true);
+                    const newPlayer = await getPlayer(leagueId, playerId);
+
+                    if (newPlayer) {
+                        const team = teams.find((team) => team.teamId === newPlayer.teamId);
+                        const teamName = team?.teamName || "N/A";
+
+                        form.setValue('name', newPlayer.name || '');
+                        form.setValue('weight', newPlayer.weight.toString() || '');
+                        form.setValue('height', newPlayer.height.toString() || '');
+                        form.setValue('skillLevel', newPlayer.skillLevel || '');
+                        form.setValue('dob', newPlayer.dob || new Date());
+                        form.setValue('teamId', team ? team.teamId.toString() : '');
+                    }
+                } catch (error) {
+                    setServerError(error instanceof Error ? error.message : 'An error occurred');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchPlayerData();
+    }, [isEdit, playerId, teams, leagueId, form]);
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
             setLoading(true);
 
             const newPlayer: Partial<Player> = {
+                playerId: playerId,
                 name: values.name,
                 weight: parseInt(values.weight),
                 height: parseInt(values.height),
@@ -125,11 +169,24 @@ const PlayerForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, playerId, onSav
 
             if (isEdit && playerId) {
                 // Update the team if editing
-                updatedPlayer = await updatePlayer(leagueId, playerId, newPlayer, accessToken!);
+                const result = await updatePlayer(leagueId, playerId, newPlayer, accessToken!);
+                if (!result) throw new Error("Failed to update player");
+                updatedPlayer = result;
 
             } else {
                 // Create a new team if not editing
-                updatedPlayer = await createPlayer(leagueId, newPlayer, accessToken!);
+                // Use the team's ID from the form field, which is already a string ID
+                newPlayer.teamId = parseInt(values.teamId);
+
+                const team = teams?.find((team) => team.teamId === newPlayer.teamId);
+
+                if (!team) throw new Error("Team not found");
+
+                if (!team.leagueId) throw new Error("League ID not found for the team");
+
+                const result = await createPlayer(team?.leagueId, newPlayer, accessToken!);
+                if (!result) throw new Error("Failed to create player");
+                updatedPlayer = result;
             }
 
             if (onSave) {

@@ -14,6 +14,7 @@ interface AddEditPlayerDialogProps {
     isEdit?: boolean;
     onSave?: (updatedPlayer: Player) => void;
     onClose?: () => void; // Add this prop
+    coachEdit?: boolean; // Optional prop to indicate if the user is a coach
 }
 
 /* 
@@ -22,7 +23,7 @@ A dialog component for adding or editing a player in a league.
 @Author: IFD
 @Date: 2025-04-01
 */
-const AddEditPlayerDialog: React.FC<AddEditPlayerDialogProps> = ({ leagueId, isEdit, playerId, onSave, onClose }) => {
+const AddEditPlayerDialog: React.FC<AddEditPlayerDialogProps> = ({ leagueId, isEdit, playerId, onSave, onClose, coachEdit }) => {
     const { dialogState, closeDialog } = useDialog();
 
     // If it's an edit dialog, use dialogState, otherwise assume it's always open (controlled by parent)
@@ -67,6 +68,7 @@ const AddEditPlayerDialog: React.FC<AddEditPlayerDialogProps> = ({ leagueId, isE
                         isEdit={isEdit}
                         playerId={playerId}
                         onSave={handleSave}
+                        coachEdit={coachEdit}
                     />
                 </DialogContent>
             </DialogPortal>

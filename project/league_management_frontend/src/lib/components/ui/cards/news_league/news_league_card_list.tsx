@@ -15,6 +15,13 @@ interface NewsLeagueCardListProps {
     leagueId: number;
 }
 
+/* 
+A list of news league cards for a given league. It fetches the 
+news leagues from the server and displays them in a list.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => {
     const { dialogState, openDialog, closeDialog } = useDialog();
     const [news, setNews] = useState<NewsLeague[]>([]);
@@ -24,6 +31,12 @@ const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => 
     // Add local state for add dialog
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
+    /* 
+    A function to fetch news leagues from the server.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const fetchNews = async () => {
         try {
             const response = await getNewsLeagues(leagueId);
@@ -38,15 +51,34 @@ const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => 
         }
     };
 
+    /* 
+    A useEffect hook to fetch news leagues when the
+    component mounts or when the leagueId changes.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     useEffect(() => {
         fetchNews();
     }, [leagueId]);
 
+    /* 
+    A function to handle the edit action for a news item.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleEdit = (newsId: number) => {
         setActiveNewsId(newsId);
         openDialog("editNewsLeague");
     };
 
+    /* 
+    A function to handle the delete action for a news item.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleDelete = (newsId: number) => {
 
         const newsItem = news.find((newsRes) => newsRes.leagueNewsId === newsId);
@@ -67,6 +99,12 @@ const NewsLeagueCardList: React.FC<NewsLeagueCardListProps> = ({ leagueId }) => 
 
     };
 
+    /* 
+    A function to handle the update action for a news item.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleUpdate = (updatedNews: NewsLeague) => {
         setNews((prevNews) => {
             const newsExists = prevNews.some((news) => news.leagueNewsId === updatedNews.leagueNewsId);

@@ -110,16 +110,19 @@ const TeamForm: React.FC<TeamFormProps> = ({ leagueId, isEdit, teamId, onSave })
                 ownerId: parseInt(values.selectedOwner),
             };
 
-            let updatedTeam: Team;
+            let updatedTeam: Team | null;
 
             if (isEdit && teamId) {
                 // Update the team if editing
                 updatedTeam = await updateTeam(leagueId, teamId, newTeam, accessToken!);
 
-                console.log("Updated team:", updatedTeam);
             } else {
                 // Create a new team if not editing
                 updatedTeam = await createTeam(leagueId, newTeam, accessToken!);
+            }
+
+            if (!updatedTeam) {
+                throw new Error("Failed to save team.");
             }
 
             if (onSave) {

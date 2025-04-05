@@ -60,6 +60,10 @@ const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onS
                 if (isEdit) {
                     const existingSeason = await getSeason(leagueId, seasonId!);
 
+                    if (!existingSeason) {
+                        throw new Error("Season not found");
+                    }
+
                     form.setValue("startDate", new Date(existingSeason.startDate));
                     form.setValue("endDate", new Date(existingSeason.endDate));
 
@@ -86,13 +90,20 @@ const SeasonForm: React.FC<SeasonFormProps> = ({ leagueId, isEdit, seasonId, onS
                 endDate: values.endDate.toISOString(),
             };
 
-            let updatedSeason: Season;
+            let updatedSeason: Season | null;
 
             if (isEdit) {
                 updatedSeason = await updateSeason(leagueId, seasonId!, newSeason, accessToken!);
             } else {
                 updatedSeason = await createSeason(leagueId, newSeason, accessToken!);
+
+                window.location.reload(); // Reload the page to reflect the new season
             }
+
+            if (!updatedSeason) {
+                throw new Error("Failed to create or update season");
+            }
+
 
             if (onSave) {
                 onSave(updatedSeason);

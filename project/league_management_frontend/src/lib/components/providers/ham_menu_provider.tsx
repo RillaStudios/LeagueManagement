@@ -12,6 +12,12 @@ interface HamContextType {
 
 const DrawerContext = createContext<HamContextType | undefined>(undefined);
 
+/* 
+A provider component that manages the state of the drawer in the application.
+
+@Author: IFD
+@Date: 2025-02-25
+*/
 export function DrawerProvider({ children }: { children: React.ReactNode }) {
     const [drawerOpen, setOpen] = useState(false);
 

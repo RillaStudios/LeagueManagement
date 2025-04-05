@@ -11,7 +11,7 @@ A function that gets all the leagues
 @Author: IFD
 @Since: 2025-03-06
 */
-export async function getAllLeagues(): Promise<League[]> {
+export async function getAllLeagues(): Promise<League[] | []> {
 
     // Send a GET request to the API to get all the leagues
     const response = await fetch(`${API_URL}/leagues/`, {
@@ -23,11 +23,12 @@ export async function getAllLeagues(): Promise<League[]> {
 
     // If the response is not ok, throw an error
     if (!response.ok) {
-        throw new Error('Failed to fetch leagues');
+        return [];
     }
 
-    // Parse the response as JSON
-    const leagues: League[] = await response.json();
+    const text = await response.text();
+
+    const leagues: League[] = text ? JSON.parse(text) : [];
 
     // Return the leagues
     return leagues;
@@ -94,8 +95,9 @@ export async function getAllUserLeagues(accessToken: string): Promise<League[] |
         return null;
     }
 
-    // Parse the response as JSON
-    const leagues: League[] = await response.json();
+    const text = await response.text();
+
+    const leagues: League[] = text ? JSON.parse(text) : [];
 
     // Return the leagues
     return leagues;
@@ -174,5 +176,7 @@ export async function deleteLeague(leagueId: number, accessToken: string): Promi
             'Authorization': `Bearer ${accessToken}`,
         },
         credentials: 'include',
+    }).catch((err) => {
+        console.log(err);
     });
 }

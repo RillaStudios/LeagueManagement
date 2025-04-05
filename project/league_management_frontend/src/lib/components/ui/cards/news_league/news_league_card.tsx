@@ -2,6 +2,12 @@ import { Button } from "@/lib/components/shadcn/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/lib/components/shadcn/card";
 import { NewsLeague } from "@/lib/types/league/news_league";
 
+/* 
+A card component that displays the details of a news league.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 export function NewsLeagueCard({ news, onDelete, onEdit }: { news: NewsLeague, onDelete: () => void, onEdit: () => void }) {
 
     const newsContent = JSON.parse(news.content);

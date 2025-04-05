@@ -1,5 +1,3 @@
-import { League } from "./league";
-
 /* 
 A interface to represent a season in a league
 

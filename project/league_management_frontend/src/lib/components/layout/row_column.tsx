@@ -14,6 +14,12 @@ interface RowColumnProps {
     children: React.ReactNode;
 }
 
+/* 
+A flexible layout component that switches between row and column layouts based on screen size.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const RowColumn: React.FC<RowColumnProps> = ({ children, gap, mainRowAxisAlign, crossRowAxisAlign, mainColAxisAlign, crossColAxisAlign, wrap, expanded, rowHeight, hideOverflow, }) => {
     return (
         <div className={`flex flex-wrap ${expanded ? 'w-full' : 'w-auto'} ${rowHeight ? rowHeight : 'h-auto'}`}>

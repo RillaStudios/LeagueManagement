@@ -91,6 +91,8 @@ public class PlayerService {
         player.setWeight(playerRequest.getWeight());
         player.setSkillLevel(playerRequest.getSkillLevel());
         player.setDob(playerRequest.getDob());
+        Team team = teamRepository.findById(playerRequest.getTeamId()).orElseThrow(() -> new ResourceNotFoundException("Team not found"));
+        player.setTeam(team);
 
         player = playerRepository.save(player);
 

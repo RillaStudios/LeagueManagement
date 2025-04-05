@@ -43,7 +43,6 @@ export function useUserData() {
 
                 // Handle errors
                 .catch((error) => {
-                    console.error("Failed to fetch user data:", error);
                     setUser(null);
                 })
 

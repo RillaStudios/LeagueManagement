@@ -59,8 +59,6 @@ const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId 
         if (isEdit && leagueId !== undefined) {
 
             const fetchLeague = async () => {
-                // Fetch league data
-                let currentLeague: League | null;
 
                 try {
                     const currentLeague = await getLeague(leagueId);
@@ -74,8 +72,7 @@ const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId 
                         });
                     }
                 } catch (error) {
-                    console.error("Failed to fetch league:", error);
-                    currentLeague = null;
+                    setServerError("Failed to fetch league data. Please try again.");
                 }
             };
 
@@ -109,12 +106,13 @@ const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId 
                 await updateLeague(accessToken!, newLeague);
             } else {
                 await addLeague(accessToken!, newLeague);
+
+                window.location.reload(); // Reload the page to reflect the new league
             }
 
             form.reset(values); // Reset form with current values to clear dirty state
 
         } catch (error) {
-            console.error("Failed to add/edit league:", error);
             setServerError("Failed to add/edit league. Please try again.");
         } finally {
             setLoading(false);
@@ -155,7 +153,7 @@ const AddEditLeagueForm: React.FC<AddEditLeagueFormProps> = ({ isEdit, leagueId 
                     name="location"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Game Type (Optional)</FormLabel>
+                            <FormLabel>Location (Optional)</FormLabel>
                             <FormControl>
                                 <Input className="w-full md:w-1/2" placeholder="Enter league location (optional)" {...field} />
                             </FormControl>

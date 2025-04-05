@@ -17,7 +17,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -152,9 +151,13 @@ public class TeamService {
                 .findDivisionByIdAndLeagueId(teamRequest.getDivisionId(), leagueId)
                 .orElse(null);
 
+        User user = userRepository.findUserById(teamRequest.getOwnerId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         team.setName(teamRequest.getTeamName());
         team.setLocation(teamRequest.getLocation());
         team.setDivision(division);
+        team.setOwner(user);
 
         teamRepository.save(team);
 

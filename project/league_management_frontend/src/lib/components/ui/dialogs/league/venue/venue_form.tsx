@@ -111,7 +111,7 @@ const VenueForm: React.FC<VenueFormProps> = ({ leagueId, isEdit, venueId, onSave
                 link: values.link,
             };
 
-            let updatedVenue: Venue;
+            let updatedVenue: Venue | null;
 
             if (isEdit) {
 
@@ -121,6 +121,12 @@ const VenueForm: React.FC<VenueFormProps> = ({ leagueId, isEdit, venueId, onSave
 
                 updatedVenue = await addVenue(leagueId, newVenue, accessToken!);
 
+                window.location.reload(); // Reload the page to show the new venue
+
+            }
+
+            if (!updatedVenue) {
+                throw new Error("Venue could not be added or updated.");
             }
 
             if (onSave) {

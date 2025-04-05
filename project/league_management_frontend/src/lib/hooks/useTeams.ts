@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { League } from "../types/league/league";
-import { getAllLeagues, getAllUserLeagues } from "../service/league/league_service";
 import { useAuth } from "./useAuth";
 import { Team } from "../types/league/team";
 import { getAllUserTeams, getTeams } from "../service/league/team_service";
@@ -41,7 +39,6 @@ export function useTeams(leagueId: number) {
                 })
                 // Handle errors
                 .catch((error) => {
-                    console.error("Failed to fetch teams data:", error);
                     setTeams(null);
                 })
                 // Set loading status to false

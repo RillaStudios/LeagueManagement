@@ -48,7 +48,8 @@ public class PlayerController {
     }
 
     @PatchMapping("/{playerId}")
-    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #player.teamId, authentication)")
+    @PreAuthorize("@playerSecurityService.canEditPlayer(#leagueId, #player.teamId, #player.playerId, authentication) or" +
+            "@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Integer leagueId, @PathVariable Integer playerId, @RequestBody PlayerRequest player) {
 
         return playerService.updatePlayer(leagueId, playerId, player);
@@ -56,7 +57,8 @@ public class PlayerController {
     }
 
     @DeleteMapping("/{playerId}")
-    @PreAuthorize("@leagueTeamSecurityService.canEditResource(#leagueId, #teamId, authentication)")
+    @PreAuthorize("@playerSecurityService.canEditPlayer(#leagueId, #teamId, #playerId, authentication) or" +
+            "@leagueSecurityService.canModifyLeague(#leagueId, authentication)")
     public ResponseEntity<?> deletePlayer(@PathVariable Integer leagueId, @PathVariable Integer playerId, @RequestBody Integer teamId) {
 
         return playerService.deletePlayer(leagueId, playerId);

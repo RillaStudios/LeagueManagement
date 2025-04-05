@@ -10,6 +10,12 @@ interface RowProps {
     children: React.ReactNode;
 }
 
+/* 
+A flexbox row component that allows for easy alignment and spacing of child elements.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Row: React.FC<RowProps> = ({
     gap = '0',
     mainAxisAlign = 'start',

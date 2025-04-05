@@ -110,8 +110,6 @@ const GameResultForm: React.FC<GameFormProps> = ({ leagueId, gameId, seasonId, h
                 },
             ];
 
-            console.log("New Game Stats:", newGameStats);
-
             await updateGameStats(leagueId, seasonId!, gameId!, newGameStats, accessToken!);
 
 
@@ -120,6 +118,10 @@ const GameResultForm: React.FC<GameFormProps> = ({ leagueId, gameId, seasonId, h
                 title: "Success",
                 description: `Game results updated successfully.`,
             })
+
+            if (onSave) {
+                onSave(newGameStats as GameStats[]);
+            }
 
         } catch (error: any) {
 

@@ -76,7 +76,6 @@ const ScheduleDisplay: React.FC<ScheduleDisplayProps> = ({ leagueId }) => {
                 setAllSeasonSchedule(enrichedSchedule);
 
             } catch (error) {
-                console.error("Failed to fetch schedule:", error);
             }
         }
 

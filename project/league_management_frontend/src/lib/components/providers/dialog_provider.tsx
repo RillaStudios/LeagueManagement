@@ -14,11 +14,16 @@ interface DialogContextType {
 
 const DialogContext = createContext<DialogContextType | undefined>(undefined);
 
+/* 
+A provider component that manages the state of dialogs in the application.
+
+@Author: IFD
+@Date: 2025-02-25
+*/
 export const DialogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [dialogState, setDialogState] = useState<DialogState>({});
 
     const openDialog = (key: string) => {
-        console.log(`Opening dialog: ${key}`);
         setDialogState((prevState) => ({
             ...prevState,
             [key]: true,

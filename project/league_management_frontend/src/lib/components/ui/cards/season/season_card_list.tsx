@@ -14,6 +14,13 @@ interface SeasonCardListProps {
     leagueId: number;
 }
 
+/* 
+A list of season cards for a given league. It fetches the 
+seasons from the server and displays them in a list.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
 
     const { dialogState, openDialog, closeDialog } = useDialog();
@@ -21,6 +28,12 @@ const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
     const [activeSeasonId, setActiveSeasonId] = useState<number | null>(null);
     const { accessToken } = useAuth(); // Get the access token from the auth context
 
+    /*
+    A function to fetch seasons from the server.
+    
+    @Author: IFD
+    @Date: 2025-03-22
+     */
     const fetchSeasons = async () => {
         await getSeasons(leagueId).then((response) => {
             setSeasons(response); // Set the seasons in the state
@@ -36,15 +49,34 @@ const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
         });
     };
 
+    /* 
+    A useEffect hook to fetch seasons when the
+    component mounts or when the leagueId changes.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     useEffect(() => {
         fetchSeasons();
     }, [leagueId]);
 
+    /* 
+    A function to handle the edit action for a season.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleEdit = (seasonId: number) => {
         setActiveSeasonId(seasonId); // Set the active season ID
         openDialog("editSeason"); // Open the dialog
     };
 
+    /* 
+    A function to handle the delete action for a season.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleDelete = (seasonId: number) => {
         const season = seasons.find((div) => div.id === seasonId);
 
@@ -71,6 +103,12 @@ const SeasonCardList: React.FC<SeasonCardListProps> = ({ leagueId }) => {
         }
     };
 
+    /* 
+    A function to handle the update action for a season.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleUpdate = () => {
         fetchSeasons();
 

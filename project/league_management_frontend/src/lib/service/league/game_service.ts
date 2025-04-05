@@ -14,11 +14,11 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getGames(leagueId: number, seasonId: number): Promise<Game[]> {
+export async function getGames(leagueId: number, seasonId: number): Promise<Game[] | []> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/`);
 
     if (!response.ok) {
-        throw new Error('Failed to fetch games');
+        return [];
     }
 
     const text = await response.text();
@@ -38,11 +38,11 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function getGame(leagueId: number, seasonId: number, gameId: number): Promise<Game> {
+export async function getGame(leagueId: number, seasonId: number, gameId: number): Promise<Game | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`);
 
     if (!response.ok) {
-        throw new Error('Failed to fetch game');
+        return null;
     }
 
     const text = await response.text();
@@ -62,7 +62,7 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function createGame(leagueId: number, seasonId: number, game: Partial<Game>, accessToken: string): Promise<Game> {
+export async function createGame(leagueId: number, seasonId: number, game: Partial<Game>, accessToken: string): Promise<Game | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/`, {
         method: 'POST',
         headers: {
@@ -77,7 +77,7 @@ export async function createGame(leagueId: number, seasonId: number, game: Parti
     });
 
     if (!response.ok) {
-        throw new Error('Failed to create game');
+        return null;
     }
 
     const text = await response.text();
@@ -97,7 +97,7 @@ Parameters:
 @Author: IFD
 @Date: 2025-03-28
 */
-export async function updateGame(leagueId: number, seasonId: number, gameId: number, game: Partial<Game>, accessToken: string): Promise<Game> {
+export async function updateGame(leagueId: number, seasonId: number, gameId: number, game: Partial<Game>, accessToken: string): Promise<Game | null> {
     const response = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}/games/${gameId}`, {
         method: 'PATCH',
         headers: {
@@ -108,7 +108,7 @@ export async function updateGame(leagueId: number, seasonId: number, gameId: num
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update game');
+        return null;
     }
 
     return response.json();

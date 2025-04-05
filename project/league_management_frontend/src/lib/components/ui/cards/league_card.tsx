@@ -15,6 +15,12 @@ interface LeagueCardProps {
     league: League;
 }
 
+/* 
+A card component that displays league information.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const LeagueCard: React.FC<LeagueCardProps> = ({ league }) => {
 
     const { user } = useUserData();

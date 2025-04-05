@@ -2,6 +2,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "../../../shadcn/button";
 import { Season } from "@/lib/types/league/season";
 
+/* 
+A card component to display season information.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 export function SeasonCard({ season, onDelete, onEdit }: { season: Season, onDelete: () => void, onEdit: () => void }) {
 
     return (

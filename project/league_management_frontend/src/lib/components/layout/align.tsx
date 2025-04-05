@@ -5,6 +5,12 @@ interface AlignProps {
     children: React.ReactNode;
 }
 
+/* 
+A component that aligns its children based on the provided alignment prop.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 const Align: React.FC<AlignProps> = ({ align = 'middle-center', children }) => {
     const alignClasses = {
         'top-left': 'top-0 left-0',

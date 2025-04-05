@@ -21,6 +21,12 @@ interface GameResult {
     draw?: boolean;
 }
 
+/* 
+A card component that displays the details of a game.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 export function GameCard({ leagueId, game, onDelete, onEdit, handleUpdate, handleStatUpdate, homeTeam, awayTeam, venue }: {
     leagueId: number,  // League ID
     game: Game, onDelete: () => void, onEdit: () => void, handleUpdate: (game: Game) => void, handleStatUpdate: (gameStats: GameStats[]) => void,
@@ -33,10 +39,9 @@ export function GameCard({ leagueId, game, onDelete, onEdit, handleUpdate, handl
 
     useEffect(() => {
         const fetchGameStats = async () => {
+            try {
+                const response = await getGameStats(leagueId, game.seasonId, game.gameId);
 
-            if (game.gameId === null) return;
-
-            await getGameStats(leagueId, game.seasonId, game.gameId).then(async (response) => {
                 if (response.length === 0) {
                     toast({
                         title: "No Game Stats",
@@ -44,35 +49,47 @@ export function GameCard({ leagueId, game, onDelete, onEdit, handleUpdate, handl
                         variant: "destructive",
                         duration: 2000,
                     });
-                    return;
-                }
-                setGameStats(response);
-            });
 
-            if (gameStats.length === 0) {
+                    setGameResult({
+                        score: "No Result Yet",
+                        winner: "N/A",
+                        loser: "N/A",
+                        draw: false,
+                    });
+                } else {
+                    setGameStats(response);
+
+                    if (new Date(game.gameDate) > new Date() && response[0].pointsFor === 0 && response[1].pointsFor === 0) {
+                        setGameResult({
+                            score: "No Result Yet",
+                            winner: "N/A",
+                            loser: "N/A",
+                            draw: false,
+                        });
+                        return;
+                    }
+
+                    setGameResult({
+                        score: `${response[0].pointsFor} - ${response[1].pointsFor}`,
+                        winner: response[0].pointsFor > response[1].pointsFor ? homeTeam.teamName : awayTeam.teamName,
+                        loser: response[0].pointsFor < response[1].pointsFor ? homeTeam.teamName : awayTeam.teamName,
+                        draw: response[0].pointsFor === response[1].pointsFor,
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching game stats:", error);
 
                 setGameResult({
-                    score: "No Result Yet",
+                    score: "Error fetching results",
                     winner: "N/A",
                     loser: "N/A",
                     draw: false,
-                });
-
-                return;
-
-            } else {
-
-                setGameResult({
-                    score: `${gameStats[0].pointsFor} - ${gameStats[1].pointsFor}`,
-                    winner: gameStats[0].pointsFor > gameStats[1].pointsFor ? homeTeam.teamName : awayTeam.teamName,
-                    loser: gameStats[0].pointsFor < gameStats[1].pointsFor ? homeTeam.teamName : awayTeam.teamName,
-                    draw: gameStats[0].pointsFor === gameStats[1].pointsFor,
                 });
             }
         };
 
         fetchGameStats();
-    }, [game.gameId, leagueId, game.seasonId, gameResult]);
+    }, [game.gameId, leagueId, game.seasonId, homeTeam.teamName, awayTeam.teamName]);
 
     return (
         <Card className="w-full mb-4">

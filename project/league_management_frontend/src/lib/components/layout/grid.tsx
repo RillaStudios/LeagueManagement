@@ -9,6 +9,12 @@ type GridProps = {
     className?: string;
 };
 
+/* 
+A simple grid component that uses Tailwind CSS classes to create a grid layout.
+
+@Author: IFD
+@Date: 2025-02-20
+*/
 export default function Grid({
     children,
     columns = "grid-cols-12", // Default to 12-column grid

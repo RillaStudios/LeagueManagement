@@ -12,6 +12,12 @@ interface LeagueButtonProps {
     variant?: 'default' | 'secondary' | 'outline';
 }
 
+/* 
+A button component that displays a league button based on the user's role.
+
+@Author: IFD
+@Date: 2025-02-25
+*/
 const LeagueButton: React.FC<LeagueButtonProps> = ({ league, className, variant }) => {
 
     const { user } = useUserData();

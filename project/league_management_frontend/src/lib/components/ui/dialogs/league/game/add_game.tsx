@@ -29,7 +29,7 @@ const AddEditGameDialog: React.FC<AddEditGameDialogProps> = ({ leagueId, isEdit,
         if (onSave) {
             onSave(updatedGame); // Call the onSave callback
         }
-        closeDialog(isEdit ? "editGame" : "addGame"); // Close the dialog
+        closeDialog(isEdit ? "editGame" : "addGame"); // Close the dialog after saving
     };
 
     return (

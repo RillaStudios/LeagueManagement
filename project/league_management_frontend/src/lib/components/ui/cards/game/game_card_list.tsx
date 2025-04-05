@@ -1,7 +1,7 @@
 'use client'
 
 import { useDialog } from "@/lib/components/providers/dialog_provider";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { BodySmall } from "@/lib/components/layout/typography";
 import { Game } from "@/lib/types/league/game";
@@ -15,7 +15,6 @@ import { Venue } from "@/lib/types/league/venue";
 import { getVenues } from "@/lib/service/league/venue_service";
 import Row from "@/lib/components/layout/row";
 import { Button } from "@/lib/components/shadcn/button";
-import { getAllGameStats, getGameStats } from "@/lib/service/league/game_stats_service";
 import { GameStats } from "@/lib/types/league/game_stats";
 import { useAuth } from "@/lib/hooks/useAuth";
 
@@ -23,28 +22,35 @@ interface GameCardListProps {
     leagueId: number;
 }
 
+/* 
+A list of game cards for a given league. It fetches 
+the games from the server and displays them in a list.
+
+@Author: IFD
+@Date: 2025-03-22
+*/
 const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
 
     const { dialogState, openDialog, closeDialog } = useDialog();
-    const [games, setGames] = useState<Game[]>([]); // State to hold the divisions
+    const [games, setGames] = useState<Game[]>([]);
     const [activeGameId, setActiveGameId] = useState<number | null>(null);
     const [seasonId, setSeasonId] = useState<number | null>(null);
-    const [teams, setTeams] = useState<Team[]>([]); // State to hold the teams
-    const [venues, setVenues] = useState<Venue[]>([]); // State to hold the venues
-    const { accessToken } = useAuth(); // Get the access token from the auth context
+    const [teams, setTeams] = useState<Team[]>([]);
+    const [venues, setVenues] = useState<Venue[]>([]);
+    const { accessToken } = useAuth();
 
+    /* 
+    A function to fetch games from the server.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const fetchGames = async () => {
         if (seasonId === null) return; // If no season is selected, do not fetch games
 
         await getGames(leagueId, seasonId).then(async (response) => {
 
             if (response.length === 0) {
-                toast({
-                    title: "No Games",
-                    description: "No games found for the selected season.",
-                    variant: "destructive",
-                    duration: 2000,
-                });
                 return;
             }
 
@@ -64,6 +70,13 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
         );
     };
 
+    /* 
+    A useEffect hook to fetch games when the
+    component mounts or when the leagueId or seasonId changes.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     useEffect(() => {
         const fetchGameInfo = async () => {
             try {
@@ -91,16 +104,35 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
         fetchGameInfo(); // Fetch teams when the component mounts
     }, [leagueId]);
 
+    /* 
+    A useEffect hook to fetch games when the
+    component mounts or when the leagueId or seasonId changes.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     useEffect(() => {
         fetchGames();
     }, [leagueId, seasonId]);
 
-    const handleEdit = useCallback((gameId: number) => {
+    /* 
+    A function to handle editing a game.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
+    const handleEdit = (gameId: number) => {
         setActiveGameId(gameId);
         openDialog("editGame");
-    }, [openDialog]);
+    };
 
-    const handleDelete = useCallback((gameId: number) => {
+    /* 
+    A function to handle deleting a game.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
+    const handleDelete = (gameId: number) => {
         const game = games.find((g) => g.gameId === gameId);
 
         if (game) {
@@ -123,9 +155,15 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
                 });
             });
         }
-    }, [leagueId, seasonId, accessToken]); // Add dependencies
+    };
 
-    const handleUpdate = useCallback((updatedGame: Game) => {
+    /* 
+    A function to handle updating a game.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
+    const handleUpdate = (updatedGame: Game) => {
         setGames((prevGames) => {
             const gameExists = prevGames.some((game) => game.gameId === updatedGame.gameId);
             if (gameExists) {
@@ -138,9 +176,15 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
         });
 
         closeDialog("editGame");
-    }, [closeDialog]);
+    };
 
-    const handleStatUpdate = useCallback((updatedGameStats: GameStats[]) => {
+    /* 
+    A function to handle updating game stats.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
+    const handleStatUpdate = (updatedGameStats: GameStats[]) => {
         // Use functional update pattern
         setGames(prevGames => prevGames.map((game) => {
             const gameStats = updatedGameStats.filter(stat => stat.gameId === game.gameId);
@@ -154,7 +198,14 @@ const GameCardList: React.FC<GameCardListProps> = ({ leagueId }) => {
         }));
 
         closeDialog("editGame");
-    }, [closeDialog]);
+    };
+
+    /* 
+    A function to handle season change.
+
+    @Author: IFD
+    @Date: 2025-03-22
+    */
     const handleSeasonChange = (seasonId: string) => {
         setSeasonId(parseInt(seasonId));
     };

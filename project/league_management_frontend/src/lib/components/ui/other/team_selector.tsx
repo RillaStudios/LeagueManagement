@@ -3,7 +3,10 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../shadcn/select";
 import { useEffect, useState } from "react";
 import { Team } from "@/lib/types/league/team";
-import { getTeams } from "@/lib/service/league/team_service";
+import { getAllUserTeams, getTeams } from "@/lib/service/league/team_service";
+import { useUserData } from "@/lib/hooks/useUserData";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 
 /* 
@@ -12,17 +15,34 @@ A team selector component for the app.
 @Author: IFD
 @Date: 2025-04-01
 */
-const TeamSelector: React.FC<{ leagueId: number; onTeamChange: (teamId: string) => void }> = ({ leagueId, onTeamChange }) => {
+const TeamSelector: React.FC<{ leagueId: number; onTeamChange: (teamId: string) => void, userTeams?: boolean }> = ({ leagueId, onTeamChange, userTeams }) => {
     const [teams, setTeams] = useState<Team[] | null>(null);
     const [selectedTeam, setSelectedTeam] = useState<string | undefined>(undefined);
+    const { accessToken } = useAuth();
+    const { user } = useUserData();
 
     useEffect(() => {
         const fetchTeams = async () => {
+
+            if (!leagueId || userTeams) {
+                await getAllUserTeams(accessToken!).then((response) => {
+                    setTeams(response);
+                }).catch((error) => {
+                    toast({
+                        title: "Error",
+                        description: `Failed to fetch teams: ${error.message}`,
+                        variant: "destructive",
+                        duration: 2000,
+                    });
+                });
+                return;
+            }
+
             const teams = await getTeams(leagueId);
             setTeams(teams);
         };
         fetchTeams();
-    }, [leagueId]);
+    }, [leagueId, user]);
 
     const handleTeamChange = (teamId: string) => {
         setSelectedTeam(teamId);

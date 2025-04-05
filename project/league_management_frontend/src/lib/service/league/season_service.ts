@@ -16,7 +16,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function getSeasons(leagueId: number): Promise<Season[]> {
+export async function getSeasons(leagueId: number): Promise<Season[] | []> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'GET',
         headers: {
@@ -27,7 +27,7 @@ export async function getSeasons(leagueId: number): Promise<Season[]> {
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch seasons');
+        return [];
     }
 
     const text = await res.text();
@@ -50,7 +50,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function getSeason(leagueId: number, seasonId: number): Promise<Season> {
+export async function getSeason(leagueId: number, seasonId: number): Promise<Season | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'GET',
         headers: {
@@ -61,7 +61,7 @@ export async function getSeason(leagueId: number, seasonId: number): Promise<Sea
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch division');
+        return null;
     }
 
     const season: Season = await res.json();
@@ -82,7 +82,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function createSeason(leagueId: number, season: Partial<Season>, accessToken: string): Promise<Season> {
+export async function createSeason(leagueId: number, season: Partial<Season>, accessToken: string): Promise<Season | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/`, {
         method: 'POST',
         headers: {
@@ -95,7 +95,7 @@ export async function createSeason(leagueId: number, season: Partial<Season>, ac
     });
 
     if (!res.ok) {
-        throw new Error("Failed to create season.");
+        return null;
     }
 
     const text = await res.text();
@@ -118,7 +118,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>, accessToken: string): Promise<Season> {
+export async function updateSeason(leagueId: number, seasonId: number, season: Partial<Season>, accessToken: string): Promise<Season | null> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/${seasonId}`, {
         method: 'PATCH',
         headers: {
@@ -131,7 +131,7 @@ export async function updateSeason(leagueId: number, seasonId: number, season: P
     });
 
     if (!res.ok) {
-        throw new Error('Failed to update season');
+        return null;
     }
 
     const text = await res.text();
@@ -184,7 +184,7 @@ Returns:
 @Author: IFD
 @Date: 2025-03-26
 */
-export async function getSeasonStats(leagueId: number, seasonId: number): Promise<TeamStats[]> {
+export async function getSeasonStats(leagueId: number, seasonId: number): Promise<TeamStats[] | []> {
     const res = await fetch(`${API_URL}/leagues/${leagueId}/seasons/stats/${seasonId}`, {
         method: 'GET',
         headers: {
@@ -195,7 +195,7 @@ export async function getSeasonStats(leagueId: number, seasonId: number): Promis
     });
 
     if (!res.ok) {
-        throw new Error('Failed to fetch season stats');
+        return [];
     }
 
     const text = await res.text();

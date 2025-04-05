@@ -30,6 +30,9 @@ const formSchema = z.object({
     awayTeam: z.string(),
     venue: z.string(),
     date: z.date(),
+}).refine(data => data.homeTeam !== data.awayTeam, {
+    message: "Home team and away team cannot be the same",
+    path: ["awayTeam"], // This targets the error at the away team field
 });
 
 interface GameFormProps {
@@ -80,6 +83,10 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
 
                     const newGame = await getGame(leagueId, seasonId!, gameId!);
 
+                    if (!newGame) {
+                        throw new Error("Game not found");
+                    }
+
                     form.setValue('homeTeam', newGame.homeTeamId.toString() || '');
                     form.setValue('awayTeam', newGame.awayTeamId.toString() || '');
                     form.setValue('venue', newGame.venueId.toString() || '');
@@ -116,12 +123,16 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
 
             };
 
-            let updatedGame: Game;
+            let updatedGame: Game | null;
 
             if (isEdit) {
                 updatedGame = await updateGame(leagueId, seasonId!, gameId!, newGame, accessToken!);
             } else {
                 updatedGame = await createGame(leagueId, seasonId!, newGame, accessToken!);
+            }
+
+            if (!updatedGame) {
+                throw new Error("Game not found or could not be created");
             }
 
             if (onSave) {
@@ -165,7 +176,11 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
                                     </SelectTrigger>
                                     <SelectContent>
                                         {teams?.map((team) => (
-                                            <SelectItem key={team.teamId} value={team.teamId.toString()}>
+                                            <SelectItem
+                                                key={team.teamId}
+                                                value={team.teamId.toString()}
+                                                disabled={team.teamId.toString() === form.watch('awayTeam')}
+                                            >
                                                 {team.teamName}
                                             </SelectItem>
                                         ))}
@@ -189,7 +204,11 @@ const GameForm: React.FC<GameFormProps> = ({ leagueId, isEdit, gameId, seasonId,
                                     </SelectTrigger>
                                     <SelectContent>
                                         {teams?.map((team) => (
-                                            <SelectItem key={team.teamId} value={team.teamId.toString()}>
+                                            <SelectItem
+                                                key={team.teamId}
+                                                value={team.teamId.toString()}
+                                                disabled={team.teamId.toString() === form.watch('homeTeam')}
+                                            >
                                                 {team.teamName}
                                             </SelectItem>
                                         ))}

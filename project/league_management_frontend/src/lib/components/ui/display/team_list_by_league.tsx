@@ -35,7 +35,6 @@ const TeamListByLeague: React.FC<TeamListProps> = ({ alignList = "center", cardW
                     await getTeams(league.id);
                 setTeams(response || []);
             } catch (error) {
-                console.error("Failed to fetch teams:", error);
                 setTeams([]);
             } finally {
                 setLoading(false);
@@ -60,7 +59,7 @@ const TeamListByLeague: React.FC<TeamListProps> = ({ alignList = "center", cardW
                     {teams === null && <p>No teams found</p>}
                     {teams && teams.length === 0 && <p>No teams found</p>}
                     {teams && teams.map((team, index) => (
-                        <TeamCard key={index} team={team} leagueOwnerId={league?.createdBy} onEdit={() => { }} onDelete={() => { }} />
+                        <TeamCard key={index} team={team} leagueOwnerId={league?.createdBy} disableActions onEdit={() => { }} onDelete={() => { }} />
                     ))}
                 </Column>
             </Container>
