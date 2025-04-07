@@ -3,6 +3,9 @@ A full-featured **League Management System** developed as a semester project for
 
 This project is designed to streamline the management of sports leagues, teams, players, and more. It offers tools for league administrators, and coaches to manage teams, track players, handle scheduling, and maintain league integrity—all within a centralized platform. 
 
+## GitHub URL:
+Clone the project via github at: https://github.com/RillaStudios/LeagueManagement
+
 ## 📌 Project Overview
 
 The League Management System is built to support various real-world use cases such as:
@@ -92,8 +95,10 @@ Open the Next.js/React frontend in your IDE of choice (such as IntelliJ IDEA or 
 3. **Configure Environment Variables** 
 If there is not already, create a `.env.local` folder in the root of the project. Ensure the contents are as follows:
 
-    NEXT_PUBLIC_API_URL="http://localhost:9000/api"
-	NODE_TLS_REJECT_UNAUTHORIZED=0
+  >     NEXT_PUBLIC_API_URL="http://localhost:9000/api" (Note: If running backend on HTTPS make sure to switch this to https://)
+	>     NODE_TLS_REJECT_UNAUTHORIZED=0
+	
+  >     NODE_TLS_REJECT_UNAUTHORIZED=0
 4. **Run the Development Server** 🚀🚀🚀
 
          npm run dev
